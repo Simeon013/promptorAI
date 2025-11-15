@@ -1,0 +1,157 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Subscription
+  plan           Plan      @default(FREE)
+  stripeId       String?   @unique
+  subscriptionId String?
+  quotaUsed      Int       @default(0)
+  quotaLimit     Int       @default(10)
+  resetDate      DateTime?
+
+  // Relations
+  prompts          Prompt[]
+  workspaces       WorkspaceMember[]
+  apiKeys          ApiKey[]
+  usageHistory     UsageHistory[]
+  stripeCustomerId String?           @unique
+
+  @@index([email])
+  @@index([stripeId])
+}
+
+model Prompt {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type        PromptType
+  input       String     @db.Text
+  output      String     @db.Text
+  constraints String?    @db.Text
+  language    String?
+
+  // Metadata
+  model     String  @default("gemini-2.5-flash")
+  tokens    Int?
+  favorited Boolean @default(false)
+  tags      String[]
+
+  // Versioning
+  parentId String?
+  parent   Prompt?  @relation("PromptVersions", fields: [parentId], references: [id], onDelete: SetNull)
+  versions Prompt[] @relation("PromptVersions")
+
+  // Sharing
+  visibility  Visibility @default(PRIVATE)
+  workspaceId String?
+  workspace   Workspace? @relation(fields: [workspaceId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([workspaceId])
+  @@index([createdAt])
+  @@index([visibility])
+}
+
+model Workspace {
+  id   String @id @default(cuid())
+  name String
+  slug String @unique
+
+  members WorkspaceMember[]
+  prompts Prompt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([slug])
+}
+
+model WorkspaceMember {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  role        Role
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId])
+}
+
+model ApiKey {
+  id       String    @id @default(cuid())
+  userId   String
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key      String    @unique
+  name     String
+  lastUsed DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([key])
+}
+
+model UsageHistory {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  action      String // "generate", "improve", "suggestions"
+  model       String
+  tokensUsed  Int?
+  success     Boolean
+  errorReason String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+enum Plan {
+  FREE
+  STARTER
+  PRO
+  ENTERPRISE
+}
+
+enum PromptType {
+  GENERATE
+  IMPROVE
+}
+
+enum Visibility {
+  PRIVATE
+  WORKSPACE
+  PUBLIC
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}

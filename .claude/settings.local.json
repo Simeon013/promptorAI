@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(NUL)"
+      "Bash(NUL)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm install:*)",
+      "Bash(if exist .next rmdir /s /q .next)"
     ],
     "deny": [],
     "ask": []
