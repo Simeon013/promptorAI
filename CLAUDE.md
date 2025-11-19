@@ -21,11 +21,6 @@ npm run build
 # Start production server
 npm start
 
-# Database commands (Prisma)
-npm run db:push      # Push schema to database
-npm run db:studio    # Open Prisma Studio
-npm run db:generate  # Generate Prisma Client
-
 # Code quality
 npm run lint         # Run ESLint
 ```
@@ -38,12 +33,13 @@ Create a `.env.local` file based on `.env.example`:
 # Required
 GEMINI_API_KEY=your_gemini_api_key
 
-# Database (Phase 2+)
-DATABASE_URL=postgresql://...
+# Supabase (Phase 2)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 
-# Auth (Phase 2+)
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
+# Clerk Auth (Phase 2)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
 
 # Stripe (Phase 3+)
 STRIPE_SECRET_KEY=
@@ -59,73 +55,83 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
 - Next.js 15 (App Router, Server Components, API Routes)
 - TypeScript (strict mode)
 - Tailwind CSS + Shadcn/ui
-- TanStack Query (planned for Phase 2)
-- Zustand (planned for state management)
+- React 18
+- TanStack Query (planned for Phase 3)
 
 **Backend:**
 - Next.js API Routes (serverless)
-- Prisma ORM
-- PostgreSQL (via Supabase, planned)
+- Supabase (PostgreSQL + JS Client)
 - Redis (planned for caching)
 
 **External Services:**
-- Google Gemini AI
-- Clerk (auth, planned)
-- Stripe (payments, planned)
-- Vercel (hosting)
+- Google Gemini AI (gemini-2.5-flash)
+- Clerk (authentication)
+- Supabase (database)
+- Stripe (payments, planned for Phase 3)
+- Vercel (hosting, planned)
 
 ### Project Structure
 
 ```
 promptor/
-├── app/                      # Next.js App Router
-│   ├── layout.tsx           # Root layout with dark theme
-│   ├── globals.css          # Global Tailwind styles
-│   ├── page.tsx             # Home page (client component)
-│   ├── (auth)/              # Auth routes (planned)
-│   ├── (dashboard)/         # Dashboard routes (planned)
-│   ├── (marketing)/         # Marketing pages (planned)
-│   └── api/                 # API Routes
-│       ├── generate/        # Prompt generation & improvement
-│       └── suggestions/     # AI suggestions
-├── components/
-│   ├── ui/                  # Shadcn/ui components
-│   │   ├── button.tsx
-│   │   ├── textarea.tsx
-│   │   └── card.tsx
-│   ├── prompt/              # Prompt-specific components (planned)
-│   ├── workspace/           # Workspace components (planned)
-│   └── shared/              # Shared components (planned)
+├── app/                           # Next.js App Router
+│   ├── (auth)/                   # Auth routes
+│   │   ├── sign-in/             # Page de connexion
+│   │   └── sign-up/             # Page d'inscription
+│   ├── (dashboard)/              # Dashboard routes
+│   │   └── dashboard/           # Dashboard utilisateur
+│   ├── api/                      # API Routes
+│   │   ├── auth/callback/       # Sync Clerk → Supabase
+│   │   ├── generate/            # Génération de prompts
+│   │   └── suggestions/         # Suggestions IA
+│   ├── layout.tsx               # Layout racine avec Clerk
+│   ├── page.tsx                 # Page d'accueil
+│   └── globals.css              # Styles globaux Tailwind
+│
+├── components/ui/                # Shadcn/ui components
+│   ├── button.tsx
+│   ├── card.tsx
+│   └── textarea.tsx
+│
 ├── lib/
 │   ├── ai/
-│   │   └── gemini.ts        # Gemini AI service
+│   │   └── gemini.ts            # Service Gemini AI
+│   ├── api/
+│   │   └── auth-helper.ts       # Auth & quota helpers
+│   ├── auth/
+│   │   └── supabase-clerk.ts    # Auth + quota Supabase
 │   ├── db/
-│   │   ├── schema.prisma    # Database schema
-│   │   └── prisma.ts        # Prisma client
-│   ├── auth/                # Clerk config (planned)
-│   ├── stripe/              # Stripe integration (planned)
-│   └── utils.ts             # Utility functions
+│   │   └── supabase.ts          # Client Supabase
+│   └── utils.ts                 # Utilitaires
+│
 ├── types/
-│   └── index.ts             # TypeScript types
+│   └── index.ts                 # Types TypeScript
+│
 ├── config/
-│   ├── site.ts              # Site configuration
-│   └── plans.ts             # Subscription plans
-├── hooks/                   # Custom React hooks (planned)
-└── public/                  # Static assets
+│   ├── site.ts                  # Config site
+│   └── plans.ts                 # Plans tarifaires
+│
+├── middleware.ts                # Middleware Clerk
+└── public/                      # Assets statiques
 ```
 
 ### API Routes Architecture
 
+**[app/api/auth/callback/route.ts](app/api/auth/callback/route.ts)**
+- Synchronise automatiquement les utilisateurs Clerk → Supabase
+- Appelé lors de la première connexion via useEffect
+- Crée l'utilisateur en DB avec plan FREE et quota initial
+
 **[app/api/generate/route.ts](app/api/generate/route.ts)**
-- Handles both generation and improvement modes
-- Validates input on server-side
-- Calls Gemini API with proper error handling
-- Returns JSON response
+- Gère génération ET amélioration de prompts
+- Vérifie l'auth et les quotas (via `verifyAuthAndQuota`)
+- Sauvegarde en DB et incrémente le quota utilisé
+- Appelle Gemini API avec gestion d'erreurs
 
 **[app/api/suggestions/route.ts](app/api/suggestions/route.ts)**
-- Generates contextual keyword suggestions
-- Uses Gemini's structured JSON output
-- Returns categorized suggestions
+- Génère des suggestions contextuelles
+- Utilise le JSON structuré de Gemini
+- Retourne des suggestions catégorisées
 
 ### Service Layer
 
@@ -140,14 +146,17 @@ All functions use the `gemini-2.5-flash` model.
 
 ### Database Schema
 
-**[lib/db/schema.prisma](lib/db/schema.prisma)** defines the complete data model:
+**Supabase PostgreSQL** avec les tables suivantes (voir [SUPABASE_QUICK_SETUP.md](SUPABASE_QUICK_SETUP.md)):
 
-- **User**: Authentication, subscriptions, quotas
-- **Prompt**: Generated/improved prompts with versioning
-- **Workspace**: Team collaboration (planned)
-- **WorkspaceMember**: RBAC permissions
-- **ApiKey**: Developer API access
-- **UsageHistory**: Analytics tracking
+- **users**: id (Clerk), email, name, avatar, plan, quota_used, quota_limit, stripe_id, subscription_id, reset_date
+- **prompts**: id, user_id, type (GENERATE/IMPROVE), input, output, constraints, language, model, tokens, favorited, tags
+- **workspaces**: Team collaboration (Phase 5)
+- **workspace_members**: RBAC permissions (Phase 5)
+- **api_keys**: Developer API access (Phase 6)
+
+**Auth Flow**: Clerk → `/api/auth/callback` → Crée user dans Supabase → Quota tracking
+
+**Note**: RLS désactivé en développement (auth gérée par Clerk)
 
 ### Key User Flows
 
@@ -197,24 +206,36 @@ Defined in [config/plans.ts](config/plans.ts):
 
 This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](MIGRATION.md) for details.
 
-**Phase 1**: ✅ Completed
+**Phase 1**: ✅ Completed (Nov 15, 2025)
 - Next.js 15 setup
 - Tailwind CSS + Shadcn/ui
 - API Routes for Gemini
 - Basic UI components
 
-**Phase 2**: 🔄 Planned (Auth & Database)
-**Phase 3**: 🔄 Planned (Stripe Payments)
-**Phase 4**: 🔄 Planned (Dashboard)
+**Phase 2**: ✅ Completed (Nov 15, 2025)
+- Clerk authentication (sign-in, sign-up)
+- Supabase database (PostgreSQL)
+- User sync Clerk → Supabase
+- Quota system (FREE: 10/month)
+- Dashboard with stats
+
+**Phase 3**: 🔄 Next (Stripe Payments)
+**Phase 4**: 🔄 Planned (History & Favorites)
 **Phase 5**: 🔄 Planned (Workspaces)
 **Phase 6**: 🔄 Planned (Public API)
 
 ## Additional Documentation
 
-- [README.md](README.md) - Project overview and features
-- [GETTING_STARTED.md](GETTING_STARTED.md) - Quick start guide
-- [MIGRATION.md](MIGRATION.md) - Detailed migration guide
+**Active Documentation:**
+- [README.md](README.md) - Project overview, quick start, architecture
+- [SUPABASE_QUICK_SETUP.md](SUPABASE_QUICK_SETUP.md) - Supabase setup guide (SQL, tables, RLS)
 - [.env.example](.env.example) - Environment variables template
+
+**Archives (Historical):**
+- [docs/archives/](docs/archives/) - Historical documentation
+  - [MIGRATION.md](docs/archives/MIGRATION.md) - Vite → Next.js migration (Nov 15, 2025)
+  - [CLEANUP_REPORT.md](docs/archives/CLEANUP_REPORT.md) - Codebase cleanup report (Nov 15, 2025)
+  - [STRUCTURE.md](docs/archives/STRUCTURE.md) - Project structure snapshot (Nov 15, 2025)
 
 ## Original AI Studio Integration
 
