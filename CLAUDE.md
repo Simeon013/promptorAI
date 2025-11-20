@@ -83,7 +83,12 @@ promptor/
 │   ├── api/                      # API Routes
 │   │   ├── auth/callback/       # Sync Clerk → Supabase
 │   │   ├── generate/            # Génération de prompts
-│   │   └── suggestions/         # Suggestions IA
+│   │   ├── suggestions/         # Suggestions IA
+│   │   ├── stripe/
+│   │   │   └── create-checkout-session/  # Stripe Checkout
+│   │   └── webhooks/stripe/     # Webhooks Stripe
+│   ├── pricing/                  # Page tarifs publique
+│   ├── success/                  # Page succès paiement
 │   ├── layout.tsx               # Layout racine avec Clerk
 │   ├── page.tsx                 # Page d'accueil
 │   └── globals.css              # Styles globaux Tailwind
@@ -102,6 +107,9 @@ promptor/
 │   │   └── supabase-clerk.ts    # Auth + quota Supabase
 │   ├── db/
 │   │   └── supabase.ts          # Client Supabase
+│   ├── stripe/
+│   │   ├── stripe.ts            # Stripe server-side client
+│   │   └── stripe-client.ts     # Stripe client-side (unused for now)
 │   └── utils.ts                 # Utilitaires
 │
 ├── types/
@@ -132,6 +140,16 @@ promptor/
 - Génère des suggestions contextuelles
 - Utilise le JSON structuré de Gemini
 - Retourne des suggestions catégorisées
+
+**[app/api/stripe/create-checkout-session/route.ts](app/api/stripe/create-checkout-session/route.ts)**
+- Crée une session de checkout Stripe pour STARTER ou PRO
+- Vérifie l'authentification Clerk
+- Redirige vers Stripe Checkout avec métadonnées (userId, plan)
+
+**[app/api/webhooks/stripe/route.ts](app/api/webhooks/stripe/route.ts)**
+- Reçoit les événements Stripe (checkout.session.completed, subscription.updated, etc.)
+- Vérifie la signature du webhook
+- Met à jour Supabase automatiquement (plan, quota, stripe_id, subscription_id)
 
 ### Service Layer
 
@@ -219,16 +237,24 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 - Quota system (FREE: 10/month)
 - Dashboard with stats
 
-**Phase 3**: 🔄 Next (Stripe Payments)
-**Phase 4**: 🔄 Planned (History & Favorites)
+**Phase 3**: ✅ Completed (Nov 19, 2025)
+
+- Stripe integration (checkout, webhooks)
+- Page Pricing avec 4 plans
+- Gestion des abonnements
+- Sync paiements → Supabase (plan upgrade)
+
+**Phase 4**: 🔄 Next (History & Favorites)
 **Phase 5**: 🔄 Planned (Workspaces)
 **Phase 6**: 🔄 Planned (Public API)
 
 ## Additional Documentation
 
 **Active Documentation:**
+
 - [README.md](README.md) - Project overview, quick start, architecture
 - [SUPABASE_QUICK_SETUP.md](SUPABASE_QUICK_SETUP.md) - Supabase setup guide (SQL, tables, RLS)
+- [STRIPE_SETUP.md](STRIPE_SETUP.md) - Stripe setup guide (products, webhooks)
 - [.env.example](.env.example) - Environment variables template
 
 **Archives (Historical):**

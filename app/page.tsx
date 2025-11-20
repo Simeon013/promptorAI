@@ -123,6 +123,12 @@ export default function Home() {
               <h1 className="text-2xl font-bold text-white">Promptor</h1>
             </div>
             <div className="flex items-center gap-4">
+              <a
+                href="/pricing"
+                className="text-sm text-slate-400 transition-colors hover:text-white"
+              >
+                Tarifs
+              </a>
               {isSignedIn ? (
                 <>
                   <a
