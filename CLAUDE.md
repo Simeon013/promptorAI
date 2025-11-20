@@ -237,12 +237,14 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 - Quota system (FREE: 10/month)
 - Dashboard with stats
 
-**Phase 3**: ✅ Completed (Nov 19, 2025)
+**Phase 3**: ✅ Completed (Nov 20, 2025)
 
-- Stripe integration (checkout, webhooks)
-- Page Pricing avec 4 plans
-- Gestion des abonnements
-- Sync paiements → Supabase (plan upgrade)
+- Stripe integration (checkout sessions, subscription management)
+- Page Pricing publique avec 4 plans (FREE, STARTER, PRO, ENTERPRISE)
+- Page Success avec synchronisation automatique
+- API `/api/stripe/sync-subscription` pour développement local
+- Mise à jour automatique de Supabase après paiement (plan, quota, stripe_id, subscription_id)
+- Webhooks Stripe configurés (pour production)
 
 **Phase 4**: 🔄 Next (History & Favorites)
 **Phase 5**: 🔄 Planned (Workspaces)
@@ -254,7 +256,8 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 
 - [README.md](README.md) - Project overview, quick start, architecture
 - [SUPABASE_QUICK_SETUP.md](SUPABASE_QUICK_SETUP.md) - Supabase setup guide (SQL, tables, RLS)
-- [STRIPE_SETUP.md](STRIPE_SETUP.md) - Stripe setup guide (products, webhooks)
+- [STRIPE_SETUP.md](STRIPE_SETUP.md) - Stripe setup guide (products, API keys, test cards)
+- [STRIPE_WEBHOOKS_LOCAL.md](STRIPE_WEBHOOKS_LOCAL.md) - Stripe CLI pour webhooks en local
 - [.env.example](.env.example) - Environment variables template
 
 **Archives (Historical):**
