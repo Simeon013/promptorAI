@@ -9,7 +9,8 @@
       "Bash(find:*)",
       "Bash(curl:*)",
       "Bash(where:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(npm run build:*)"
     ],
     "deny": [],
     "ask": []

@@ -4,10 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function SuccessPage() {
+function SuccessPageContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const [syncing, setSyncing] = useState(true);
@@ -89,5 +89,24 @@ export default function SuccessPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <Card className="w-full max-w-md border-slate-800 bg-slate-900/50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-center gap-3">
+              <Loader2 className="h-6 w-6 animate-spin text-blue-500" />
+              <p className="text-slate-300">Chargement...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <SuccessPageContent />
+    </Suspense>
   );
 }

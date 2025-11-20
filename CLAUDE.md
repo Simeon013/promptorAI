@@ -41,10 +41,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 
-# Stripe (Phase 3+)
-STRIPE_SECRET_KEY=
-STRIPE_WEBHOOK_SECRET=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+# Stripe (Phase 3)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_PRICE_STARTER=price_...
+STRIPE_PRICE_PRO=price_...
 ```
 
 ## Architecture
@@ -246,7 +248,16 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 - Mise à jour automatique de Supabase après paiement (plan, quota, stripe_id, subscription_id)
 - Webhooks Stripe configurés (pour production)
 
-**Phase 4**: 🔄 Next (History & Favorites)
+**Phase 4**: ✅ Completed (Nov 20, 2025)
+
+- Page historique avec pagination (20 prompts/page)
+- Recherche full-text dans les prompts
+- Filtres par type (GENERATE/IMPROVE) et favoris
+- Toggle favoris sur chaque prompt
+- Copie rapide dans le presse-papiers
+- Suppression de prompts avec confirmation
+- Lien vers l'historique depuis le dashboard
+
 **Phase 5**: 🔄 Planned (Workspaces)
 **Phase 6**: 🔄 Planned (Public API)
 
@@ -255,12 +266,14 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 **Active Documentation:**
 
 - [README.md](README.md) - Project overview, quick start, architecture
+- [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) - État complet du développement (Phases 1-4)
 - [SUPABASE_QUICK_SETUP.md](SUPABASE_QUICK_SETUP.md) - Supabase setup guide (SQL, tables, RLS)
-- [STRIPE_SETUP.md](STRIPE_SETUP.md) - Stripe setup guide (products, API keys, test cards)
+- [PHASE_3_SUMMARY.md](PHASE_3_SUMMARY.md) - Stripe integration détaillée
 - [STRIPE_WEBHOOKS_LOCAL.md](STRIPE_WEBHOOKS_LOCAL.md) - Stripe CLI pour webhooks en local
 - [.env.example](.env.example) - Environment variables template
 
 **Archives (Historical):**
+
 - [docs/archives/](docs/archives/) - Historical documentation
   - [MIGRATION.md](docs/archives/MIGRATION.md) - Vite → Next.js migration (Nov 15, 2025)
   - [CLEANUP_REPORT.md](docs/archives/CLEANUP_REPORT.md) - Codebase cleanup report (Nov 15, 2025)

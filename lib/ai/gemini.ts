@@ -50,7 +50,7 @@ export async function generatePrompt(topic: string, constraints: string, languag
       model: 'gemini-2.5-flash',
       contents: generationPrompt,
     });
-    return response.text.trim();
+    return response.text?.trim() || '';
   } catch (error) {
     throw handleGeminiError(error);
   }
@@ -85,7 +85,7 @@ export async function improvePrompt(existingPrompt: string, constraints: string,
       model: 'gemini-2.5-flash',
       contents: improvementPrompt,
     });
-    return response.text.trim();
+    return response.text?.trim() || '';
   } catch (error) {
     throw handleGeminiError(error);
   }
@@ -136,7 +136,7 @@ export async function getPromptSuggestions(context: string): Promise<SuggestionC
       },
     });
 
-    const jsonStr = response.text.trim();
+    const jsonStr = response.text?.trim() || '[]';
     return JSON.parse(jsonStr) as SuggestionCategory[];
   } catch (error) {
     throw handleGeminiError(error);

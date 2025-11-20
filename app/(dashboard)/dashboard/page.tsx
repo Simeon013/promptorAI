@@ -2,8 +2,9 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/db/supabase';
 import { getQuotaInfo } from '@/lib/auth/supabase-clerk';
-import { Sparkles, TrendingUp, Clock, Zap } from 'lucide-react';
+import { Sparkles, TrendingUp, Clock, Zap, History } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import Link from 'next/link';
 
 export default async function DashboardPage() {
   const { userId } = await auth();
@@ -153,10 +154,21 @@ export default async function DashboardPage() {
         {/* Recent Prompts */}
         <Card className="border-slate-800 bg-slate-900/50 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-white">Prompts Récents</CardTitle>
-            <CardDescription className="text-slate-400">
-              Vos 10 derniers prompts générés
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white">Prompts Récents</CardTitle>
+                <CardDescription className="text-slate-400">
+                  Vos 10 derniers prompts générés
+                </CardDescription>
+              </div>
+              <Link
+                href="/dashboard/history"
+                className="flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-medium text-white transition-all hover:border-slate-600 hover:bg-slate-800"
+              >
+                <History className="h-4 w-4" />
+                Voir l'Historique
+              </Link>
+            </div>
           </CardHeader>
           <CardContent>
             {prompts && prompts.length > 0 ? (
