@@ -1,0 +1,179 @@
+{
+  "common": {
+    "getStarted": "Commencer gratuitement",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "dashboard": "Dashboard",
+    "editor": "Éditeur",
+    "pricing": "Tarifs",
+    "features": "Fonctionnalités",
+    "howItWorks": "Comment ça marche",
+    "faq": "FAQ",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "loading": "Chargement...",
+    "learnMore": "En savoir plus"
+  },
+  "hero": {
+    "badge": "Transformez vos idées en prompts professionnels",
+    "title1": "Un bon prompt fait",
+    "titleHighlight": "toute la différence",
+    "description": "Passez d'un prompt basique à un prompt optimisé qui génère des résultats exceptionnels avec {tools} et tous les modèles d'IA.",
+    "ctaPrimary": "Commencer gratuitement",
+    "ctaSecondary": "Voir la différence",
+    "trustFree": "Gratuit pour commencer",
+    "trustNoCard": "Aucune carte requise",
+    "trustPrompts": "10 prompts gratuits/mois",
+    "comparison": {
+      "basicTitle": "Prompt basique",
+      "basicPrompt": "Écris-moi un email professionnel",
+      "basicPoint1": "Résultat vague et générique",
+      "basicPoint2": "Manque de contexte",
+      "basicPoint3": "Plusieurs retouches nécessaires",
+      "optimizedTitle": "Prompt optimisé",
+      "optimizedBadge": "Avec Promptor",
+      "optimizedPrompt": "Rédige un email professionnel pour relancer un client B2B qui n'a pas répondu depuis 2 semaines. Ton : courtois mais direct. Objectif : obtenir un rendez-vous. Inclus une proposition de valeur et un CTA clair.",
+      "optimizedPoint1": "Résultat précis et actionnable",
+      "optimizedPoint2": "Contexte et ton définis",
+      "optimizedPoint3": "Utilisable immédiatement"
+    },
+    "stats": {
+      "faster": "Plus efficace",
+      "secure": "Sécurisé",
+      "languages": "Langues"
+    }
+  },
+  "features": {
+    "badge": "Fonctionnalités",
+    "title": "Tout ce dont vous avez",
+    "titleHighlight": "besoin",
+    "description": "Des outils puissants pour créer des prompts parfaits, quel que soit votre niveau.",
+    "generation": {
+      "title": "Génération Intelligente",
+      "description": "Décrivez simplement votre idée et obtenez un prompt détaillé et optimisé pour n'importe quelle IA générative."
+    },
+    "improvement": {
+      "title": "Amélioration de Prompts",
+      "description": "Transformez vos prompts existants en versions plus efficaces grâce à notre analyse IA avancée."
+    },
+    "multilang": {
+      "title": "Multi-langues",
+      "description": "Générez des prompts dans 13 langues différentes. Français, anglais, espagnol, allemand et plus."
+    },
+    "history": {
+      "title": "Historique Complet",
+      "description": "Retrouvez tous vos prompts générés avec recherche, filtres et favoris. Ne perdez plus jamais une bonne idée."
+    },
+    "suggestions": {
+      "title": "Suggestions IA",
+      "description": "Recevez des suggestions contextuelles pour enrichir vos prompts et obtenir de meilleurs résultats."
+    },
+    "speed": {
+      "title": "Ultra Rapide",
+      "description": "Génération en quelques secondes grâce à notre IA. Pas d'attente, que des résultats."
+    }
+  },
+  "howItWorks": {
+    "badge": "Comment ça marche",
+    "title": "Trois étapes",
+    "titleHighlight": "simples",
+    "description": "Créez des prompts parfaits en quelques secondes.",
+    "step1": {
+      "title": "Décrivez votre idée",
+      "description": "Entrez simplement ce que vous voulez créer : une image, un texte, du code... Ajoutez des contraintes si besoin."
+    },
+    "step2": {
+      "title": "L'IA génère votre prompt",
+      "description": "Notre IA analyse votre demande et crée un prompt détaillé, structuré et optimisé pour les meilleurs résultats."
+    },
+    "step3": {
+      "title": "Copiez et utilisez",
+      "description": "Copiez votre prompt en un clic et utilisez-le dans ChatGPT, Midjourney, DALL-E ou toute autre IA."
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Questions",
+    "titleHighlight": "fréquentes",
+    "description": "Tout ce que vous devez savoir sur Promptor.",
+    "q1": {
+      "question": "Qu'est-ce qu'un prompt ?",
+      "answer": "Un prompt est une instruction textuelle donnée à une IA générative pour obtenir un résultat spécifique. Plus le prompt est détaillé et bien structuré, meilleurs seront les résultats générés par l'IA."
+    },
+    "q2": {
+      "question": "Quels modèles d'IA sont supportés ?",
+      "answer": "Les prompts générés par Promptor sont optimisés pour tous les modèles d'IA générative : ChatGPT, GPT-4, Claude, Midjourney, DALL-E, Stable Diffusion, et bien d'autres."
+    },
+    "q3": {
+      "question": "Le plan gratuit est-il vraiment gratuit ?",
+      "answer": "Oui ! Le plan gratuit vous permet de générer 10 prompts par mois sans engagement et sans carte bancaire. Parfait pour tester le service et voir s'il vous convient."
+    },
+    "q4": {
+      "question": "Puis-je annuler mon abonnement à tout moment ?",
+      "answer": "Absolument. Vous pouvez annuler votre abonnement à tout moment depuis votre dashboard. Vous conserverez l'accès jusqu'à la fin de votre période de facturation."
+    },
+    "q5": {
+      "question": "Mes prompts sont-ils privés ?",
+      "answer": "Oui, tous vos prompts sont privés et sécurisés. Nous ne partageons jamais vos données avec des tiers et vous pouvez supprimer vos prompts à tout moment."
+    },
+    "q6": {
+      "question": "Comment fonctionne la génération multilingue ?",
+      "answer": "Vous pouvez générer des prompts dans 13 langues différentes. Sélectionnez simplement la langue souhaitée et notre IA adaptera le prompt en conséquence."
+    }
+  },
+  "cta": {
+    "badge": "Commencez dès maintenant",
+    "title": "Prêt à créer des prompts",
+    "titleHighlight": "extraordinaires",
+    "description": "Rejoignez des milliers d'utilisateurs qui améliorent leurs résultats IA avec Promptor. Commencez gratuitement, sans carte bancaire.",
+    "ctaPrimary": "Commencer gratuitement",
+    "ctaSecondary": "Voir les tarifs",
+    "trustPrompts": "10 prompts gratuits/mois",
+    "trustNoCard": "Aucune carte requise",
+    "trustCancel": "Annulation à tout moment"
+  },
+  "footer": {
+    "description": "Générez et améliorez vos prompts IA en quelques secondes. Optimisé pour tous les modèles d'IA générative.",
+    "product": "Produit",
+    "resources": "Ressources",
+    "legal": "Légal",
+    "documentation": "Documentation",
+    "api": "API",
+    "blog": "Blog",
+    "privacy": "Confidentialité",
+    "terms": "CGU",
+    "legalNotice": "Mentions légales",
+    "copyright": "Tous droits réservés."
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "Oups ! La page que vous recherchez n'existe pas ou a été déplacée. Vérifiez l'URL ou retournez à l'accueil.",
+    "backHome": "Retour à l'accueil",
+    "viewPricing": "Voir les tarifs"
+  },
+  "pricing": {
+    "pricing": "Tarifs",
+    "title": "Tarifs simples et transparents",
+    "subtitle": "Choisissez le plan qui correspond à vos besoins",
+    "popular": "Populaire",
+    "custom": "Sur mesure",
+    "perMonth": "/mois",
+    "startFree": "Commencer gratuitement",
+    "subscribe": "S'abonner",
+    "contactUs": "Nous contacter",
+    "footer": "Tous les plans incluent un support par email. Annulez à tout moment.",
+    "home": "Accueil",
+    "signIn": "Connexion"
+  }
+,
+  "success": {
+    "activating": "Activation en cours...",
+    "paymentSuccess": "Paiement réussi !",
+    "activatingDescription": "Nous activons votre abonnement, cela ne prendra qu'un instant...",
+    "successDescription": "Votre abonnement a été activé avec succès. Vous pouvez maintenant profiter de toutes les fonctionnalités de votre plan.",
+    "syncError": "Votre paiement a été effectué, mais la synchronisation a échoué. Contactez le support si le problème persiste.",
+    "goToDashboard": "Accéder au Dashboard",
+    "backHome": "Retour à l'accueil",
+    "loading": "Chargement..."
+  }
+}

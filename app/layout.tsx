@@ -1,15 +1,24 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Space_Grotesk } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
+import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 import { Toaster } from 'sonner';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+});
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-space-grotesk',
+});
 
 export const metadata: Metadata = {
   title: 'Promptor - Générateur et Améliorateur de Prompts IA',
   description: 'Créez et améliorez vos prompts pour l\'IA avec Promptor. Générez des prompts optimisés pour tous vos besoins.',
-  keywords: ['prompt', 'IA', 'AI', 'générateur', 'Gemini', 'GPT', 'Claude'],
+  keywords: ['prompt', 'IA', 'AI', 'générateur', 'ChatGPT', 'GPT', 'Claude', 'Midjourney'],
 };
 
 export default function RootLayout({
@@ -19,10 +28,17 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="fr" className="dark" suppressHydrationWarning>
-        <body className={inter.className}>
-          {children}
-          <Toaster position="top-center" richColors />
+      <html lang="fr" suppressHydrationWarning>
+        <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster position="top-center" richColors />
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
