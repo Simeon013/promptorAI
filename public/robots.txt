@@ -1,0 +1,20 @@
+# Allow all bots
+User-agent: *
+Allow: /
+
+# Disallow private pages
+Disallow: /dashboard
+Disallow: /dashboard/*
+Disallow: /editor
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /api/
+
+# Allow public localized pages
+Allow: /fr
+Allow: /en
+Allow: /fr/pricing
+Allow: /en/pricing
+
+# Sitemap
+Sitemap: https://promptor.app/sitemap.xml

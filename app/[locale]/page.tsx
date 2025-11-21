@@ -16,7 +16,7 @@ export default async function HomePage({ params }: Props) {
   // Rediriger les utilisateurs connectés vers le dashboard
   const { userId } = await auth();
   if (userId) {
-    redirect(`/${locale}/dashboard`);
+    redirect('/dashboard');
   }
 
   return (

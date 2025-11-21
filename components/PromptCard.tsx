@@ -90,36 +90,36 @@ export function PromptCard({ prompt, onToggleFavorite, onDelete }: PromptCardPro
   };
 
   return (
-    <Card className="border-slate-800 bg-slate-900/50 hover:border-slate-700 transition-colors">
+    <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <span
-                className={`inline-block px-2 py-0.5 text-xs font-medium rounded ${
+                className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
                   prompt.type === 'GENERATE'
-                    ? 'bg-blue-500/10 text-blue-400'
-                    : 'bg-purple-500/10 text-purple-400'
+                    ? 'bg-purple-500/20 text-purple-600 dark:text-purple-400'
+                    : 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400'
                 }`}
               >
                 {prompt.type === 'GENERATE' ? 'Généré' : 'Amélioré'}
               </span>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-muted-foreground">
                 {formatDate(prompt.created_at)}
               </span>
             </div>
-            <p className="text-sm text-slate-300 line-clamp-2">{prompt.input}</p>
+            <p className="text-sm text-foreground line-clamp-2 font-medium">{prompt.input}</p>
           </div>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleToggleFavorite}
             disabled={isFavoriting}
-            className="flex-shrink-0"
+            className="flex-shrink-0 hover:bg-purple-500/10"
           >
             <Star
-              className={`h-4 w-4 ${
-                prompt.favorited ? 'fill-yellow-400 text-yellow-400' : 'text-slate-400'
+              className={`h-4 w-4 transition-all ${
+                prompt.favorited ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground hover:text-yellow-400'
               }`}
             />
           </Button>
@@ -127,12 +127,12 @@ export function PromptCard({ prompt, onToggleFavorite, onDelete }: PromptCardPro
       </CardHeader>
 
       <CardContent className="pb-3">
-        <div className="flex items-start gap-2 text-slate-400 text-sm mb-3">
-          <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-2 text-muted-foreground text-sm mb-3">
+          <ArrowRight className="h-4 w-4 mt-0.5 flex-shrink-0 text-purple-500" />
           <p className="line-clamp-3">{prompt.output}</p>
         </div>
         {(prompt.model || prompt.language) && (
-          <div className="flex gap-2 text-xs text-slate-500">
+          <div className="flex gap-2 text-xs text-muted-foreground">
             {prompt.model && <span>Modèle: {prompt.model}</span>}
             {prompt.language && <span>• Langue: {prompt.language}</span>}
           </div>
@@ -144,7 +144,7 @@ export function PromptCard({ prompt, onToggleFavorite, onDelete }: PromptCardPro
           variant="outline"
           size="sm"
           onClick={handleCopy}
-          className="flex-1"
+          className="flex-1 transition-all hover:border-purple-500 hover:bg-purple-500/10"
         >
           <Copy className="h-4 w-4 mr-2" />
           Copier
@@ -154,7 +154,7 @@ export function PromptCard({ prompt, onToggleFavorite, onDelete }: PromptCardPro
           size="sm"
           onClick={handleDelete}
           disabled={isDeleting}
-          className="text-red-400 hover:text-red-300 hover:border-red-400"
+          className="text-red-600 dark:text-red-400 hover:text-red-500 hover:border-red-500 transition-all"
         >
           <Trash2 className="h-4 w-4" />
         </Button>
