@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
+import { listPromptsSchema, validateSearchParams } from '@/lib/validations/schemas';
+import { applyRateLimit, getRateLimitIdentifier } from '@/lib/ratelimit';
 
 /**
  * GET /api/prompts
@@ -15,17 +17,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
     }
 
+    // Appliquer le rate limiting
+    const rateLimitResponse = await applyRateLimit(
+      'prompts',
+      getRateLimitIdentifier(userId, request)
+    );
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const { searchParams } = new URL(request.url);
 
-    // Paramètres de pagination
-    const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '20');
-    const offset = (page - 1) * limit;
+    // Valider les paramètres avec Zod
+    const validation = validateSearchParams(listPromptsSchema, searchParams);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error },
+        { status: 400 }
+      );
+    }
 
-    // Paramètres de filtre
-    const type = searchParams.get('type'); // GENERATE ou IMPROVE
-    const favorited = searchParams.get('favorited'); // 'true' pour favoris uniquement
-    const search = searchParams.get('search'); // Recherche full-text
+    const { page, limit, type, favorited, search } = validation.data;
+    const offset = (page - 1) * limit;
 
     // Construction de la requête Supabase
     let query = supabase
@@ -35,16 +48,17 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false });
 
     // Appliquer les filtres
-    if (type && (type === 'GENERATE' || type === 'IMPROVE')) {
+    if (type) {
       query = query.eq('type', type);
     }
 
-    if (favorited === 'true') {
+    if (favorited) {
       query = query.eq('favorited', true);
     }
 
     // Recherche full-text (dans input et output)
-    if (search && search.trim()) {
+    // Note: Les requêtes Supabase sont paramétrées automatiquement (pas de SQL injection)
+    if (search) {
       query = query.or(`input.ilike.%${search}%,output.ilike.%${search}%`);
     }
 
@@ -54,7 +68,7 @@ export async function GET(request: NextRequest) {
     const { data: prompts, error, count } = await query;
 
     if (error) {
-      console.error('❌ Erreur Supabase:', error);
+      console.error('Erreur Supabase:', error);
       return NextResponse.json(
         { error: 'Erreur lors de la récupération des prompts' },
         { status: 500 }
@@ -70,9 +84,8 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil((count || 0) / limit),
       },
     });
-
   } catch (error) {
-    console.error('❌ Erreur API prompts:', error);
+    console.error('Erreur API prompts:', error);
     return NextResponse.json(
       { error: 'Erreur serveur' },
       { status: 500 }

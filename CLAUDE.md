@@ -258,8 +258,16 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 - Suppression de prompts avec confirmation
 - Lien vers l'historique depuis le dashboard
 
-**Phase 5**: 🔄 Planned (Workspaces)
-**Phase 6**: 🔄 Planned (Public API)
+**Phase 5**: 🔄 Next (Sécurité & Hardening)
+**Phase 6**: 🔄 Planned (Landing Page & UI/UX)
+**Phase 7**: 🔄 Planned (Admin Dashboard)
+**Phase 8**: 🔄 Planned (SEO & Performance)
+**Phase 9**: 🔄 Planned (Tests & CI/CD)
+**Phase 10**: 🔄 Planned (Monitoring & Logs)
+**Phase 11**: 🔄 Planned (Internationalisation)
+**Phase 12**: 🔄 Planned (Features Avancées)
+
+> Note: Les anciennes phases "Workspaces" et "Public API" sont reportées après la mise en production.
 
 ## Additional Documentation
 
@@ -267,6 +275,7 @@ This project was recently migrated from Vite to Next.js 15. See [MIGRATION.md](M
 
 - [README.md](README.md) - Project overview, quick start, architecture
 - [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) - État complet du développement (Phases 1-4)
+- [PRODUCTION_ROADMAP.md](PRODUCTION_ROADMAP.md) - Roadmap complète pour la production
 - [SUPABASE_QUICK_SETUP.md](SUPABASE_QUICK_SETUP.md) - Supabase setup guide (SQL, tables, RLS)
 - [PHASE_3_SUMMARY.md](PHASE_3_SUMMARY.md) - Stripe integration détaillée
 - [STRIPE_WEBHOOKS_LOCAL.md](STRIPE_WEBHOOKS_LOCAL.md) - Stripe CLI pour webhooks en local

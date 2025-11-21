@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getPromptSuggestions } from '@/lib/ai/gemini';
 import { verifyAuthAndQuota, useQuota } from '@/lib/api/auth-helper';
 import { getOrCreateUser } from '@/lib/auth/supabase-clerk';
+import { suggestionsSchema, validateInput } from '@/lib/validations/schemas';
+import { applyRateLimit, getRateLimitIdentifier } from '@/lib/ratelimit';
 
 export async function POST(request: NextRequest) {
   // Vérifier l'authentification et les quotas
@@ -11,19 +13,31 @@ export async function POST(request: NextRequest) {
   }
   const { userId } = authResult;
 
+  // Appliquer le rate limiting
+  const rateLimitResponse = await applyRateLimit(
+    'suggestions',
+    getRateLimitIdentifier(userId, request)
+  );
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   // S'assurer que l'utilisateur existe en DB
   await getOrCreateUser();
 
   try {
     const body = await request.json();
-    const { context } = body;
 
-    if (!context || !context.trim()) {
+    // Valider les entrées avec Zod
+    const validation = validateInput(suggestionsSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Le contexte est requis' },
+        { error: validation.error },
         { status: 400 }
       );
     }
+
+    const { context } = validation.data;
 
     const suggestions = await getPromptSuggestions(context);
 

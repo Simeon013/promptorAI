@@ -3,6 +3,8 @@ import { generatePrompt, improvePrompt } from '@/lib/ai/gemini';
 import { verifyAuthAndQuota, useQuota } from '@/lib/api/auth-helper';
 import { getOrCreateUser } from '@/lib/auth/supabase-clerk';
 import { supabase } from '@/lib/db/supabase';
+import { generatePromptSchema, validateInput } from '@/lib/validations/schemas';
+import { applyRateLimit, getRateLimitIdentifier } from '@/lib/ratelimit';
 
 export async function POST(request: NextRequest) {
   // Vérifier l'authentification et les quotas
@@ -12,30 +14,45 @@ export async function POST(request: NextRequest) {
   }
   const { userId } = authResult;
 
+  // Appliquer le rate limiting
+  const rateLimitResponse = await applyRateLimit(
+    'generate',
+    getRateLimitIdentifier(userId, request)
+  );
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   // S'assurer que l'utilisateur existe en DB
   await getOrCreateUser();
 
   try {
     const body = await request.json();
-    const { mode, input, constraints, language } = body;
 
-    if (!input || !input.trim()) {
+    // Valider les entrées avec Zod
+    const validation = validateInput(generatePromptSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: 'Le champ input est requis' },
+        { error: validation.error },
         { status: 400 }
       );
     }
 
+    const { mode, input, constraints, language } = validation.data;
+
     // Générer ou améliorer le prompt
     let result: string;
     if (mode === 'generate') {
-      result = await generatePrompt(input, constraints || '', language || 'Français');
-    } else if (mode === 'improve') {
-      result = await improvePrompt(input, constraints || '', language || 'Français');
+      result = await generatePrompt(input, constraints, language);
     } else {
+      result = await improvePrompt(input, constraints, language);
+    }
+
+    // Vérifier que le résultat n'est pas vide
+    if (!result || result.trim().length === 0) {
       return NextResponse.json(
-        { error: 'Mode invalide' },
-        { status: 400 }
+        { error: 'Impossible de générer un prompt. Veuillez réessayer.' },
+        { status: 500 }
       );
     }
 
@@ -58,6 +75,7 @@ export async function POST(request: NextRequest) {
 
     if (promptError) {
       console.error('Error saving prompt:', promptError);
+      // On continue même si la sauvegarde échoue
     }
 
     // Incrémenter le quota utilisateur
