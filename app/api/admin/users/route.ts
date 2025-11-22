@@ -32,6 +32,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
     const search = searchParams.get('search') || '';
+    const planFilter = searchParams.get('plan') || '';
+    const quotaFilter = searchParams.get('quota') || '';
 
     const from = (page - 1) * limit;
     const to = from + limit - 1;
@@ -48,12 +50,37 @@ export async function GET(request: NextRequest) {
       query = query.or(`email.ilike.%${search}%,name.ilike.%${search}%`);
     }
 
+    // Filtre par plan
+    if (planFilter && planFilter !== 'ALL') {
+      query = query.eq('plan', planFilter);
+    }
+
     const { data: users, count, error } = await query;
+
+    // Filtre par quota (post-processing car nécessite calcul)
+    let filteredUsers = users || [];
+    if (quotaFilter && quotaFilter !== 'ALL') {
+      filteredUsers = filteredUsers.filter((user) => {
+        const percentage = (user.quota_used / user.quota_limit) * 100;
+        switch (quotaFilter) {
+          case 'UNDER_50':
+            return percentage < 50;
+          case 'OVER_50':
+            return percentage >= 50;
+          case 'OVER_80':
+            return percentage >= 80;
+          case 'FULL':
+            return percentage >= 100;
+          default:
+            return true;
+        }
+      });
+    }
 
     if (error) throw error;
 
     return NextResponse.json({
-      users,
+      users: filteredUsers,
       pagination: {
         page,
         limit,
