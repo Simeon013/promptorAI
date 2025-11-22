@@ -100,66 +100,60 @@ export default function AdminPromptsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 dark:bg-purple-500/30 blur-[120px]" />
-        <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/20 dark:bg-cyan-500/30 blur-[120px]" />
-      </div>
-
+    <div>
       {/* Page Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2 shadow-lg">
-            <FileText className="h-6 w-6 text-white" />
-          </div>
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Gestion des prompts
+            <h1 className="text-2xl font-bold text-foreground">
+              Gestion des Prompts
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {pagination.total} prompt{pagination.total > 1 ? 's' : ''} au total
+            <p className="text-sm text-muted-foreground mt-1">
+              {pagination.total} prompt{pagination.total > 1 ? 's' : ''} générés par les utilisateurs
             </p>
           </div>
         </div>
-        <Link href="/admin">
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-4 transition-all hover:border-purple-500"
-          >
-            Retour à l'admin
-          </Button>
-        </Link>
       </div>
 
       {/* Stats Cards */}
       {stats && (
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+            <div className="flex items-center justify-between mb-2">
+              <FileText className="h-5 w-5 text-purple-500" />
+            </div>
             <p className="text-sm text-muted-foreground">Total Prompts</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-3xl font-bold text-foreground mt-1">
               {stats.totalPrompts}
             </p>
           </Card>
 
           <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+            <div className="flex items-center justify-between mb-2">
+              <Sparkles className="h-5 w-5 text-cyan-500" />
+            </div>
             <p className="text-sm text-muted-foreground">Générés</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-3xl font-bold text-foreground mt-1">
               {stats.totalGenerate}
             </p>
           </Card>
 
           <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingUp className="h-5 w-5 text-green-500" />
+            </div>
             <p className="text-sm text-muted-foreground">Améliorés</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-3xl font-bold text-foreground mt-1">
               {stats.totalImprove}
             </p>
           </Card>
 
           <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+            <div className="flex items-center justify-between mb-2">
+              <Eye className="h-5 w-5 text-yellow-500" />
+            </div>
             <p className="text-sm text-muted-foreground">Total Tokens</p>
-            <p className="text-2xl font-bold text-foreground">
+            <p className="text-3xl font-bold text-foreground mt-1">
               {stats.totalTokens.toLocaleString()}
             </p>
           </Card>
@@ -167,38 +161,43 @@ export default function AdminPromptsPage() {
       )}
 
       {/* Barre de recherche et filtres */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-8">
-        <div className="flex-1 flex gap-2">
-          <Input
-            placeholder="Rechercher dans les prompts..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-            className="bg-background border-input transition-all focus:border-purple-500"
-          />
+      <Card className="border p-6 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher dans les prompts..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+              className="pl-10 bg-background border-input transition-all focus:border-purple-500"
+              aria-label="Rechercher dans les prompts"
+            />
+          </div>
+
+          <select
+            value={typeFilter}
+            onChange={(e) => {
+              setTypeFilter(e.target.value as typeof typeFilter);
+              fetchPrompts(1);
+            }}
+            aria-label="Filtrer par type de prompt"
+            className="bg-background border border-input text-foreground rounded-md px-3 py-2 text-sm transition-all hover:border-purple-500 focus:border-purple-500 focus:outline-none"
+          >
+            <option value="ALL">Tous types</option>
+            <option value="GENERATE">Générés</option>
+            <option value="IMPROVE">Améliorés</option>
+          </select>
+
           <Button
             onClick={handleSearch}
-            size="sm"
-            className="btn-gradient text-white"
+            className="btn-gradient text-white transition-all"
           >
-            <Search className="h-4 w-4" />
+            <Search className="h-4 w-4 mr-2" />
+            Rechercher
           </Button>
         </div>
-
-        <select
-          value={typeFilter}
-          onChange={(e) => {
-            setTypeFilter(e.target.value as typeof typeFilter);
-            fetchPrompts(1);
-          }}
-          aria-label="Filtrer par type de prompt"
-          className="bg-background border border-input text-foreground rounded-md px-3 py-2 text-sm transition-all hover:border-purple-500 focus:border-purple-500 focus:outline-none"
-        >
-          <option value="ALL">Tous types</option>
-          <option value="GENERATE">Générés</option>
-          <option value="IMPROVE">Améliorés</option>
-        </select>
-      </div>
+      </Card>
 
       {/* Liste des prompts */}
       {loading ? (
@@ -222,69 +221,93 @@ export default function AdminPromptsPage() {
         </div>
       ) : (
         <>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {prompts.map((prompt) => (
               <Card
                 key={prompt.id}
-                className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10"
+                className="group border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span
-                      className={`inline-block px-2 py-0.5 text-xs font-medium rounded-full ${
+                      className={`inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full ${
                         prompt.type === 'GENERATE'
-                          ? 'bg-purple-500/20 text-purple-600 dark:text-purple-400'
-                          : 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400'
+                          ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
+                          : 'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20'
                       }`}
                     >
-                      {prompt.type === 'GENERATE' ? 'Généré' : 'Amélioré'}
+                      {prompt.type === 'GENERATE' ? (
+                        <>
+                          <Sparkles className="h-3 w-3 mr-1" />
+                          Généré
+                        </>
+                      ) : (
+                        <>
+                          <TrendingUp className="h-3 w-3 mr-1" />
+                          Amélioré
+                        </>
+                      )}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {prompt.user_email || 'Utilisateur inconnu'}
                     </span>
                     {prompt.favorited && (
-                      <span className="text-xs">⭐</span>
+                      <span className="text-yellow-500">⭐</span>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(prompt.created_at).toLocaleDateString('fr-FR')}
-                  </span>
+                  <div className="flex flex-col items-end gap-1 text-xs text-muted-foreground shrink-0">
+                    <span>{new Date(prompt.created_at).toLocaleDateString('fr-FR', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric'
+                    })}</span>
+                    <span className="text-[10px]">
+                      {new Date(prompt.created_at).toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">
-                      Entrée:
+                <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Entrée
                     </p>
-                    <p className="text-sm text-foreground line-clamp-2">
+                    <p className="text-sm text-foreground line-clamp-3 bg-muted/30 rounded-lg p-3 border">
                       {prompt.input}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">
-                      Sortie:
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                      Sortie
                     </p>
-                    <p className="text-sm text-foreground line-clamp-3">
+                    <p className="text-sm text-foreground line-clamp-3 bg-muted/30 rounded-lg p-3 border">
                       {prompt.output}
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                <div className="flex items-center justify-between pt-4 border-t">
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                    <span>Modèle: {prompt.model}</span>
+                    <span className="flex items-center gap-1">
+                      <span className="font-medium">Modèle:</span> {prompt.model}
+                    </span>
                     {prompt.tokens && (
-                      <span>Tokens: {prompt.tokens.toLocaleString()}</span>
+                      <span className="flex items-center gap-1">
+                        <span className="font-medium">Tokens:</span> {prompt.tokens.toLocaleString()}
+                      </span>
                     )}
                   </div>
                   <Link href={`/admin/prompts/${prompt.id}`}>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="transition-all hover:border-purple-500"
+                      className="transition-all hover:border-purple-500 group-hover:shadow-sm"
                     >
                       <Eye className="h-4 w-4 mr-2" />
-                      Voir
+                      Détails
                     </Button>
                   </Link>
                 </div>

@@ -77,59 +77,46 @@ export default function AdminSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="text-center py-12">
-          <div className="inline-flex items-center gap-2 text-muted-foreground">
-            <Sparkles className="h-5 w-5 animate-spin text-purple-500" />
-            Chargement...
-          </div>
+      <div className="text-center py-12">
+        <div className="inline-flex items-center gap-2 text-muted-foreground">
+          <Sparkles className="h-5 w-5 animate-spin text-purple-500" />
+          Chargement...
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 dark:bg-purple-500/30 blur-[120px]" />
-        <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/20 dark:bg-cyan-500/30 blur-[120px]" />
-      </div>
-
+    <div>
       {/* Page Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2 shadow-lg">
-            <Settings className="h-6 w-6 text-white" />
-          </div>
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Paramètres du site
+            <h1 className="text-2xl font-bold text-foreground">
+              Paramètres du Site
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Configuration globale de la plateforme
+            <p className="text-sm text-muted-foreground mt-1">
+              Configuration globale de la plateforme Promptor
             </p>
           </div>
         </div>
-        <Link href="/admin">
-          <Button
-            variant="outline"
-            size="sm"
-            className="mt-4 transition-all hover:border-purple-500"
-          >
-            Retour à l'admin
-          </Button>
-        </Link>
       </div>
 
       <div className="grid gap-6 max-w-4xl">
         {/* Informations générales */}
         <Card className="border p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <Globe className="h-5 w-5 text-purple-500" />
-            <h2 className="text-xl font-semibold text-foreground">
-              Informations générales
-            </h2>
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+            <div className="rounded-lg bg-purple-500/10 p-2">
+              <Globe className="h-5 w-5 text-purple-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Informations Générales
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Configuration de base du site
+              </p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -180,11 +167,18 @@ export default function AdminSettingsPage() {
 
         {/* Quotas par défaut */}
         <Card className="border p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <Zap className="h-5 w-5 text-cyan-500" />
-            <h2 className="text-xl font-semibold text-foreground">
-              Quotas par défaut
-            </h2>
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+            <div className="rounded-lg bg-cyan-500/10 p-2">
+              <Zap className="h-5 w-5 text-cyan-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Quotas par Défaut
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Limites mensuelles pour chaque plan
+              </p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -246,11 +240,18 @@ export default function AdminSettingsPage() {
 
         {/* Tarification */}
         <Card className="border p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <DollarSign className="h-5 w-5 text-yellow-500" />
-            <h2 className="text-xl font-semibold text-foreground">
-              Tarification (€/mois)
-            </h2>
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+            <div className="rounded-lg bg-yellow-500/10 p-2">
+              <DollarSign className="h-5 w-5 text-yellow-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Tarification
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Prix mensuels en euros (€)
+              </p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -297,11 +298,18 @@ export default function AdminSettingsPage() {
 
         {/* Options du site */}
         <Card className="border p-6">
-          <div className="flex items-center gap-2 mb-6">
-            <Settings className="h-5 w-5 text-pink-500" />
-            <h2 className="text-xl font-semibold text-foreground">
-              Options du site
-            </h2>
+          <div className="flex items-center gap-3 mb-6 pb-4 border-b">
+            <div className="rounded-lg bg-pink-500/10 p-2">
+              <Settings className="h-5 w-5 text-pink-500" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-foreground">
+                Options du Site
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Fonctionnalités et maintenance
+              </p>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -323,6 +331,7 @@ export default function AdminSettingsPage() {
                     })
                   }
                   className="sr-only peer"
+                  aria-label="Activer le mode maintenance"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
               </label>
@@ -348,6 +357,7 @@ export default function AdminSettingsPage() {
                     })
                   }
                   className="sr-only peer"
+                  aria-label="Activer les inscriptions"
                 />
                 <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600"></div>
               </label>
@@ -356,23 +366,25 @@ export default function AdminSettingsPage() {
         </Card>
 
         {/* Save Button */}
-        <Button
-          onClick={handleSave}
-          disabled={saving}
-          className="btn-gradient text-white"
-        >
-          {saving ? (
-            <>
-              <Sparkles className="mr-2 h-4 w-4 animate-spin" />
-              Enregistrement...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Enregistrer les paramètres
-            </>
-          )}
-        </Button>
+        <div className="sticky bottom-6">
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="btn-gradient text-white w-full shadow-lg"
+          >
+            {saving ? (
+              <>
+                <Sparkles className="mr-2 h-4 w-4 animate-spin" />
+                Enregistrement...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2 h-4 w-4" />
+                Enregistrer les Paramètres
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -1,20 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
-
-// Liste des emails admin autorisés
-const ADMIN_EMAILS = [
-  'admin@promptor.app',
-  'simeondaouda@gmail.com',
-  // Ajoutez vos emails admin ici
-];
-
-const PLAN_COLORS = {
-  FREE: '#6B7280',
-  STARTER: '#06B6D4',
-  PRO: '#8B5CF6',
-  ENTERPRISE: '#F59E0B',
-};
+import { isAdminUser } from '@/lib/auth/admin';
 
 export async function GET() {
   try {
@@ -27,171 +14,150 @@ export async function GET() {
     }
 
     // Vérifier si l'utilisateur est admin
-    const isAdmin = user.emailAddresses.some((email) =>
-      ADMIN_EMAILS.includes(email.emailAddress)
-    );
-
-    if (!isAdmin) {
+    if (!isAdminUser(user.emailAddresses)) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
-    // Récupérer les statistiques
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const firstDayOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-
-    // Total utilisateurs
-    const { count: totalUsers } = await supabase
+    // Récupérer les statistiques globales
+    const { data: users, error: usersError } = await supabase
       .from('users')
-      .select('*', { count: 'exact', head: true });
+      .select('*');
 
-    // Utilisateurs créés ce mois
-    const { count: usersThisMonth } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', firstDayOfMonth.toISOString());
+    if (usersError) throw usersError;
 
-    // Utilisateurs créés le mois dernier
-    const { count: usersLastMonth } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', firstDayOfLastMonth.toISOString())
-      .lt('created_at', firstDayOfMonth.toISOString());
-
-    // Total prompts
-    const { count: totalPrompts } = await supabase
+    const { data: prompts, error: promptsError } = await supabase
       .from('prompts')
-      .select('*', { count: 'exact', head: true });
+      .select('*');
 
-    // Prompts créés ce mois
-    const { count: promptsThisMonth } = await supabase
-      .from('prompts')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', firstDayOfMonth.toISOString());
+    if (promptsError) throw promptsError;
 
-    // Prompts créés le mois dernier
-    const { count: promptsLastMonth } = await supabase
-      .from('prompts')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', firstDayOfLastMonth.toISOString())
-      .lt('created_at', firstDayOfMonth.toISOString());
+    // Calculer les statistiques
+    const totalUsers = users?.length || 0;
+    const totalPrompts = prompts?.length || 0;
 
-    // Abonnements actifs (tous les plans sauf FREE)
-    const { count: activeSubscriptions } = await supabase
-      .from('users')
-      .select('*', { count: 'exact', head: true })
-      .neq('plan', 'FREE');
+    // Compter les abonnements actifs (plans payants)
+    const activeSubscriptions = users?.filter(
+      (u) => u.plan && u.plan !== 'FREE'
+    ).length || 0;
 
-    // Calculer le revenu mensuel estimé
-    const { data: subscribedUsers } = await supabase
-      .from('users')
-      .select('plan')
-      .neq('plan', 'FREE');
+    // Calculer le revenu mensuel (MRR)
+    const revenueByPlan: Record<string, number> = {
+      STARTER: 9,
+      PRO: 29,
+      ENTERPRISE: 99,
+    };
 
-    let monthlyRevenue = 0;
-    let lastMonthRevenue = 0;
-    subscribedUsers?.forEach((user) => {
-      if (user.plan === 'STARTER') monthlyRevenue += 9;
-      if (user.plan === 'PRO') monthlyRevenue += 29;
-      // ENTERPRISE est custom, on ne compte pas
-    });
+    const monthlyRevenue = users?.reduce((total, u) => {
+      return total + (revenueByPlan[u.plan] || 0);
+    }, 0) || 0;
 
-    // Calculer les taux de croissance
-    const usersGrowth =
-      usersLastMonth && usersLastMonth > 0
-        ? Math.round(((usersThisMonth || 0) / usersLastMonth - 1) * 100)
-        : 0;
+    // Calculer les croissances (30 derniers jours)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-    const promptsGrowth =
-      promptsLastMonth && promptsLastMonth > 0
-        ? Math.round(((promptsThisMonth || 0) / promptsLastMonth - 1) * 100)
-        : 0;
+    const recentUsers = users?.filter(
+      (u) => new Date(u.created_at) >= thirtyDaysAgo
+    ).length || 0;
 
-    const revenueGrowth = 5; // Simulé pour l'exemple
+    const previousUsers = totalUsers - recentUsers;
+    const usersGrowth = previousUsers > 0
+      ? Math.round((recentUsers / previousUsers) * 100)
+      : 0;
 
-    // Données pour les graphiques - derniers 6 mois
+    const recentPrompts = prompts?.filter(
+      (p) => new Date(p.created_at) >= thirtyDaysAgo
+    ).length || 0;
+
+    const previousPrompts = totalPrompts - recentPrompts;
+    const promptsGrowth = previousPrompts > 0
+      ? Math.round((recentPrompts / previousPrompts) * 100)
+      : 0;
+
+    // Revenue growth (simulé pour l'instant)
+    const revenueGrowth = 15;
+
+    // Utilisateurs par mois (6 derniers mois)
     const usersByMonth = [];
-    const promptsByMonth = [];
-
     for (let i = 5; i >= 0; i--) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const nextDate = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
-      const monthName = date.toLocaleDateString('fr-FR', { month: 'short' });
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-      // Users par mois
-      const { count: usersCount } = await supabase
-        .from('users')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', date.toISOString())
-        .lt('created_at', nextDate.toISOString());
+      const count = users?.filter((u) => {
+        const createdAt = new Date(u.created_at);
+        return createdAt >= monthStart && createdAt <= monthEnd;
+      }).length || 0;
 
       usersByMonth.push({
-        month: monthName,
-        users: usersCount || 0,
-      });
-
-      // Prompts par mois
-      const { count: promptsCount } = await supabase
-        .from('prompts')
-        .select('*', { count: 'exact', head: true })
-        .gte('created_at', date.toISOString())
-        .lt('created_at', nextDate.toISOString());
-
-      promptsByMonth.push({
-        month: monthName,
-        prompts: promptsCount || 0,
+        month: date.toLocaleDateString('fr-FR', { month: 'short' }),
+        users: count,
       });
     }
 
-    // Utilisateurs par plan
-    const { data: allUsers } = await supabase
-      .from('users')
-      .select('plan');
+    // Prompts par mois (6 derniers mois)
+    const promptsByMonth = [];
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthStart = new Date(date.getFullYear(), date.getMonth(), 1);
+      const monthEnd = new Date(date.getFullYear(), date.getMonth() + 1, 0);
 
-    const planCounts = allUsers?.reduce((acc: Record<string, number>, user) => {
-      acc[user.plan] = (acc[user.plan] || 0) + 1;
-      return acc;
-    }, {}) || {};
+      const count = prompts?.filter((p) => {
+        const createdAt = new Date(p.created_at);
+        return createdAt >= monthStart && createdAt <= monthEnd;
+      }).length || 0;
 
-    const usersByPlan = Object.entries(planCounts).map(([name, value]) => ({
-      name,
-      value: value as number,
-      color: PLAN_COLORS[name as keyof typeof PLAN_COLORS] || '#888888',
-    }));
+      promptsByMonth.push({
+        month: date.toLocaleDateString('fr-FR', { month: 'short' }),
+        prompts: count,
+      });
+    }
 
-    // Top 5 utilisateurs actifs
-    const { data: userPromptCounts } = await supabase
-      .from('prompts')
-      .select('user_id');
+    // Répartition par plan
+    const usersByPlan = [
+      {
+        name: 'FREE',
+        value: users?.filter((u) => u.plan === 'FREE').length || 0,
+        color: '#8B5CF6',
+      },
+      {
+        name: 'STARTER',
+        value: users?.filter((u) => u.plan === 'STARTER').length || 0,
+        color: '#06B6D4',
+      },
+      {
+        name: 'PRO',
+        value: users?.filter((u) => u.plan === 'PRO').length || 0,
+        color: '#10B981',
+      },
+      {
+        name: 'ENTERPRISE',
+        value: users?.filter((u) => u.plan === 'ENTERPRISE').length || 0,
+        color: '#F59E0B',
+      },
+    ];
 
-    const promptCountByUser = userPromptCounts?.reduce((acc: Record<string, number>, prompt) => {
-      acc[prompt.user_id] = (acc[prompt.user_id] || 0) + 1;
-      return acc;
-    }, {}) || {};
+    // Top utilisateurs (par nombre de prompts)
+    const userPromptsCount = users?.map((u) => ({
+      id: u.id,
+      name: u.name || u.email,
+      email: u.email,
+      prompts: prompts?.filter((p) => p.user_id === u.id).length || 0,
+    })) || [];
 
-    const topUserIds = Object.entries(promptCountByUser)
-      .sort(([, a], [, b]) => (b as number) - (a as number))
-      .slice(0, 5);
-
-    const topUsers = await Promise.all(
-      topUserIds.map(async ([userId, count]) => {
-        const { data: user } = await supabase
-          .from('users')
-          .select('name, email')
-          .eq('id', userId)
-          .single();
-
-        return {
-          name: user?.name || user?.email?.split('@')[0] || 'Anonyme',
-          prompts: count as number,
-        };
-      })
-    );
+    const topUsers = userPromptsCount
+      .sort((a, b) => b.prompts - a.prompts)
+      .slice(0, 5)
+      .map((u) => ({
+        name: u.name,
+        prompts: u.prompts,
+      }));
 
     return NextResponse.json({
-      totalUsers: totalUsers || 0,
-      totalPrompts: totalPrompts || 0,
-      activeSubscriptions: activeSubscriptions || 0,
+      totalUsers,
+      totalPrompts,
+      activeSubscriptions,
       monthlyRevenue,
       usersGrowth,
       promptsGrowth,

@@ -61,7 +61,7 @@ export function FAQ() {
                 type="button"
                 className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-muted/50"
                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                aria-expanded={openIndex === index}
+                aria-expanded={openIndex === index ? 'true' : 'false'}
               >
                 <span className="text-lg font-medium text-foreground pr-4">
                   {t(`${key}.question`)}

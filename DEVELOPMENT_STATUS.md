@@ -1,8 +1,8 @@
 # État du Développement - Promptor
 
-**Dernière mise à jour** : 20 Novembre 2025
-**Version** : 1.0.0
-**Status** : Phases 1-4 Complétées ✅
+**Dernière mise à jour** : 22 Novembre 2025
+**Version** : 1.1.0
+**Status** : Phases 1-5 Complétées ✅ (Interface Admin Incluse)
 
 ---
 
@@ -119,6 +119,76 @@ Promptor est une application SaaS moderne pour générer et améliorer des promp
 - Page `/dashboard/favorites` dédiée
 - Système d'export (JSON, Markdown, CSV)
 - Système de tags personnalisables
+
+---
+
+### ✅ Phase 5 : Admin Interface
+
+**Statut** : Complétée le 22 Nov 2025
+
+**Fonctionnalités** :
+
+- Interface d'administration complète avec sidebar
+- Dashboard avec statistiques globales et graphiques
+- Gestion des utilisateurs (liste, modification, suppression)
+- Gestion des prompts (liste, recherche, filtres)
+- Configuration IA (clés API, modèles par plan, tests)
+- Logs d'activité avec filtres avancés
+- Paramètres du site (quotas, tarifs, options)
+- Theme toggle (dark/light mode)
+- Configuration centralisée des admins
+
+**Fichiers clés** :
+
+- [app/admin/layout.tsx](app/admin/layout.tsx) - Layout avec sidebar
+- [app/admin/page.tsx](app/admin/page.tsx) - Dashboard admin
+- [app/admin/users/page.tsx](app/admin/users/page.tsx) - Gestion utilisateurs
+- [app/admin/prompts/page.tsx](app/admin/prompts/page.tsx) - Gestion prompts
+- [app/admin/api-keys/page.tsx](app/admin/api-keys/page.tsx) - Configuration IA
+- [app/admin/logs/page.tsx](app/admin/logs/page.tsx) - Logs d'activité
+- [app/admin/settings/page.tsx](app/admin/settings/page.tsx) - Paramètres
+- [lib/auth/admin.ts](lib/auth/admin.ts) - Configuration centralisée admins
+
+**Routes API Admin** :
+
+- [app/api/admin/stats/route.ts](app/api/admin/stats/route.ts) - Statistiques globales
+- [app/api/admin/users/route.ts](app/api/admin/users/route.ts) - Liste utilisateurs
+- [app/api/admin/users/[userId]/route.ts](app/api/admin/users/[userId]/route.ts) - CRUD utilisateur
+- [app/api/admin/prompts/route.ts](app/api/admin/prompts/route.ts) - Liste prompts
+- [app/api/admin/prompts/stats/route.ts](app/api/admin/prompts/stats/route.ts) - Stats prompts
+- [app/api/admin/prompts/[promptId]/route.ts](app/api/admin/prompts/[promptId]/route.ts) - Détails prompt
+- [app/api/admin/api-keys/route.ts](app/api/admin/api-keys/route.ts) - Gestion clés API
+- [app/api/admin/api-keys/test/route.ts](app/api/admin/api-keys/test/route.ts) - Test clés
+- [app/api/admin/logs/route.ts](app/api/admin/logs/route.ts) - Récupération logs
+- [app/api/admin/settings/route.ts](app/api/admin/settings/route.ts) - Gestion paramètres
+
+**Base de données (Supabase)** :
+
+- Table `admin_logs` : Logs d'activité administratives
+- Table `site_settings` : Configuration globale du site
+- Table `admin_api_keys` : Stockage sécurisé des clés API
+- Table `admin_model_config` : Configuration modèles par plan
+- Migration SQL : [supabase/migrations/admin_tables.sql](supabase/migrations/admin_tables.sql)
+
+**Documentation** :
+
+- [docs/ADMIN_SETUP.md](docs/ADMIN_SETUP.md) - Guide d'installation complet
+
+**Sécurité** :
+
+- Authentification admin basée sur liste d'emails
+- Vérification sur toutes les routes API
+- Configuration centralisée dans [lib/auth/admin.ts](lib/auth/admin.ts)
+- RLS Supabase (à activer en production)
+
+**Pages admin** :
+
+- `/admin` - Dashboard avec statistiques
+- `/admin/users` - Gestion des utilisateurs (pagination, filtres)
+- `/admin/prompts` - Gestion des prompts (recherche, types)
+- `/admin/api-keys` - Configuration IA (clés + modèles)
+- `/admin/logs` - Logs d'activité (filtres multi-niveaux)
+- `/admin/settings` - Paramètres globaux (quotas, tarifs)
 
 ---
 

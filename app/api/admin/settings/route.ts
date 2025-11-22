@@ -1,12 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
-
-// Liste des emails admin autorisés
-const ADMIN_EMAILS = [
-  'admin@promptor.app',
-  'simeondaouda@gmail.com',
-  // Ajoutez vos emails admin ici
-];
+import { isAdminUser } from '@/lib/auth/admin';
 
 // Stockage temporaire des paramètres (en production, utilisez une vraie DB ou Redis)
 let siteSettings = {
@@ -33,11 +27,7 @@ export async function GET() {
     }
 
     // Vérifier si l'utilisateur est admin
-    const isAdmin = user.emailAddresses.some((email) =>
-      ADMIN_EMAILS.includes(email.emailAddress)
-    );
-
-    if (!isAdmin) {
+    if (!isAdminUser(user.emailAddresses)) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
@@ -62,11 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Vérifier si l'utilisateur est admin
-    const isAdmin = user.emailAddresses.some((email) =>
-      ADMIN_EMAILS.includes(email.emailAddress)
-    );
-
-    if (!isAdmin) {
+    if (!isAdminUser(user.emailAddresses)) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 

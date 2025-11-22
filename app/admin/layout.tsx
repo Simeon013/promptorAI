@@ -20,12 +20,7 @@ import {
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
-
-// Liste des emails admin autorisés
-const ADMIN_EMAILS = [
-  'admin@promptor.app',
-  'simeondaouda@gmail.com',
-];
+import { isAdminUser } from '@/lib/auth/admin';
 
 interface NavItem {
   name: string;
@@ -81,8 +76,15 @@ export default function AdminLayout({
   const { user, isLoaded } = useUser();
   const router = useRouter();
   const pathname = usePathname();
+  const { theme, setTheme } = useTheme();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Éviter le flash pendant l'hydratation
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Détecter la taille de l'écran
   useEffect(() => {
@@ -101,11 +103,7 @@ export default function AdminLayout({
   // Vérifier les permissions admin
   useEffect(() => {
     if (isLoaded && user) {
-      const isAdmin = user.emailAddresses.some((email) =>
-        ADMIN_EMAILS.includes(email.emailAddress)
-      );
-
-      if (!isAdmin) {
+      if (!isAdminUser(user.emailAddresses)) {
         router.push('/dashboard');
       }
     }
@@ -124,11 +122,7 @@ export default function AdminLayout({
     );
   }
 
-  const isAdmin = user.emailAddresses.some((email) =>
-    ADMIN_EMAILS.includes(email.emailAddress)
-  );
-
-  if (!isAdmin) {
+  if (!isAdminUser(user.emailAddresses)) {
     return null;
   }
 
@@ -174,11 +168,37 @@ export default function AdminLayout({
           })}
         </nav>
 
+        {/* Theme Toggle */}
+        <div className="px-4 pb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="w-full transition-all hover:border-purple-500"
+          >
+            {mounted && (
+              <>
+                {theme === 'dark' ? (
+                  <>
+                    <Sun className="h-4 w-4 mr-2" />
+                    Mode Clair
+                  </>
+                ) : (
+                  <>
+                    <Moon className="h-4 w-4 mr-2" />
+                    Mode Sombre
+                  </>
+                )}
+              </>
+            )}
+          </Button>
+        </div>
+
         {/* User Info */}
         <div className="p-4 border-t border-border">
           <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted">
             <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-              {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress[0].toUpperCase()}
+              {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || 'A'}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-medium text-sm text-foreground truncate">
@@ -261,11 +281,37 @@ export default function AdminLayout({
               })}
             </nav>
 
+            {/* Theme Toggle */}
+            <div className="px-4 pb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-full transition-all hover:border-purple-500"
+              >
+                {mounted && (
+                  <>
+                    {theme === 'dark' ? (
+                      <>
+                        <Sun className="h-4 w-4 mr-2" />
+                        Mode Clair
+                      </>
+                    ) : (
+                      <>
+                        <Moon className="h-4 w-4 mr-2" />
+                        Mode Sombre
+                      </>
+                    )}
+                  </>
+                )}
+              </Button>
+            </div>
+
             {/* User Info */}
             <div className="p-4 border-t border-border">
               <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted">
                 <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-                  {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress[0].toUpperCase()}
+                  {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || 'A'}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-sm text-foreground truncate">
