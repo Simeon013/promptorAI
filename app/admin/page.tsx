@@ -1,0 +1,219 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Users,
+  FileText,
+  TrendingUp,
+  DollarSign,
+  Settings,
+  Shield,
+  Sparkles,
+} from 'lucide-react';
+import Link from 'next/link';
+
+interface AdminStats {
+  totalUsers: number;
+  totalPrompts: number;
+  activeSubscriptions: number;
+  monthlyRevenue: number;
+  usersGrowth: number;
+  promptsGrowth: number;
+}
+
+export default function AdminDashboard() {
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/admin/stats');
+      if (!response.ok) throw new Error();
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error('Erreur lors du chargement des statistiques:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Background Effects */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 dark:bg-purple-500/30 blur-[120px]" />
+        <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/20 dark:bg-cyan-500/30 blur-[120px]" />
+      </div>
+
+      {/* Page Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2 shadow-lg">
+            <Shield className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">
+              Administration
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              Gérez votre plateforme Promptor
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="inline-flex items-center gap-2 text-muted-foreground">
+            <Sparkles className="h-5 w-5 animate-spin text-purple-500" />
+            Chargement des statistiques...
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Quick Stats */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Utilisateurs
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {stats?.totalUsers || 0}
+                  </p>
+                  {stats && stats.usersGrowth !== 0 && (
+                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1 mt-1">
+                      <TrendingUp className="h-3 w-3" />
+                      +{stats.usersGrowth}% ce mois
+                    </p>
+                  )}
+                </div>
+                <div className="rounded-full bg-purple-500/10 p-3">
+                  <Users className="h-6 w-6 text-purple-500" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Prompts</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {stats?.totalPrompts || 0}
+                  </p>
+                  {stats && stats.promptsGrowth !== 0 && (
+                    <p className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1 mt-1">
+                      <TrendingUp className="h-3 w-3" />
+                      +{stats.promptsGrowth}% ce mois
+                    </p>
+                  )}
+                </div>
+                <div className="rounded-full bg-cyan-500/10 p-3">
+                  <FileText className="h-6 w-6 text-cyan-500" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Abonnements actifs
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {stats?.activeSubscriptions || 0}
+                  </p>
+                </div>
+                <div className="rounded-full bg-green-500/10 p-3">
+                  <TrendingUp className="h-6 w-6 text-green-500" />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="border p-6 transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    Revenu mensuel
+                  </p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {stats?.monthlyRevenue || 0}€
+                  </p>
+                </div>
+                <div className="rounded-full bg-yellow-500/10 p-3">
+                  <DollarSign className="h-6 w-6 text-yellow-500" />
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Link href="/admin/users">
+              <Card className="border p-6 cursor-pointer transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-purple-500/10 p-3">
+                    <Users className="h-6 w-6 text-purple-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">
+                      Gestion des utilisateurs
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Voir, modifier et gérer les comptes
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+
+            <Link href="/admin/prompts">
+              <Card className="border p-6 cursor-pointer transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-cyan-500/10 p-3">
+                    <FileText className="h-6 w-6 text-cyan-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">
+                      Gestion des prompts
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Analyser et modérer le contenu
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+
+            <Link href="/admin/settings">
+              <Card className="border p-6 cursor-pointer transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+                <div className="flex items-center gap-4">
+                  <div className="rounded-full bg-pink-500/10 p-3">
+                    <Settings className="h-6 w-6 text-pink-500" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">
+                      Paramètres du site
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Configuration et SEO
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

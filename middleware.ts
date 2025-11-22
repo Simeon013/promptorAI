@@ -24,6 +24,7 @@ const isPublicRoute = createRouteMatcher([
 const isNonLocalizedRoute = (pathname: string) => {
   return pathname.startsWith('/dashboard') ||
          pathname.startsWith('/editor') ||
+         pathname.startsWith('/admin') ||
          pathname.startsWith('/sign-in') ||
          pathname.startsWith('/sign-up') ||
          pathname.startsWith('/api') ||

@@ -3,11 +3,18 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { Sparkles, Menu, X } from 'lucide-react';
+import { Sparkles, Menu, X, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Liste des emails admin autorisés
+const ADMIN_EMAILS = [
+  'admin@promptor.app',
+  'simeondaouda@gmail.com'
+  // Ajoutez vos emails admin ici
+];
 
 const navLinks = [
   { href: '/#features', label: 'Features' },
@@ -20,6 +27,12 @@ export function HeaderSimple() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
+  const { user } = useUser();
+
+  // Vérifier si l'utilisateur est admin
+  const isAdmin = user?.emailAddresses?.some((email) =>
+    ADMIN_EMAILS.includes(email.emailAddress)
+  ) || false;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -95,6 +108,18 @@ export function HeaderSimple() {
 
             <SignedIn>
               <div className="hidden sm:flex items-center gap-2">
+                {isAdmin && (
+                  <Link href="/admin">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300"
+                    >
+                      <Shield className="h-4 w-4 mr-1" />
+                      Admin
+                    </Button>
+                  </Link>
+                )}
                 <Link href="/dashboard">
                   <Button variant="ghost" size="sm" className="font-medium">
                     Dashboard
@@ -173,6 +198,17 @@ export function HeaderSimple() {
 
                 <SignedIn>
                   <div className="space-y-2 px-4">
+                    {isAdmin && (
+                      <Link href="/admin" className="block">
+                        <Button
+                          variant="outline"
+                          className="w-full text-purple-600 dark:text-purple-400 border-purple-500"
+                        >
+                          <Shield className="h-4 w-4 mr-2" />
+                          Admin
+                        </Button>
+                      </Link>
+                    )}
                     <Link href="/dashboard" className="block">
                       <Button variant="outline" className="w-full">
                         Dashboard

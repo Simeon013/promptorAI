@@ -15,11 +15,40 @@ export default async function DashboardPage() {
   }
 
   // Récupérer l'utilisateur de la DB
-  const { data: user } = await supabase
+  let { data: user } = await supabase
     .from('users')
     .select('*')
     .eq('id', userId)
     .single();
+
+  // Si l'utilisateur n'existe pas dans Supabase, le créer automatiquement
+  if (!user) {
+    console.log('⚠️ User not found in Supabase, creating...');
+    const clerkUser = await currentUser();
+
+    if (clerkUser) {
+      const { data: newUser, error } = await supabase
+        .from('users')
+        .insert({
+          id: userId,
+          email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
+          name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null,
+          avatar: clerkUser.imageUrl,
+          plan: 'FREE',
+          quota_used: 0,
+          quota_limit: 10,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('❌ Error creating user:', error);
+      } else {
+        console.log('✅ User created successfully');
+        user = newUser;
+      }
+    }
+  }
 
   // Récupérer les prompts récents
   const { data: prompts } = await supabase

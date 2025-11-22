@@ -6,6 +6,8 @@ Allow: /
 Disallow: /dashboard
 Disallow: /dashboard/*
 Disallow: /editor
+Disallow: /admin
+Disallow: /admin/*
 Disallow: /sign-in
 Disallow: /sign-up
 Disallow: /api/
