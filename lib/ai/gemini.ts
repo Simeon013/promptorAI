@@ -1,13 +1,23 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import { SuggestionCategory } from '@/types';
+import { getApiKey } from '@/lib/api/api-keys-helper';
 
-const API_KEY = process.env.GEMINI_API_KEY;
+// Initialisation avec une clé temporaire (sera remplacée dynamiquement)
+let ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || 'temp' });
 
-if (!API_KEY) {
-  throw new Error('GEMINI_API_KEY is not defined in environment variables');
+/**
+ * Récupère une instance de l'API Gemini avec la dernière clé depuis Supabase
+ */
+async function getGeminiClient(): Promise<GoogleGenAI> {
+  const apiKey = await getApiKey('GEMINI');
+
+  if (!apiKey) {
+    throw new Error('Clé API Gemini non configurée. Veuillez ajouter votre clé dans /admin/api-keys');
+  }
+
+  // Créer une nouvelle instance avec la clé à jour
+  return new GoogleGenAI({ apiKey });
 }
-
-const ai = new GoogleGenAI({ apiKey: API_KEY });
 
 /**
  * Analyzes a Gemini API error and returns a user-friendly error message.
@@ -46,7 +56,8 @@ export async function generatePrompt(topic: string, constraints: string, languag
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const client = await getGeminiClient();
+    const response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: generationPrompt,
     });
@@ -81,7 +92,8 @@ export async function improvePrompt(existingPrompt: string, constraints: string,
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const client = await getGeminiClient();
+    const response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: improvementPrompt,
     });
@@ -108,7 +120,8 @@ export async function getPromptSuggestions(context: string): Promise<SuggestionC
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const client = await getGeminiClient();
+    const response = await client.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: suggestionPrompt,
       config: {

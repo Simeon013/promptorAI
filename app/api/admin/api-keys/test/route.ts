@@ -49,6 +49,11 @@ export async function POST(request: NextRequest) {
           message = isValid ? 'Clé Mistral valide' : 'Clé Mistral invalide';
           break;
 
+        case 'PERPLEXITY_API_KEY':
+          isValid = await testPerplexityKey(keyValue);
+          message = isValid ? 'Clé Perplexity valide' : 'Clé Perplexity invalide';
+          break;
+
         default:
           return NextResponse.json({
             isValid: false,
@@ -76,19 +81,28 @@ export async function POST(request: NextRequest) {
 // Fonction pour tester une clé Gemini
 async function testGeminiKey(apiKey: string): Promise<boolean> {
   try {
+    // Utiliser le modèle gemini-2.5-flash qui est stable
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: 'test' }] }],
+          contents: [{ parts: [{ text: 'Hello' }] }],
         }),
       }
     );
 
+    console.log('Gemini test response:', response.status, response.statusText);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Gemini error:', errorText);
+    }
+
     return response.ok;
-  } catch {
+  } catch (error) {
+    console.error('Gemini test error:', error);
     return false;
   }
 }
@@ -141,6 +155,28 @@ async function testMistralKey(apiKey: string): Promise<boolean> {
     });
 
     return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+// Fonction pour tester une clé Perplexity
+async function testPerplexityKey(apiKey: string): Promise<boolean> {
+  try {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-small-128k-online',
+        messages: [{ role: 'user', content: 'test' }],
+        max_tokens: 1,
+      }),
+    });
+
+    return response.ok || response.status === 400; // 400 = validation error mais clé valide
   } catch {
     return false;
   }

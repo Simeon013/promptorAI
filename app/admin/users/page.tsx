@@ -219,7 +219,7 @@ export default function AdminUsersPage() {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              onClick={fetchUsers}
+              onClick={() => fetchUsers()}
               variant="outline"
               size="sm"
               className="transition-all hover:border-purple-500"
