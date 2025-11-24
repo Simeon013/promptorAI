@@ -11,7 +11,9 @@
       "Bash(where:*)",
       "Bash(nul)",
       "Bash(npm run build:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(node scripts/check-db.mjs:*)",
+      "Bash(node scripts/clean-model-config.mjs:*)"
     ],
     "deny": [],
     "ask": []

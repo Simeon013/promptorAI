@@ -2,9 +2,6 @@ import { GoogleGenAI, Type } from '@google/genai';
 import { SuggestionCategory } from '@/types';
 import { getApiKey } from '@/lib/api/api-keys-helper';
 
-// Initialisation avec une clé temporaire (sera remplacée dynamiquement)
-let ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || 'temp' });
-
 /**
  * Récupère une instance de l'API Gemini avec la dernière clé depuis Supabase
  */
@@ -38,7 +35,7 @@ function handleGeminiError(error: unknown): Error {
 /**
  * Generates a detailed prompt from a user-provided topic.
  */
-export async function generatePrompt(topic: string, constraints: string, language: string): Promise<string> {
+export async function generatePrompt(topic: string, constraints: string, language: string, modelId: string = 'gemini-2.5-flash'): Promise<string> {
   const constraintsSection = constraints.trim()
     ? `\n6. Adhère strictement aux contraintes suivantes définies par l'utilisateur : "${constraints}"`
     : '';
@@ -58,7 +55,7 @@ export async function generatePrompt(topic: string, constraints: string, languag
   try {
     const client = await getGeminiClient();
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: modelId,
       contents: generationPrompt,
     });
     return response.text?.trim() || '';
@@ -70,7 +67,7 @@ export async function generatePrompt(topic: string, constraints: string, languag
 /**
  * Improves an existing prompt to make it more effective.
  */
-export async function improvePrompt(existingPrompt: string, constraints: string, language: string): Promise<string> {
+export async function improvePrompt(existingPrompt: string, constraints: string, language: string, modelId: string = 'gemini-2.5-flash'): Promise<string> {
   const constraintsSection = constraints.trim()
     ? `\n- Adhère strictement aux contraintes suivantes définies par l'utilisateur : "${constraints}"`
     : '';
@@ -94,7 +91,7 @@ export async function improvePrompt(existingPrompt: string, constraints: string,
   try {
     const client = await getGeminiClient();
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: modelId,
       contents: improvementPrompt,
     });
     return response.text?.trim() || '';
@@ -106,7 +103,7 @@ export async function improvePrompt(existingPrompt: string, constraints: string,
 /**
  * Gets keyword suggestions to enrich a prompt.
  */
-export async function getPromptSuggestions(context: string): Promise<SuggestionCategory[]> {
+export async function getPromptSuggestions(context: string, modelId: string = 'gemini-2.5-flash'): Promise<SuggestionCategory[]> {
   const suggestionPrompt = `
     Based on the following user input for a generative AI prompt, provide a list of suggested keywords and phrases to enrich it. The user input is: "${context}".
 
@@ -122,7 +119,7 @@ export async function getPromptSuggestions(context: string): Promise<SuggestionC
   try {
     const client = await getGeminiClient();
     const response = await client.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: modelId,
       contents: suggestionPrompt,
       config: {
         responseMimeType: 'application/json',

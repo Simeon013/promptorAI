@@ -3,6 +3,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { isAdminUser } from '@/lib/auth/admin';
 import { supabase } from '@/lib/db/supabase';
 import { invalidateKeyCache } from '@/lib/api/api-keys-helper';
+import { invalidateModelCache, getProviderFromModel } from '@/lib/api/model-helper';
 
 export async function GET() {
   try {
@@ -142,32 +143,69 @@ export async function POST(request: NextRequest) {
     }
 
     // Sauvegarder la configuration des modèles par plan
+    const modelErrors: string[] = [];
     if (body.modelsByPlan) {
+      console.log('📝 Sauvegarde des modèles par plan:', body.modelsByPlan);
+
       for (const [plan, modelId] of Object.entries(body.modelsByPlan)) {
         if (typeof modelId === 'string' && modelId) {
-          // Désactiver l'ancien modèle par défaut pour ce plan
-          await supabase
+          console.log(`  → Plan ${plan}: ${modelId}`);
+
+          // Supprimer toutes les anciennes configurations pour ce plan
+          const { error: deleteError } = await supabase
             .from('admin_model_config')
-            .update({ is_default: false })
+            .delete()
             .eq('plan', plan);
 
-          // Chercher si le modèle existe déjà
-          const { data: existing } = await supabase
-            .from('admin_model_config')
-            .select('*')
-            .eq('plan', plan)
-            .eq('model_id', modelId)
-            .single();
-
-          if (existing) {
-            // Mettre à jour comme défaut
-            await supabase
-              .from('admin_model_config')
-              .update({ is_default: true, updated_at: new Date().toISOString() })
-              .eq('id', existing.id);
+          if (deleteError) {
+            console.error(`    ❌ Erreur suppression pour ${plan}:`, deleteError);
           }
+
+          // Créer la nouvelle configuration
+          console.log(`    ✓ Création de ${modelId} pour ${plan}`);
+
+          // Extraire un nom lisible depuis le model_id
+          const modelName = modelId
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, (c) => c.toUpperCase());
+
+          // Détecter le provider depuis le model_id
+          const provider = getProviderFromModel(modelId);
+
+          const { error: insertError } = await supabase
+            .from('admin_model_config')
+            .insert({
+              plan,
+              model_id: modelId,
+              model_name: modelName,
+              provider,
+              is_default: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            });
+
+          if (insertError) {
+            console.error(`    ❌ Erreur insert pour ${plan}:`, insertError);
+            modelErrors.push(`${plan}: ${insertError.message}`);
+          } else {
+            console.log(`    ✅ Modèle ${modelId} configuré pour ${plan}`);
+          }
+
+          // Invalider le cache pour ce plan
+          invalidateModelCache(plan);
         }
       }
+    }
+
+    // Si des erreurs se sont produites, retourner un statut d'erreur
+    if (modelErrors.length > 0) {
+      return NextResponse.json(
+        {
+          error: 'Erreur lors de la sauvegarde de certains modèles',
+          details: modelErrors,
+        },
+        { status: 500 }
+      );
     }
 
     // Logger l'action

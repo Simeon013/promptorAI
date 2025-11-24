@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generatePrompt, improvePrompt } from '@/lib/ai/gemini';
+import { generatePrompt, improvePrompt } from '@/lib/ai/router';
 import { verifyAuthAndQuota, useQuota } from '@/lib/api/auth-helper';
 import { getOrCreateUser } from '@/lib/auth/supabase-clerk';
 import { supabase } from '@/lib/db/supabase';
 import { generatePromptSchema, validateInput } from '@/lib/validations/schemas';
 import { applyRateLimit, getRateLimitIdentifier } from '@/lib/ratelimit';
+import { getModelForPlan, getProviderFromModel } from '@/lib/api/model-helper';
+import { checkProviderAvailability } from '@/lib/api/quota-checker';
 
 export async function POST(request: NextRequest) {
   // Vérifier l'authentification et les quotas
@@ -40,12 +42,41 @@ export async function POST(request: NextRequest) {
 
     const { mode, input, constraints, language } = validation.data;
 
-    // Générer ou améliorer le prompt
+    // Récupérer le plan de l'utilisateur
+    const { data: userData } = await supabase
+      .from('users')
+      .select('plan')
+      .eq('id', userId)
+      .single();
+
+    const userPlan = userData?.plan || 'FREE';
+
+    // Récupérer le modèle configuré pour ce plan
+    const modelId = await getModelForPlan(userPlan);
+
+    // Vérifier que le provider du modèle est disponible
+    const provider = getProviderFromModel(modelId);
+    const providerCheck = await checkProviderAvailability(provider.toUpperCase() as 'GEMINI' | 'OPENAI' | 'CLAUDE' | 'MISTRAL' | 'PERPLEXITY');
+
+    if (!providerCheck.available) {
+      // Log pour l'admin (dans les logs serveur)
+      console.error(`[QUOTA] Modèle ${modelId} indisponible pour plan ${userPlan}: ${providerCheck.reason}`);
+
+      // Message simple pour l'utilisateur
+      return NextResponse.json(
+        {
+          error: `Une erreur est survenue lors de la génération. Veuillez réessayer ultérieurement ou contacter le support.`,
+        },
+        { status: 503 }
+      );
+    }
+
+    // Générer ou améliorer le prompt avec le modèle configuré
     let result: string;
     if (mode === 'generate') {
-      result = await generatePrompt(input, constraints, language);
+      result = await generatePrompt(input, constraints, language, modelId);
     } else {
-      result = await improvePrompt(input, constraints, language);
+      result = await improvePrompt(input, constraints, language, modelId);
     }
 
     // Vérifier que le résultat n'est pas vide
@@ -66,7 +97,7 @@ export async function POST(request: NextRequest) {
         output: result,
         constraints: constraints || null,
         language: language || null,
-        model: 'gemini-2.5-flash',
+        model: modelId,
         favorited: false,
         tags: [],
       })
