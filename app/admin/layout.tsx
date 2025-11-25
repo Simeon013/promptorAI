@@ -16,6 +16,9 @@ import {
   ChevronRight,
   Sun,
   Moon,
+  DollarSign,
+  Percent,
+  Tag,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -47,6 +50,24 @@ const navigation: NavItem[] = [
     href: '/admin/prompts',
     icon: FileText,
     description: 'Contenu généré',
+  },
+  {
+    name: 'Tarifs',
+    href: '/admin/pricing',
+    icon: DollarSign,
+    description: 'Plans & quotas',
+  },
+  {
+    name: 'Promotions',
+    href: '/admin/promotions',
+    icon: Percent,
+    description: 'Offres temporaires',
+  },
+  {
+    name: 'Codes Promo',
+    href: '/admin/promo-codes',
+    icon: Tag,
+    description: 'Coupons Stripe',
   },
   {
     name: 'Clés API',

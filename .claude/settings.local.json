@@ -13,7 +13,8 @@
       "Bash(npm run build:*)",
       "Bash(cat:*)",
       "Bash(node scripts/check-db.mjs:*)",
-      "Bash(node scripts/clean-model-config.mjs:*)"
+      "Bash(node scripts/clean-model-config.mjs:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
