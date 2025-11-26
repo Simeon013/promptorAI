@@ -14,7 +14,8 @@
       "Bash(cat:*)",
       "Bash(node scripts/check-db.mjs:*)",
       "Bash(node scripts/clean-model-config.mjs:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

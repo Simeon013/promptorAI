@@ -2,7 +2,7 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/db/supabase';
 import { getQuotaInfo } from '@/lib/auth/supabase-clerk';
-import { Sparkles, TrendingUp, Clock, Zap, History, ArrowRight } from 'lucide-react';
+import { Sparkles, TrendingUp, Clock, Zap, History, ArrowRight, CreditCard } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
 import { HeaderSimple } from '@/components/layout/HeaderSimple';
@@ -114,24 +114,30 @@ export default async function DashboardPage() {
         {/* Stats Cards */}
         <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Plan Card */}
-          <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <Zap className="h-4 w-4 text-purple-500" />
-                Plan Actuel
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold gradient-text">
-                {user?.plan || 'FREE'}
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {user?.plan === 'FREE' && 'Passez à Pro pour plus de prompts'}
-                {user?.plan === 'STARTER' && '100 prompts/mois'}
-                {user?.plan === 'PRO' && 'Prompts illimités'}
-              </p>
-            </CardContent>
-          </Card>
+          <Link href="/dashboard/subscription">
+            <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Zap className="h-4 w-4 text-purple-500" />
+                  Plan Actuel
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold gradient-text">
+                  {user?.plan || 'FREE'}
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  {user?.plan === 'FREE' && 'Passez à Pro pour plus de prompts'}
+                  {user?.plan === 'STARTER' && '100 prompts/mois'}
+                  {user?.plan === 'PRO' && 'Prompts illimités'}
+                </p>
+                <div className="mt-2 flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
+                  <CreditCard className="h-3 w-3" />
+                  Gérer l'abonnement
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Quota Card */}
           <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
