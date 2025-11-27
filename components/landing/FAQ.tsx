@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 
@@ -12,89 +12,76 @@ export function FAQ() {
   const t = useTranslations('faq');
 
   return (
-    <section id="faq" className="relative py-24 sm:py-32 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-muted/30" />
-      </div>
-
+    <section id="faq" className="relative py-16 sm:py-20 bg-muted/20">
       <div className="container mx-auto px-4">
         {/* Header */}
         <motion.div
-          className="mx-auto max-w-2xl text-center"
+          className="mx-auto max-w-2xl text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-pink-500/30 bg-pink-500/10 px-4 py-1.5 text-sm font-medium text-pink-600 dark:text-pink-400">
-            <HelpCircle className="h-4 w-4" />
-            {t('badge')}
-          </span>
-          <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {t('title')}{' '}
             <span className="gradient-text">{t('titleHighlight')}</span>
           </h2>
-          <p className="mt-4 text-lg text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground">
             {t('description')}
           </p>
         </motion.div>
 
         {/* FAQ Items */}
-        <motion.div
-          className="mx-auto mt-16 max-w-3xl space-y-4"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          {faqKeys.map((key, index) => (
-            <motion.div
-              key={key}
-              className="rounded-2xl border border-border bg-card overflow-hidden"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
-            >
-              <button
-                type="button"
-                className="flex w-full items-center justify-between p-6 text-left transition-colors hover:bg-muted/50"
-                onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                aria-expanded={openIndex === index ? 'true' : 'false'}
-              >
-                <span className="text-lg font-medium text-foreground pr-4">
-                  {t(`${key}.question`)}
-                </span>
-                <motion.div
-                  animate={{ rotate: openIndex === index ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex-shrink-0"
-                >
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                </motion.div>
-              </button>
+        <div className="mx-auto max-w-3xl space-y-2">
+          {faqKeys.map((key, index) => {
+            const isOpen = openIndex === index;
 
-              <AnimatePresence>
-                {openIndex === index && (
+            return (
+              <motion.div
+                key={key}
+                className="overflow-hidden rounded-lg border border-border bg-card"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+              >
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between px-6 py-4 text-left hover:bg-muted/50 transition-colors"
+                  onClick={() => setOpenIndex(isOpen ? null : index)}
+                >
+                  <span className="font-medium text-foreground pr-4">
+                    {t(`${key}.question`)}
+                  </span>
                   <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
+                    animate={{ rotate: isOpen ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
+                    className="flex-shrink-0"
                   >
-                    <div className="px-6 pb-6">
-                      <div className="h-px bg-border mb-4" />
-                      <p className="text-muted-foreground leading-relaxed">
-                        {t(`${key}.answer`)}
-                      </p>
-                    </div>
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
                   </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
-        </motion.div>
+                </button>
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <div className="px-6 pb-4 pt-0">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {t(`${key}.answer`)}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

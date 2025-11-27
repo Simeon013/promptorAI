@@ -121,6 +121,23 @@
       "answer": "You can generate prompts in 13 different languages. Simply select your desired language and our AI will adapt the prompt accordingly."
     }
   },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "What our",
+    "titleHighlight": "users say",
+    "description": "Join thousands of users who transform their ideas into professional prompts.",
+    "testimonial1": "Promptor has completely changed the way I work with AI. I save so much time and my results are much better!",
+    "testimonial2": "As a marketer, I need to create content every day. Promptor allows me to generate optimized prompts in seconds.",
+    "testimonial3": "Intuitive interface, exceptional results. I recommend Promptor to all my designer colleagues!",
+    "testimonial4": "The AI suggestions are incredible. They help me structure my prompts professionally even for complex tasks.",
+    "testimonial5": "I use Promptor daily to manage my social media. It has become an essential tool in my workflow.",
+    "testimonial6": "Multilingual generation is perfect for my international projects. A considerable time saver!",
+    "stats": {
+      "users": "Active users",
+      "prompts": "Prompts generated",
+      "rating": "Average rating"
+    }
+  },
   "cta": {
     "badge": "Get started now",
     "title": "Ready to create",

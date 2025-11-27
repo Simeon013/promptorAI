@@ -10,7 +10,7 @@ export function CTA() {
   const t = useTranslations('cta');
 
   return (
-    <section className="py-24 sm:py-32">
+    <section className="py-16 sm:py-20">
       <div className="container mx-auto px-4">
         <motion.div
           className="relative overflow-hidden rounded-3xl"

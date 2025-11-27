@@ -40,7 +40,7 @@ export function Features() {
   const t = useTranslations('features');
 
   return (
-    <section id="features" className="relative py-24 sm:py-32 overflow-hidden">
+    <section id="features" className="relative py-16 sm:py-20 overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute inset-0 bg-muted/30" />
