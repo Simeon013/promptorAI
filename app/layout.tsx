@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Space_Grotesk } from 'next/font/google';
 import { ClerkProvider } from '@clerk/nextjs';
+import { frFR } from '@clerk/localizations';
 import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 import { Toaster } from 'sonner';
@@ -28,7 +29,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={frFR}>
       <html lang="fr" suppressHydrationWarning>
         <head>
           <GoogleAdSenseScript />
