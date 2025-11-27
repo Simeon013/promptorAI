@@ -72,6 +72,14 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+
+  /* Disable smooth scroll when user prefers reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
@@ -165,27 +173,16 @@
   .btn-gradient {
     @apply relative overflow-hidden;
     background: linear-gradient(135deg, hsl(var(--brand-primary)), hsl(var(--brand-secondary)));
+    transition: background 0.3s ease;
+    color: white !important;
   }
 
-  .btn-gradient::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+  .btn-gradient:hover {
     background: linear-gradient(135deg, hsl(var(--brand-secondary)), hsl(var(--brand-primary)));
-    opacity: 0;
-    transition: opacity 0.3s ease;
   }
 
-  .btn-gradient:hover::before {
-    opacity: 1;
-  }
-
-  .btn-gradient > * {
-    position: relative;
-    z-index: 1;
+  .btn-gradient * {
+    color: white !important;
   }
 }
 

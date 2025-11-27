@@ -84,32 +84,32 @@ export function Features() {
               <motion.div
                 key={key}
                 variants={itemVariants}
-                whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                className="group relative rounded-2xl border border-border bg-card p-8 transition-all duration-300 hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/5"
+                whileHover={{ y: -8, transition: { duration: 0.3, ease: 'easeOut' } }}
+                className="group relative rounded-xl border border-border bg-card/50 backdrop-blur-sm p-6 transition-all duration-300 hover:border-purple-500/30 hover:shadow-xl hover:shadow-purple-500/10"
               >
                 {/* Gradient Glow on Hover */}
-                <div className={`absolute -inset-px rounded-2xl bg-gradient-to-br ${gradient} opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-20`} />
+                <div className={`absolute -inset-0.5 rounded-xl bg-gradient-to-br ${gradient} opacity-0 blur-lg transition-opacity duration-500 group-hover:opacity-10`} />
 
                 {/* Content */}
                 <div className="relative">
                   {/* Icon */}
                   <div
-                    className={`inline-flex rounded-xl bg-gradient-to-br ${gradient} p-3 shadow-lg`}
+                    className={`inline-flex rounded-lg bg-gradient-to-br ${gradient} p-2.5 shadow-md group-hover:shadow-lg transition-shadow`}
                   >
-                    <Icon className="h-6 w-6 text-white" />
+                    <Icon className="h-5 w-5 text-white" />
                   </div>
 
                   {/* Text */}
-                  <h3 className="mt-6 text-lg font-semibold text-foreground">
+                  <h3 className="mt-5 text-base font-semibold text-foreground group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                     {t(`${key}.title`)}
                   </h3>
-                  <p className="mt-2 text-muted-foreground leading-relaxed">
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
                     {t(`${key}.description`)}
                   </p>
                 </div>
 
                 {/* Number */}
-                <div className="absolute top-6 right-6 text-6xl font-bold text-muted/10">
+                <div className="absolute top-5 right-5 text-5xl font-bold text-muted/5 group-hover:text-muted/10 transition-colors">
                   {String(index + 1).padStart(2, '0')}
                 </div>
               </motion.div>
