@@ -80,11 +80,12 @@ export const generatePromptSchema = z.object({
     .transform((val) => val.trim()),
   language: z
     .string()
+    .nullable()
+    .optional()
     .refine(
-      (val) => SUPPORTED_LANGUAGES.includes(val as SupportedLanguage),
+      (val) => val === null || SUPPORTED_LANGUAGES.includes(val as SupportedLanguage),
       'Langue non supportée'
-    )
-    .default('Français'),
+    ),
 });
 
 export type GeneratePromptInput = z.infer<typeof generatePromptSchema>;
@@ -102,6 +103,7 @@ export const suggestionsSchema = z.object({
     .min(1, 'Le contexte ne peut pas être vide')
     .max(2000, 'Le contexte ne peut pas dépasser 2000 caractères')
     .transform((val) => val.trim()),
+  language: z.string().nullable().optional(),
 });
 
 export type SuggestionsInput = z.infer<typeof suggestionsSchema>;

@@ -1,5 +1,3 @@
-import { auth } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -12,12 +10,6 @@ type Props = {
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-
-  // Rediriger les utilisateurs connectés vers le dashboard
-  const { userId } = await auth();
-  if (userId) {
-    redirect('/dashboard');
-  }
 
   return (
     <div className="min-h-screen bg-background">

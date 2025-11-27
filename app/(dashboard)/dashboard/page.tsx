@@ -4,6 +4,7 @@ import { supabase } from '@/lib/db/supabase';
 import { getQuotaInfo } from '@/lib/auth/supabase-clerk';
 import { Sparkles, TrendingUp, Clock, Zap, History, ArrowRight, CreditCard } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { HeaderSimple } from '@/components/layout/HeaderSimple';
 
@@ -42,7 +43,17 @@ export default async function DashboardPage() {
         .single();
 
       if (error) {
-        console.error('❌ Error creating user:', error);
+        console.error('❌ Error creating user:', error.message || error.code || error);
+        // Si l'erreur est une duplication (utilisateur déjà créé), on le récupère
+        if (error.code === '23505') {
+          console.log('ℹ️ User already exists, fetching...');
+          const { data: existingUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+          user = existingUser;
+        }
       } else {
         console.log('✅ User created successfully');
         user = newUser;
@@ -88,6 +99,32 @@ export default async function DashboardPage() {
       </div>
 
       <div className="container mx-auto px-4 py-8">
+        {/* Ad Banner for FREE users */}
+        {user?.plan === 'FREE' && (
+          <div className="mb-6">
+            <Card className="border-2 border-purple-500/30 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10">
+              <CardContent className="p-3 sm:p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs sm:text-sm font-medium text-foreground truncate">
+                        <span className="font-semibold">Sans publicité avec Starter</span>
+                        <span className="hidden sm:inline ml-2">• 100 prompts/mois + Suggestions IA pour 9€/mois</span>
+                      </p>
+                    </div>
+                  </div>
+                  <Link href="/pricing">
+                    <Button size="sm" className="btn-gradient text-white flex-shrink-0 text-xs sm:text-sm">
+                      Découvrir
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Welcome Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">

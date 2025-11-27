@@ -11,6 +11,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/landing/Footer';
 import { PromoBanner } from '@/components/pricing/PromoBanner';
+import { FeatureComparisonTable } from '@/components/pricing/FeatureComparisonTable';
 import { motion } from 'framer-motion';
 
 const containerVariants = {
@@ -392,6 +393,15 @@ export function PricingContent() {
             <p className="text-sm text-muted-foreground">
               {t('footer')}
             </p>
+          </motion.div>
+
+          {/* Feature Comparison Table */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+          >
+            <FeatureComparisonTable />
           </motion.div>
         </div>
       </div>

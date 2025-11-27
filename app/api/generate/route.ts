@@ -73,10 +73,11 @@ export async function POST(request: NextRequest) {
 
     // Générer ou améliorer le prompt avec le modèle configuré
     let result: string;
+    const languageValue = language ?? null; // Convert undefined to null
     if (mode === 'generate') {
-      result = await generatePrompt(input, constraints, language, modelId);
+      result = await generatePrompt(input, constraints, languageValue, modelId);
     } else {
-      result = await improvePrompt(input, constraints, language, modelId);
+      result = await improvePrompt(input, constraints, languageValue, modelId);
     }
 
     // Vérifier que le résultat n'est pas vide

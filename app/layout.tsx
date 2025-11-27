@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { ThemeProvider } from '@/components/theme-provider';
 import './globals.css';
 import { Toaster } from 'sonner';
+import { GoogleAdSenseScript } from '@/components/ads/GoogleAdSense';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,6 +30,9 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="fr" suppressHydrationWarning>
+        <head>
+          <GoogleAdSenseScript />
+        </head>
         <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
           <ThemeProvider
             attribute="class"

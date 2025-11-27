@@ -4,9 +4,12 @@ import { useEffect, useState } from 'react';
 import { PromptCard } from '@/components/PromptCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, ChevronLeft, ChevronRight, Filter, History, Sparkles } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Filter, History, Sparkles, Download, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { HeaderSimple } from '@/components/layout/HeaderSimple';
+import { Plan } from '@/types';
+import { canExport, getExportFormats } from '@/lib/features/plan-features';
+import { toast } from 'sonner';
 
 interface Prompt {
   id: string;
@@ -35,6 +38,7 @@ export default function HistoryPage() {
     total: 0,
     totalPages: 0,
   });
+  const [userPlan, setUserPlan] = useState<Plan>(Plan.FREE);
 
   // Filtres
   const [search, setSearch] = useState('');
@@ -68,6 +72,16 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchPrompts();
+
+    // Récupérer le plan de l'utilisateur
+    fetch('/api/subscription')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.user?.plan) {
+          setUserPlan(data.user.plan as Plan);
+        }
+      })
+      .catch((error) => console.error('Error fetching user plan:', error));
   }, []);
 
   const handleSearch = () => {
@@ -82,6 +96,62 @@ export default function HistoryPage() {
 
   const handleDelete = (id: string) => {
     setPrompts((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  const handleExportCSV = () => {
+    if (!canExport(userPlan)) {
+      toast.error('Passez au plan STARTER pour exporter vos prompts');
+      return;
+    }
+
+    const formats = getExportFormats(userPlan);
+    if (!formats.includes('csv')) {
+      toast.error('Format CSV non disponible pour votre plan');
+      return;
+    }
+
+    // Créer le CSV
+    const headers = ['Type', 'Input', 'Output', 'Language', 'Model', 'Date', 'Favorited'];
+    const rows = prompts.map((p) => [
+      p.type,
+      `"${p.input.replace(/"/g, '""')}"`,
+      `"${p.output.replace(/"/g, '""')}"`,
+      p.language || '',
+      p.model || '',
+      new Date(p.created_at).toLocaleString('fr-FR'),
+      p.favorited ? 'Oui' : 'Non',
+    ]);
+
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `promptor-history-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+
+    toast.success('Export CSV réussi !');
+  };
+
+  const handleExportJSON = () => {
+    if (!canExport(userPlan)) {
+      toast.error('Passez au plan PRO pour exporter en JSON');
+      return;
+    }
+
+    const formats = getExportFormats(userPlan);
+    if (!formats.includes('json')) {
+      toast.error('Format JSON disponible uniquement pour le plan PRO');
+      return;
+    }
+
+    const json = JSON.stringify(prompts, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `promptor-history-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+
+    toast.success('Export JSON réussi !');
   };
 
   return (
@@ -161,6 +231,43 @@ export default function HistoryPage() {
             </Button>
           </div>
         </div>
+
+        {/* Export Buttons */}
+        {prompts.length > 0 && (
+          <div className="flex gap-2 mb-6 justify-end">
+            {canExport(userPlan) ? (
+              <>
+                <Button
+                  onClick={handleExportCSV}
+                  variant="outline"
+                  size="sm"
+                  className="transition-all hover:border-purple-500"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Export CSV
+                </Button>
+                {getExportFormats(userPlan).includes('json') && (
+                  <Button
+                    onClick={handleExportJSON}
+                    variant="outline"
+                    size="sm"
+                    className="transition-all hover:border-purple-500"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Export JSON
+                  </Button>
+                )}
+              </>
+            ) : (
+              <Link href="/pricing">
+                <Button variant="outline" size="sm" className="border-purple-500 text-purple-600 hover:bg-purple-500/10">
+                  <Lock className="h-4 w-4 mr-2" />
+                  Export (STARTER+)
+                </Button>
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Liste des prompts */}
         {loading ? (

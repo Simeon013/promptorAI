@@ -37,9 +37,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { context } = validation.data;
+    const { context, language } = validation.data;
 
-    const suggestions = await getPromptSuggestions(context);
+    const suggestions = await getPromptSuggestions(context, language || null);
 
     // Incrémenter le quota utilisateur (les suggestions comptent aussi)
     await useQuota(userId);

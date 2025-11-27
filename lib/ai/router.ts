@@ -9,7 +9,7 @@ import { getProviderFromModel } from '@/lib/api/model-helper';
 export async function generatePrompt(
   topic: string,
   constraints: string,
-  language: string,
+  language: string | null,
   modelId: string
 ): Promise<string> {
   const provider = getProviderFromModel(modelId);
@@ -41,7 +41,7 @@ export async function generatePrompt(
 export async function improvePrompt(
   existingPrompt: string,
   constraints: string,
-  language: string,
+  language: string | null,
   modelId: string
 ): Promise<string> {
   const provider = getProviderFromModel(modelId);

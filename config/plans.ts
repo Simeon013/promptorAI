@@ -14,7 +14,17 @@ export interface PlanFeatures {
   workspaces: number | 'unlimited';
   apiAccess: boolean;
   models: string[];
+  modelTier: 'standard' | 'advanced' | 'premium' | 'custom';
+  modelSelection: boolean; // Permet de choisir le modèle
   support: string;
+  // Nouvelles features
+  suggestions: boolean;
+  export: boolean;
+  exportFormats: string[];
+  ads: boolean;
+  analytics: boolean;
+  customization: boolean;
+  customizationFeatures: string[];
   stripePriceId?: {
     monthly: string;
     yearly: string;
@@ -33,16 +43,25 @@ export const planFeatures: Record<Plan, PlanFeatures> = {
     features: [
       '10 prompts par mois',
       'Historique 7 jours',
-      'Modèle Gemini Flash',
+      'Modèle Standard',
       'Support communautaire',
-      'Export JSON',
+      'Avec publicités',
     ],
     quotaLimit: 10,
     historyDays: 7,
     workspaces: 0,
     apiAccess: false,
     models: ['gemini-2.5-flash'],
+    modelTier: 'standard',
+    modelSelection: false,
     support: 'Community',
+    suggestions: false,
+    export: false,
+    exportFormats: [],
+    ads: true,
+    analytics: false,
+    customization: false,
+    customizationFeatures: [],
   },
   [Plan.STARTER]: {
     plan: Plan.STARTER,
@@ -55,19 +74,27 @@ export const planFeatures: Record<Plan, PlanFeatures> = {
     features: [
       '100 prompts par mois',
       'Historique 30 jours',
-      '1 workspace',
-      'Gemini Flash & Pro',
-      'Accès API',
-      'Templates publics',
+      'Modèle Performant',
+      'Suggestions IA',
+      'Export CSV',
+      'Sans publicité',
       'Support email',
-      'Export JSON & CSV',
     ],
     quotaLimit: 100,
     historyDays: 30,
-    workspaces: 1,
-    apiAccess: true,
-    models: ['gemini-2.5-flash', 'gemini-2.5-pro'],
+    workspaces: 0,
+    apiAccess: false,
+    models: ['gemini-2.5-pro'],
+    modelTier: 'advanced',
+    modelSelection: false,
     support: 'Email',
+    suggestions: true,
+    export: true,
+    exportFormats: ['csv'],
+    ads: false,
+    analytics: false,
+    customization: false,
+    customizationFeatures: [],
     stripePriceId: {
       monthly: 'price_starter_monthly',
       yearly: 'price_starter_yearly',
@@ -84,21 +111,35 @@ export const planFeatures: Record<Plan, PlanFeatures> = {
     features: [
       'Prompts illimités',
       'Historique illimité',
-      '5 workspaces',
-      'Tous les modèles IA',
-      'Accès API complet',
-      'Templates premium',
+      'Choix du modèle IA',
+      'Personnalisation avancée',
+      'Templates personnalisés',
+      'Suggestions IA',
+      'Export JSON & CSV',
       'Analytics avancés',
+      'Accès API',
       'Support prioritaire',
-      'Export tous formats',
-      'Versioning des prompts',
     ],
     quotaLimit: -1, // -1 = unlimited
     historyDays: -1,
     workspaces: 5,
     apiAccess: true,
-    models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gpt-4', 'claude-3.5-sonnet'],
+    models: ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-exp-1206'],
+    modelTier: 'premium',
+    modelSelection: true,
     support: 'Priority',
+    suggestions: true,
+    export: true,
+    exportFormats: ['csv', 'json'],
+    ads: false,
+    analytics: true,
+    customization: true,
+    customizationFeatures: [
+      'Templates personnalisés',
+      'Instructions par défaut',
+      'Préférences sauvegardées',
+      'Formats favoris',
+    ],
     stripePriceId: {
       monthly: 'price_pro_monthly',
       yearly: 'price_pro_yearly',
@@ -116,6 +157,8 @@ export const planFeatures: Record<Plan, PlanFeatures> = {
       'Tout de Pro +',
       'Workspaces illimités',
       'Modèles IA personnalisés',
+      'Personnalisation complète',
+      'Branding personnalisé',
       'SLA garanti',
       'Support dédié',
       'Formation équipe',
@@ -128,7 +171,24 @@ export const planFeatures: Record<Plan, PlanFeatures> = {
     workspaces: 'unlimited',
     apiAccess: true,
     models: ['all', 'custom'],
+    modelTier: 'custom',
+    modelSelection: true,
     support: 'Dedicated',
+    suggestions: true,
+    export: true,
+    exportFormats: ['csv', 'json', 'api'],
+    ads: false,
+    analytics: true,
+    customization: true,
+    customizationFeatures: [
+      'Templates personnalisés',
+      'Instructions par défaut',
+      'Préférences sauvegardées',
+      'Formats favoris',
+      'Branding complet',
+      'Fine-tuning modèles',
+      'Intégrations custom',
+    ],
   },
 };
 
