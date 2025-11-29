@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
+import { sendEmail } from '@/lib/email/send';
+import { syncUserToAudiences } from '@/lib/email/audiences';
+import { WelcomeEmail } from '@/lib/email/templates/WelcomeEmail';
 
 /**
  * API Route appelée après l'authentification Clerk
@@ -62,6 +65,43 @@ export async function GET() {
     }
 
     console.log('✅ User created successfully in Supabase:', newUser);
+
+    // Envoyer l'email de bienvenue (non-bloquant)
+    try {
+      console.log('📧 Sending welcome email to:', newUser.email);
+      const emailResult = await sendEmail({
+        to: newUser.email,
+        subject: 'Bienvenue sur Promptor !',
+        react: WelcomeEmail({
+          userName: newUser.name || 'là',
+          dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
+        }),
+        tags: [{ name: 'type', value: 'welcome' }],
+      });
+
+      if (emailResult.success) {
+        console.log('✅ Welcome email sent successfully:', emailResult.id);
+      } else {
+        console.error('⚠️ Failed to send welcome email:', emailResult.error);
+      }
+    } catch (emailError) {
+      // Ne pas bloquer l'inscription si l'email échoue
+      console.error('⚠️ Welcome email error (non-blocking):', emailError);
+    }
+
+    // Ajouter l'utilisateur aux audiences Resend (non-bloquant)
+    try {
+      console.log('👥 Adding user to Resend audiences...');
+      await syncUserToAudiences({
+        email: newUser.email,
+        name: newUser.name || 'User',
+        plan: newUser.plan as 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE',
+      });
+      console.log('✅ User added to Resend audiences');
+    } catch (audienceError) {
+      // Ne pas bloquer l'inscription si l'ajout à l'audience échoue
+      console.error('⚠️ Audience sync error (non-blocking):', audienceError);
+    }
 
     return NextResponse.json({
       success: true,
