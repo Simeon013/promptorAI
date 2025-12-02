@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { stripe } from '@/lib/stripe/stripe';
 import { supabase } from '@/lib/db/supabase';
+import { sendEmail } from '@/lib/email/send';
+import { updateUserLists } from '@/lib/email/audiences';
+import { getPaymentSuccessEmailHtml } from '@/lib/email/templates/html/payment-success.html';
 
 /**
  * API temporaire pour synchroniser l'abonnement après paiement
@@ -79,6 +82,53 @@ export async function POST(request: NextRequest) {
     }
 
     console.log(`✅ Utilisateur ${userId} mis à jour vers ${plan}`);
+
+    // Récupérer les informations de l'utilisateur pour l'email
+    const { data: user } = await supabase
+      .from('users')
+      .select('email, name, plan, quota_limit')
+      .eq('id', userId)
+      .single();
+
+    // Envoyer l'email de confirmation de paiement (non-bloquant)
+    if (user) {
+      try {
+        console.log('📧 Sending payment success email to:', user.email);
+        const amount = session.amount_total || 0;
+
+        const htmlContent = getPaymentSuccessEmailHtml({
+          userName: user.name || 'là',
+          plan: plan,
+          amount: amount,
+          quota: user.quota_limit === -1 ? 999999 : user.quota_limit,
+          dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
+        });
+
+        const emailResult = await sendEmail({
+          to: user.email,
+          subject: `Paiement confirmé - Votre plan ${plan === 'STARTER' ? 'Starter' : 'Pro'} est actif !`,
+          htmlContent,
+          tags: ['payment_success', `plan:${plan}`],
+        });
+
+        if (emailResult.success) {
+          console.log('✅ Payment success email sent:', emailResult.id);
+        } else {
+          console.error('⚠️ Failed to send payment email:', emailResult.error);
+        }
+      } catch (emailError) {
+        console.error('⚠️ Payment email error (non-blocking):', emailError);
+      }
+
+      // Mettre à jour les listes Brevo (non-bloquant)
+      try {
+        console.log('👥 Updating Brevo lists...');
+        await updateUserLists(user.email, 'FREE', plan);
+        console.log('✅ Brevo lists updated');
+      } catch (listError) {
+        console.error('⚠️ List update error (non-blocking):', listError);
+      }
+    }
 
     return NextResponse.json({
       success: true,

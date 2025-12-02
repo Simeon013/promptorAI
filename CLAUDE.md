@@ -109,6 +109,11 @@ promptor/
 │   │   └── supabase-clerk.ts    # Auth + quota Supabase
 │   ├── db/
 │   │   └── supabase.ts          # Client Supabase
+│   ├── email/
+│   │   ├── brevo.ts             # Brevo client & configuration
+│   │   ├── send.ts              # Email sending functions
+│   │   ├── audiences.ts         # Contact lists management
+│   │   └── templates/html/      # 8 HTML email templates
 │   ├── stripe/
 │   │   ├── stripe.ts            # Stripe server-side client
 │   │   └── stripe-client.ts     # Stripe client-side (unused for now)
@@ -163,6 +168,40 @@ promptor/
 - `handleGeminiError(error)`: Centralizes error handling with French user-friendly messages
 
 All functions use the `gemini-2.5-flash` model.
+
+**[lib/email/brevo.ts](lib/email/brevo.ts)** - Brevo (ex-Sendinblue) email service:
+
+- `transactionalEmailsApi`: Client for sending transactional emails
+- `brevoContactsApi`: Client for managing contact lists
+- `BREVO_LISTS`: Configuration of 5 contact lists (ALL_USERS, FREE_USERS, PRO_USERS, NEWSLETTER, INACTIVE_USERS)
+- `EMAIL_FROM`: Pre-configured sender addresses (DEFAULT, SUPPORT, MARKETING, NEWSLETTER)
+
+**[lib/email/send.ts](lib/email/send.ts)** - Email sending functions:
+
+- `sendEmail(to, subject, htmlContent, tags)`: Sends transactional emails
+- `sendBroadcastEmail(listId, subject, htmlContent, tags)`: Sends to a contact list (recommends using Brevo Campaigns)
+- `sendTestEmail(testEmail, subject, htmlContent)`: Sends test emails
+
+**[lib/email/audiences.ts](lib/email/audiences.ts)** - Contact lists management:
+
+- `addToList(listId, email, data)`: Adds a contact to a Brevo list
+- `removeFromList(listId, email)`: Removes a contact from a list
+- `updateContact(email, data)`: Updates contact information and attributes
+- `syncUserToLists(user)`: Syncs a new user to appropriate lists based on plan
+- `updateUserLists(email, oldPlan, newPlan)`: Updates lists when user changes plan
+- `deleteContact(email)`: Completely removes a contact from Brevo
+
+**Email Templates** ([lib/email/templates/html/](lib/email/templates/html/)):
+
+8 HTML email templates for all user interactions:
+1. Welcome email (signup)
+2. Payment success (subscription)
+3. Contact received (contact form)
+4. Quota reminder (80% used)
+5. Quota exceeded (100% used)
+6. Subscription cancelled
+7. Inactivity reminder (re-engagement)
+8. Newsletter (marketing campaigns)
 
 ### Database Schema
 

@@ -3,8 +3,9 @@ import { stripe } from '@/lib/stripe/stripe';
 import { supabase } from '@/lib/db/supabase';
 import Stripe from 'stripe';
 import { sendEmail } from '@/lib/email/send';
-import { updateUserAudiences } from '@/lib/email/audiences';
-import { PaymentSuccessEmail } from '@/lib/email/templates/PaymentSuccessEmail';
+import { updateUserLists } from '@/lib/email/audiences';
+import { getPaymentSuccessEmailHtml } from '@/lib/email/templates/html/payment-success.html';
+import { getSubscriptionCancelledEmailHtml } from '@/lib/email/templates/html/subscription-cancelled.html';
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -123,22 +124,21 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   // Envoyer l'email de confirmation de paiement (non-bloquant)
   try {
     console.log('📧 Sending payment success email to:', user.email);
-    const amount = session.amount_total ? `${session.amount_total / 100}€` : '29€';
+    const amount = session.amount_total || 0;
+
+    const htmlContent = getPaymentSuccessEmailHtml({
+      userName: user.name || 'là',
+      plan: plan,
+      amount: amount,
+      quota: user.quota_limit === -1 ? 999999 : user.quota_limit,
+      dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
+    });
 
     const emailResult = await sendEmail({
       to: user.email,
       subject: `Paiement confirmé - Votre plan ${plan === 'STARTER' ? 'Starter' : 'Pro'} est actif !`,
-      react: PaymentSuccessEmail({
-        userName: user.name || 'là',
-        plan: plan,
-        amount: amount,
-        quota: user.quota_limit === -1 ? 999999 : user.quota_limit,
-        dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
-      }),
-      tags: [
-        { name: 'type', value: 'payment_success' },
-        { name: 'plan', value: plan },
-      ],
+      htmlContent,
+      tags: ['payment_success', `plan:${plan}`],
     });
 
     if (emailResult.success) {
@@ -150,13 +150,13 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     console.error('⚠️ Payment email error (non-blocking):', emailError);
   }
 
-  // Mettre à jour les audiences Resend (non-bloquant)
+  // Mettre à jour les listes Brevo (non-bloquant)
   try {
-    console.log('👥 Updating Resend audiences for plan change...');
-    await updateUserAudiences(user.email, 'FREE', plan);
-    console.log('✅ Audiences updated successfully');
-  } catch (audienceError) {
-    console.error('⚠️ Audience update error (non-blocking):', audienceError);
+    console.log('👥 Updating Brevo lists for plan change...');
+    await updateUserLists(user.email, 'FREE', plan);
+    console.log('✅ Lists updated successfully');
+  } catch (listError) {
+    console.error('⚠️ List update error (non-blocking):', listError);
   }
 }
 
@@ -204,14 +204,14 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     return;
   }
 
-  // Mettre à jour les audiences si le plan a changé (non-bloquant)
+  // Mettre à jour les listes si le plan a changé (non-bloquant)
   if (currentUser && oldPlan !== plan) {
     try {
-      console.log(`👥 Updating audiences: ${oldPlan} → ${plan}`);
-      await updateUserAudiences(currentUser.email, oldPlan, plan);
-      console.log('✅ Audiences updated for subscription change');
-    } catch (audienceError) {
-      console.error('⚠️ Audience update error (non-blocking):', audienceError);
+      console.log(`👥 Updating lists: ${oldPlan} → ${plan}`);
+      await updateUserLists(currentUser.email, oldPlan, plan);
+      console.log('✅ Lists updated for subscription change');
+    } catch (listError) {
+      console.error('⚠️ List update error (non-blocking):', listError);
     }
   }
 }
@@ -246,14 +246,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
   console.log('✅ User downgraded to FREE');
 
-  // Mettre à jour les audiences (non-bloquant)
+  // Mettre à jour les listes (non-bloquant)
   if (user && oldPlan !== 'FREE') {
     try {
-      console.log(`👥 Updating audiences: ${oldPlan} → FREE`);
-      await updateUserAudiences(user.email, oldPlan, 'FREE');
-      console.log('✅ Audiences updated for downgrade');
-    } catch (audienceError) {
-      console.error('⚠️ Audience update error (non-blocking):', audienceError);
+      console.log(`👥 Updating lists: ${oldPlan} → FREE`);
+      await updateUserLists(user.email, oldPlan, 'FREE');
+      console.log('✅ Lists updated for downgrade');
+    } catch (listError) {
+      console.error('⚠️ List update error (non-blocking):', listError);
     }
   }
 }

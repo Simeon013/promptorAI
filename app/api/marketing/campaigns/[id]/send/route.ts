@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
 import { sendBroadcastEmail } from '@/lib/email/send';
-import { NewsletterEmail } from '@/lib/email/templates/NewsletterEmail';
-import { PromotionEmail } from '@/lib/email/templates/PromotionEmail';
-import { AnnouncementEmail } from '@/lib/email/templates/AnnouncementEmail';
-import { ReEngagementEmail } from '@/lib/email/templates/ReEngagementEmail';
+import { getNewsletterEmailHtml } from '@/lib/email/templates/html/newsletter.html';
 
 /**
  * POST /api/marketing/campaigns/[id]/send
@@ -62,42 +59,31 @@ export async function POST(
       .update({ status: 'sending' })
       .eq('id', id);
 
-    // Sélectionner le bon template
-    let emailTemplate;
+    // Générer le HTML selon le template
+    let htmlContent: string;
     const templateData = campaign.template_data;
 
     switch (campaign.template_name) {
       case 'newsletter':
-        emailTemplate = NewsletterEmail(templateData);
-        break;
-      case 'promotion':
-        emailTemplate = PromotionEmail(templateData);
-        break;
-      case 'announcement':
-        emailTemplate = AnnouncementEmail(templateData);
-        break;
-      case 're-engagement':
-        emailTemplate = ReEngagementEmail(templateData);
+        htmlContent = getNewsletterEmailHtml(templateData);
         break;
       default:
         return NextResponse.json(
-          { error: `Unknown template: ${campaign.template_name}` },
+          { error: `Template non supporté pour l'instant. Utilisez Brevo Campaigns pour plus de templates.` },
           { status: 400 }
         );
     }
 
-    console.log(`📧 Sending campaign "${campaign.name}" to audience ${campaign.audience_id}`);
+    console.log(`📧 Campaign "${campaign.name}" should be sent via Brevo Campaigns dashboard`);
+    console.log(`   Brevo List ID: ${campaign.audience_id}`);
 
-    // Envoyer l'email à l'audience
+    // NOTE: Pour les campagnes marketing, Brevo recommande d'utiliser leur interface Campaigns
+    // Cette API est plus adaptée aux emails transactionnels
     const result = await sendBroadcastEmail({
-      audienceId: campaign.audience_id,
+      listId: parseInt(campaign.audience_id),
       subject: campaign.subject,
-      react: emailTemplate,
-      tags: [
-        { name: 'type', value: 'marketing' },
-        { name: 'campaign_id', value: campaign.id },
-        { name: 'template', value: campaign.template_name },
-      ],
+      htmlContent,
+      tags: ['marketing', `campaign_id:${campaign.id}`, `template:${campaign.template_name}`],
     });
 
     if (!result.success) {
@@ -127,7 +113,7 @@ export async function POST(
     return NextResponse.json({
       success: true,
       message: 'Campaign sent successfully',
-      broadcast_id: result.id,
+      note: 'For best results, use Brevo Campaigns dashboard for marketing emails',
     });
   } catch (error) {
     console.error('Send campaign error:', error);

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
 import { sendEmail } from '@/lib/email/send';
-import { ContactReceivedEmail } from '@/lib/email/templates/ContactReceivedEmail';
+import { getContactReceivedEmailHtml } from '@/lib/email/templates/html/contact-received.html';
 
 /**
  * POST /api/contact
@@ -67,18 +67,17 @@ export async function POST(request: NextRequest) {
     try {
       console.log('📧 Sending contact confirmation email to:', email);
 
+      const htmlContent = getContactReceivedEmailHtml({
+        userName: name,
+        subject: subject,
+        message: message,
+      });
+
       const emailResult = await sendEmail({
         to: email,
         subject: 'Nous avons bien reçu votre message',
-        react: ContactReceivedEmail({
-          userName: name,
-          subject: subject,
-          message: message,
-        }),
-        tags: [
-          { name: 'type', value: 'contact_confirmation' },
-          { name: 'contact_id', value: contact.id },
-        ],
+        htmlContent,
+        tags: ['contact_confirmation', `contact_id:${contact.id}`],
       });
 
       if (emailResult.success) {

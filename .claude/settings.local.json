@@ -15,7 +15,8 @@
       "Bash(node scripts/check-db.mjs:*)",
       "Bash(node scripts/clean-model-config.mjs:*)",
       "Bash(dir:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(npm uninstall:*)"
     ],
     "deny": [],
     "ask": []

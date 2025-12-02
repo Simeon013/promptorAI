@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
 import { sendEmail } from '@/lib/email/send';
-import { syncUserToAudiences } from '@/lib/email/audiences';
-import { WelcomeEmail } from '@/lib/email/templates/WelcomeEmail';
+import { syncUserToLists } from '@/lib/email/audiences';
+import { getWelcomeEmailHtml } from '@/lib/email/templates/html/welcome.html';
 
 /**
  * API Route appelée après l'authentification Clerk
@@ -69,14 +69,16 @@ export async function GET() {
     // Envoyer l'email de bienvenue (non-bloquant)
     try {
       console.log('📧 Sending welcome email to:', newUser.email);
+      const htmlContent = getWelcomeEmailHtml({
+        userName: newUser.name || 'là',
+        dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
+      });
+
       const emailResult = await sendEmail({
         to: newUser.email,
         subject: 'Bienvenue sur Promptor !',
-        react: WelcomeEmail({
-          userName: newUser.name || 'là',
-          dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
-        }),
-        tags: [{ name: 'type', value: 'welcome' }],
+        htmlContent,
+        tags: ['welcome', 'onboarding'],
       });
 
       if (emailResult.success) {
@@ -89,18 +91,18 @@ export async function GET() {
       console.error('⚠️ Welcome email error (non-blocking):', emailError);
     }
 
-    // Ajouter l'utilisateur aux audiences Resend (non-bloquant)
+    // Ajouter l'utilisateur aux listes Brevo (non-bloquant)
     try {
-      console.log('👥 Adding user to Resend audiences...');
-      await syncUserToAudiences({
+      console.log('👥 Adding user to Brevo lists...');
+      await syncUserToLists({
         email: newUser.email,
         name: newUser.name || 'User',
         plan: newUser.plan as 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE',
       });
-      console.log('✅ User added to Resend audiences');
+      console.log('✅ User added to Brevo lists');
     } catch (audienceError) {
-      // Ne pas bloquer l'inscription si l'ajout à l'audience échoue
-      console.error('⚠️ Audience sync error (non-blocking):', audienceError);
+      // Ne pas bloquer l'inscription si l'ajout à la liste échoue
+      console.error('⚠️ List sync error (non-blocking):', audienceError);
     }
 
     return NextResponse.json({
