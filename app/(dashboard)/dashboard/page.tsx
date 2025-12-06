@@ -22,58 +22,42 @@ export default async function DashboardPage() {
     .eq('id', userId)
     .single();
 
-  // Si l'utilisateur n'existe pas dans Supabase, appeler l'API callback pour le créer
+  // Si l'utilisateur n'existe pas dans Supabase, le créer automatiquement
   if (!user) {
-    console.log('⚠️ User not found in Supabase, calling auth callback...');
+    console.log('⚠️ User not found in Supabase, creating...');
+    const clerkUser = await currentUser();
 
-    try {
-      // Appeler l'API callback qui gère la création + email de bienvenue + ajout aux listes Brevo
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/callback`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (response.ok) {
-        console.log('✅ User created via auth callback');
-        // Récupérer l'utilisateur créé
-        const { data: createdUser } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', userId)
-          .single();
-        user = createdUser;
-      } else {
-        console.error('❌ Auth callback failed, falling back to direct creation');
-        // Fallback : créer directement si l'API callback échoue
-        const clerkUser = await currentUser();
-        if (clerkUser) {
-          const { data: newUser } = await supabase
-            .from('users')
-            .insert({
-              id: userId,
-              email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
-              name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null,
-              avatar: clerkUser.imageUrl,
-              plan: 'FREE',
-              quota_used: 0,
-              quota_limit: 10,
-            })
-            .select()
-            .single();
-          user = newUser;
-        }
-      }
-    } catch (error) {
-      console.error('❌ Error in auth flow:', error);
-      // Fallback : récupérer l'utilisateur s'il existe déjà
-      const { data: existingUser } = await supabase
+    if (clerkUser) {
+      const { data: newUser, error } = await supabase
         .from('users')
-        .select('*')
-        .eq('id', userId)
+        .insert({
+          id: userId,
+          email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
+          name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null,
+          avatar: clerkUser.imageUrl,
+          plan: 'FREE',
+          quota_used: 0,
+          quota_limit: 10,
+        })
+        .select()
         .single();
-      user = existingUser;
+
+      if (error) {
+        console.error('❌ Error creating user:', error.message);
+        // Si erreur de duplication, récupérer l'utilisateur existant
+        if (error.code === '23505') {
+          console.log('ℹ️ User already exists, fetching...');
+          const { data: existingUser } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', userId)
+            .single();
+          user = existingUser;
+        }
+      } else {
+        console.log('✅ User created successfully');
+        user = newUser;
+      }
     }
   }
 

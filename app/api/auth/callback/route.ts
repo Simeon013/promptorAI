@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { supabase } from '@/lib/db/supabase';
-import { sendEmail } from '@/lib/email/send';
-import { syncUserToLists } from '@/lib/email/audiences';
-import { getWelcomeEmailHtml } from '@/lib/email/templates/html/welcome.html';
+// TODO: Emails désactivés en développement - À réactiver en production
+// import { sendEmail } from '@/lib/email/send';
+// import { syncUserToLists } from '@/lib/email/audiences';
+// import { getWelcomeEmailHtml } from '@/lib/email/templates/html/welcome.html';
 
 /**
  * API Route appelée après l'authentification Clerk
@@ -66,44 +67,46 @@ export async function GET() {
 
     console.log('✅ User created successfully in Supabase:', newUser);
 
+    // TODO: Emails désactivés en développement - À réactiver en production
     // Envoyer l'email de bienvenue (non-bloquant)
-    try {
-      console.log('📧 Sending welcome email to:', newUser.email);
-      const htmlContent = getWelcomeEmailHtml({
-        userName: newUser.name || 'là',
-        dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
-      });
+    // try {
+    //   console.log('📧 Sending welcome email to:', newUser.email);
+    //   const htmlContent = getWelcomeEmailHtml({
+    //     userName: newUser.name || 'là',
+    //     dashboardUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard`,
+    //   });
 
-      const emailResult = await sendEmail({
-        to: newUser.email,
-        subject: 'Bienvenue sur Promptor !',
-        htmlContent,
-        tags: ['welcome', 'onboarding'],
-      });
+    //   const emailResult = await sendEmail({
+    //     to: newUser.email,
+    //     subject: 'Bienvenue sur Promptor !',
+    //     htmlContent,
+    //     tags: ['welcome', 'onboarding'],
+    //   });
 
-      if (emailResult.success) {
-        console.log('✅ Welcome email sent successfully:', emailResult.id);
-      } else {
-        console.error('⚠️ Failed to send welcome email:', emailResult.error);
-      }
-    } catch (emailError) {
-      // Ne pas bloquer l'inscription si l'email échoue
-      console.error('⚠️ Welcome email error (non-blocking):', emailError);
-    }
+    //   if (emailResult.success) {
+    //     console.log('✅ Welcome email sent successfully:', emailResult.id);
+    //   } else {
+    //     console.error('⚠️ Failed to send welcome email:', emailResult.error);
+    //   }
+    // } catch (emailError) {
+    //   // Ne pas bloquer l'inscription si l'email échoue
+    //   console.error('⚠️ Welcome email error (non-blocking):', emailError);
+    // }
 
+    // TODO: Brevo lists désactivés en développement - À réactiver en production
     // Ajouter l'utilisateur aux listes Brevo (non-bloquant)
-    try {
-      console.log('👥 Adding user to Brevo lists...');
-      await syncUserToLists({
-        email: newUser.email,
-        name: newUser.name || 'User',
-        plan: newUser.plan as 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE',
-      });
-      console.log('✅ User added to Brevo lists');
-    } catch (audienceError) {
-      // Ne pas bloquer l'inscription si l'ajout à la liste échoue
-      console.error('⚠️ List sync error (non-blocking):', audienceError);
-    }
+    // try {
+    //   console.log('👥 Adding user to Brevo lists...');
+    //   await syncUserToLists({
+    //     email: newUser.email,
+    //     name: newUser.name || 'User',
+    //     plan: newUser.plan as 'FREE' | 'STARTER' | 'PRO' | 'ENTERPRISE',
+    //   });
+    //   console.log('✅ User added to Brevo lists');
+    // } catch (audienceError) {
+    //   // Ne pas bloquer l'inscription si l'ajout à la liste échoue
+    //   console.error('⚠️ List sync error (non-blocking):', audienceError);
+    // }
 
     return NextResponse.json({
       success: true,
