@@ -16,7 +16,8 @@
       "Bash(node scripts/clean-model-config.mjs:*)",
       "Bash(dir:*)",
       "Bash(ls:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

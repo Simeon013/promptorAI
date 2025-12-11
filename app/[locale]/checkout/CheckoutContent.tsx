@@ -207,7 +207,7 @@ function CheckoutContent() {
         formData.append('promotionCode', autoPromotion.stripePromotionCodeId);
       }
 
-      const response = await fetch('/api/stripe/create-checkout-session', {
+      const response = await fetch('/api/fedapay/create-checkout-session', {
         method: 'POST',
         body: formData,
         credentials: 'include',
@@ -221,7 +221,7 @@ function CheckoutContent() {
       const data = await response.json();
 
       if (data.url) {
-        // Rediriger vers Stripe Checkout
+        // Rediriger vers FedaPay Checkout
         window.location.href = data.url;
       } else {
         throw new Error('URL de paiement manquante');
