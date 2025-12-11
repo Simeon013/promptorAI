@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { FedaPay } from '@/lib/fedapay/fedapay';
 import { supabase } from '@/lib/db/supabase';
 
 /**

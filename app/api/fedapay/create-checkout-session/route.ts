@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
-import { FedaPay, FEDAPAY_PRICES } from '@/lib/fedapay/fedapay';
+import { FEDAPAY_PRICES } from '@/lib/fedapay/fedapay';
 import { defaultLocale } from '@/i18n/config';
+
+const { Transaction } = require('fedapay');
 
 /**
  * API Route pour créer une session de paiement FedaPay
@@ -38,7 +40,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Créer une transaction FedaPay
-    const transaction = await FedaPay.Transaction.create({
+    const transaction = await Transaction.create({
       description: `${pricing.name} - ${pricing.description}`,
       amount: pricing.amount,
       currency: {
@@ -62,7 +64,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Générer le token de paiement
-    const token = await FedaPay.Transaction.generateToken(transaction.id);
+    const token = await transaction.generateToken();
 
     // Retourner l'URL de paiement
     return NextResponse.json({

@@ -1,4 +1,4 @@
-import FedaPay from 'fedapay';
+const { FedaPay, Transaction } = require('fedapay');
 
 // Configuration FedaPay
 if (!process.env.FEDAPAY_SECRET_KEY) {
@@ -32,4 +32,6 @@ export const FEDAPAY_PRICES = {
 // Conversion EUR → FCFA (taux approximatif : 1 EUR = 655.957 FCFA)
 export const EUR_TO_XOF = 655.957;
 
-export { FedaPay };
+// Export FedaPay et Transaction
+module.exports = { FedaPay, Transaction, FEDAPAY_PRICES, EUR_TO_XOF };
+export { FedaPay, Transaction };
