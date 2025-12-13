@@ -40,6 +40,24 @@ const navigation: NavItem[] = [
     description: 'Vue d\'ensemble',
   },
   {
+    name: 'Crédits - Vue',
+    href: '/admin/credits',
+    icon: DollarSign,
+    description: 'Statistiques crédits',
+  },
+  {
+    name: 'Crédits - Packs',
+    href: '/admin/credits/packs',
+    icon: DollarSign,
+    description: 'Gérer les packs',
+  },
+  {
+    name: 'Crédits - Promos',
+    href: '/admin/credits/promotions',
+    icon: Tag,
+    description: 'Réductions auto',
+  },
+  {
     name: 'Utilisateurs',
     href: '/admin/users',
     icon: Users,
@@ -54,14 +72,8 @@ const navigation: NavItem[] = [
   {
     name: 'Tarifs',
     href: '/admin/pricing',
-    icon: DollarSign,
-    description: 'Plans & quotas',
-  },
-  {
-    name: 'Promotions',
-    href: '/admin/promotions',
     icon: Percent,
-    description: 'Offres temporaires',
+    description: 'Plans & quotas',
   },
   {
     name: 'Codes Promo',

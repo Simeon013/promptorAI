@@ -151,26 +151,28 @@ export default async function DashboardPage() {
         {/* Stats Cards */}
         <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Plan Card */}
-          <Link href="/dashboard/subscription">
+          <Link href="/dashboard/credits">
             <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                   <Zap className="h-4 w-4 text-purple-500" />
-                  Plan Actuel
+                  Tier Actuel
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold gradient-text">
-                  {user?.plan || 'FREE'}
+                  {user?.tier || 'FREE'}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {user?.plan === 'FREE' && 'Passez à Pro pour plus de prompts'}
-                  {user?.plan === 'STARTER' && '100 prompts/mois'}
-                  {user?.plan === 'PRO' && 'Prompts illimités'}
+                  {(!user?.tier || user?.tier === 'FREE') && 'Achetez des crédits pour débloquer plus'}
+                  {user?.tier === 'BRONZE' && '1 000 FCFA dépensés'}
+                  {user?.tier === 'SILVER' && '5 000 FCFA dépensés'}
+                  {user?.tier === 'GOLD' && '10 000 FCFA dépensés'}
+                  {user?.tier === 'PLATINUM' && '20 000 FCFA dépensés'}
                 </p>
                 <div className="mt-2 flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
                   <CreditCard className="h-3 w-3" />
-                  Gérer l'abonnement
+                  Voir mes crédits
                 </div>
               </CardContent>
             </Card>

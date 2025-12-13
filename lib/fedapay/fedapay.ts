@@ -1,15 +1,20 @@
 const { FedaPay, Transaction } = require('fedapay');
 
 // Configuration FedaPay
-if (!process.env.FEDAPAY_SECRET_KEY) {
-  console.warn('⚠️ FEDAPAY_SECRET_KEY is not defined. Using test mode.');
+const apiKey = process.env.FEDAPAY_SECRET_KEY;
+const environment = process.env.FEDAPAY_ENVIRONMENT || 'sandbox';
+
+if (!apiKey) {
+  console.error('❌ FEDAPAY_SECRET_KEY is not defined in environment variables!');
+  throw new Error('FEDAPAY_SECRET_KEY is required');
 }
 
+console.log('✅ FedaPay initializing with environment:', environment);
+console.log('✅ API Key present:', apiKey ? 'Yes (' + apiKey.substring(0, 15) + '...)' : 'No');
+
 // Initialiser FedaPay
-FedaPay.setApiKey(process.env.FEDAPAY_SECRET_KEY || '');
-FedaPay.setEnvironment(
-  process.env.FEDAPAY_ENVIRONMENT === 'live' ? 'live' : 'sandbox'
-);
+FedaPay.setApiKey(apiKey);
+FedaPay.setEnvironment(environment === 'live' ? 'live' : 'sandbox');
 
 // Prix FedaPay (montants en FCFA)
 export const FEDAPAY_PRICES = {

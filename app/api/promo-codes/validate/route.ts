@@ -1,32 +1,58 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
-import { validatePromoCode } from '@/lib/admin/promo-helper';
-import { ValidatePromoCodeRequest, Plan } from '@/types';
+import { currentUser } from '@clerk/nextjs/server';
+import { validatePromoCode } from '@/lib/subscriptions/promo-codes';
 
-/**
- * POST /api/promo-codes/validate
- * Valide un code promo pour un utilisateur
- * (Accessible aux utilisateurs authentifiés)
- */
-export async function POST(request: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const user = await currentUser();
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Non authentifié' }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: 'Non authentifie' }, { status: 401 });
     }
 
-    const body: ValidatePromoCodeRequest = await request.json();
+    const searchParams = request.nextUrl.searchParams;
+    const code = searchParams.get('code');
+    const plan = searchParams.get('plan') as 'STARTER' | 'PRO' | null;
+    const amount = searchParams.get('amount');
 
-    if (!body.code || !body.plan) {
-      return NextResponse.json({ error: 'Code et plan requis' }, { status: 400 });
+    if (!code || !plan || !amount) {
+      return NextResponse.json(
+        { error: 'Parametres manquants' },
+        { status: 400 }
+      );
     }
 
-    const result = await validatePromoCode(body.code, body.plan as Plan, userId);
+    if (!['STARTER', 'PRO'].includes(plan)) {
+      return NextResponse.json({ error: 'Plan invalide' }, { status: 400 });
+    }
 
-    return NextResponse.json(result);
-  } catch (error) {
-    console.error('Erreur POST /api/promo-codes/validate:', error);
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 });
+    const amountNum = parseInt(amount, 10);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      return NextResponse.json({ error: 'Montant invalide' }, { status: 400 });
+    }
+
+    const validation = await validatePromoCode(code, user.id, plan, amountNum);
+
+    return NextResponse.json({
+      valid: validation.valid,
+      error: validation.error,
+      discount_amount: validation.discount_amount,
+      final_amount: validation.final_amount,
+      promo_code: validation.promo_code
+        ? {
+            id: validation.promo_code.id,
+            code: validation.promo_code.code,
+            name: validation.promo_code.name,
+            description: validation.promo_code.description,
+            type: validation.promo_code.type,
+          }
+        : null,
+    });
+  } catch (error: any) {
+    console.error('Erreur validation code promo:', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la validation du code promo', details: error.message },
+      { status: 500 }
+    );
   }
 }

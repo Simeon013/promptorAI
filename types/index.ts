@@ -217,6 +217,144 @@ export interface UpdatePromoCodeRequest extends Partial<CreatePromoCodeRequest> 
   isActive?: boolean;
 }
 
+// ============================================================================
+// Credit Packs
+// ============================================================================
+
+export interface CreditPack {
+  id: string;
+  name: string;
+  display_name: string;
+  description?: string;
+  credits: number;
+  bonus_credits: number;
+  total_credits: number;
+  price: number;
+  price_xof?: number;
+  price_eur?: number;
+  price_usd?: number;
+  currency: string;
+  tier_unlock?: string;
+  min_tier_spend?: number;
+  is_active: boolean;
+  is_featured: boolean;
+  sort_order: number;
+  metadata?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================================
+// Pack Promotions (Réductions sur les packs)
+// ============================================================================
+
+export type PromotionDiscountType = 'percentage' | 'fixed_amount';
+
+export interface PackPromotion {
+  id: string;
+  name: string;
+  description?: string;
+  code?: string; // Code promo optionnel pour activer la promo
+
+  // Ciblage
+  pack_id?: string; // null = tous les packs
+  all_packs: boolean;
+
+  // Réduction
+  discount_type: PromotionDiscountType;
+  discount_value: number;
+
+  // Période
+  starts_at: string;
+  ends_at: string;
+
+  // Limites
+  max_uses?: number;
+  uses_count: number;
+  max_uses_per_user: number;
+
+  // Configuration
+  is_active: boolean;
+  is_stackable: boolean; // Cumulable avec codes promo
+  priority: number;
+
+  // Affichage
+  show_on_pricing: boolean;
+  badge_text?: string; // '-20%', 'PROMO'
+  badge_color?: string; // 'red', 'orange', etc.
+
+  // Métadonnées
+  metadata?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+}
+
+export interface PackPromotionUse {
+  id: string;
+  promotion_id: string;
+  user_id: string;
+  purchase_id?: string;
+  discount_applied: number;
+  created_at: string;
+}
+
+export interface CreatePackPromotionRequest {
+  name: string;
+  description?: string;
+  code?: string;
+  pack_id?: string;
+  all_packs: boolean;
+  discount_type: PromotionDiscountType;
+  discount_value: number;
+  starts_at: string;
+  ends_at: string;
+  max_uses?: number;
+  max_uses_per_user?: number;
+  is_stackable?: boolean;
+  priority?: number;
+  show_on_pricing?: boolean;
+  badge_text?: string;
+  badge_color?: string;
+}
+
+export interface UpdatePackPromotionRequest extends Partial<CreatePackPromotionRequest> {
+  is_active?: boolean;
+}
+
+export interface ActivePromotion {
+  promotion_id: string;
+  name: string;
+  discount_type: PromotionDiscountType;
+  discount_value: number;
+  badge_text?: string;
+  badge_color?: string;
+  uses_remaining?: number;
+  calculated_discount: number; // Montant de la réduction calculée
+  final_price: number; // Prix final après réduction
+}
+
+// ============================================================================
+// Currency (Devises)
+// ============================================================================
+
+export type CurrencyCode = 'XOF' | 'EUR' | 'USD';
+
+export interface CurrencyRate {
+  id: string;
+  currency: CurrencyCode;
+  name: string;
+  symbol: string;
+  rate_to_xof: number;
+  rate_from_xof: number;
+  is_active: boolean;
+  is_default: boolean;
+  decimals: number;
+  display_format: string;
+  last_updated: string;
+  created_at: string;
+}
+
 export interface ValidatePromoCodeRequest {
   code: string;
   plan: Plan;

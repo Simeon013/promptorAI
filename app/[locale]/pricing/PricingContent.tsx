@@ -1,412 +1,565 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Sparkles, Loader2 } from 'lucide-react';
-import { planFeatures } from '@/config/plans';
-import { Plan } from '@/types';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { useTranslations, useLocale } from 'next-intl';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/landing/Footer';
-import { PromoBanner } from '@/components/pricing/PromoBanner';
-import { FeatureComparisonTable } from '@/components/pricing/FeatureComparisonTable';
-import { motion } from 'framer-motion';
+import {
+  ArrowRight,
+  Check,
+  Sparkles,
+  Zap,
+  Gift,
+  Shield,
+  Clock,
+  TrendingUp,
+  Star,
+  Tag,
+} from 'lucide-react';
+import { CurrencySelector } from '@/components/credits/CurrencySelector';
+import { formatCurrency, DEFAULT_CURRENCY, type CurrencyCode } from '@/config/currencies';
+import type { ActivePromotion } from '@/types';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-    },
-  },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-    },
-  },
-};
-
-interface DynamicPricing {
-  plan: Plan;
-  priceMonthly: number;
-  priceYearly: number;
-  currency: string;
-  quotaLimit: number;
-  historyDays: number;
-  workspaces: number;
-  apiAccess: boolean;
-  analyticsAccess: boolean;
-}
-
-interface Promotion {
+interface CreditPack {
   id: string;
   name: string;
+  display_name: string;
   description: string;
-  discountType: 'PERCENTAGE' | 'FIXED_AMOUNT';
-  discountValue: number;
-  applicablePlans: string[];
-  billingCycle: 'monthly' | 'yearly' | 'both';
+  credits: number;
+  bonus_credits: number;
+  total_credits: number;
+  price: number;
+  original_price: number;
+  currency: string;
+  tier_unlock: string;
+  is_featured: boolean;
+  price_per_credit: number;
+  active_promotion?: ActivePromotion | null;
 }
 
 export function PricingContent() {
-  const t = useTranslations('pricing');
-  const locale = useLocale();
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const [dynamicPricing, setDynamicPricing] = useState<Record<Plan, DynamicPricing> | null>(null);
-  const [promotions, setPromotions] = useState<Promotion[]>([]);
+  const [packs, setPacks] = useState<CreditPack[]>([]);
   const [loading, setLoading] = useState(true);
+  const [purchasing, setPurchasing] = useState<string | null>(null);
+  const [currency, setCurrency] = useState<CurrencyCode>(DEFAULT_CURRENCY);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Charger les prix et promotions en parallèle
-        const [pricingRes, promosRes] = await Promise.all([
-          fetch('/api/public/pricing'),
-          fetch('/api/public/promotions'),
-        ]);
+    fetchPacks(currency);
+  }, [currency]);
 
-        const pricingData = await pricingRes.json();
-        const promosData = await promosRes.json();
-
-        if (pricingData.pricing && pricingData.pricing.length > 0) {
-          const pricingMap: Record<string, DynamicPricing> = {};
-          pricingData.pricing.forEach((item: DynamicPricing) => {
-            pricingMap[item.plan] = item;
-          });
-          setDynamicPricing(pricingMap as Record<Plan, DynamicPricing>);
-        }
-
-        if (promosData.promotions) {
-          setPromotions(promosData.promotions);
-        }
-      } catch (error) {
-        console.error('Erreur chargement données pricing:', error);
-      } finally {
-        setLoading(false);
+  const fetchPacks = async (curr: CurrencyCode) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/credits/packs-with-promotions?currency=${curr}`);
+      const data = await res.json();
+      if (data.success) {
+        setPacks(data.packs);
       }
-    };
-
-    fetchData();
-  }, []);
-
-  // Fonction pour obtenir le prix (dynamique si disponible, sinon statique)
-  const getPrice = (plan: Plan, cycle: 'monthly' | 'yearly') => {
-    if (dynamicPricing && dynamicPricing[plan]) {
-      return cycle === 'monthly'
-        ? dynamicPricing[plan].priceMonthly
-        : dynamicPricing[plan].priceYearly;
+      setLoading(false);
+    } catch (err) {
+      console.error('Erreur packs:', err);
+      setLoading(false);
     }
-    return planFeatures[plan].price[cycle];
   };
 
-  // Trouver la promotion applicable pour un plan et cycle donné
-  const getApplicablePromotion = (plan: Plan, cycle: 'monthly' | 'yearly'): Promotion | null => {
-    return promotions.find(
-      (promo) =>
-        promo.applicablePlans.includes(plan) &&
-        (promo.billingCycle === cycle || promo.billingCycle === 'both')
-    ) || null;
+  const getTierEmoji = (tier: string) => {
+    const emojis: Record<string, string> = {
+      FREE: '⚪',
+      BRONZE: '🥉',
+      SILVER: '🥈',
+      GOLD: '🥇',
+      PLATINUM: '💎',
+    };
+    return emojis[tier] || '⭐';
   };
 
-  // Calculer le prix avec réduction
-  const getPriceWithDiscount = (plan: Plan, cycle: 'monthly' | 'yearly') => {
-    const basePrice = getPrice(plan, cycle);
-    const promo = getApplicablePromotion(plan, cycle);
-
-    if (!promo || basePrice <= 0) {
-      return { originalPrice: basePrice, finalPrice: basePrice, discount: null };
-    }
-
-    let finalPrice = basePrice;
-    if (promo.discountType === 'PERCENTAGE') {
-      finalPrice = basePrice - (basePrice * promo.discountValue) / 100;
-    } else {
-      finalPrice = Math.max(0, basePrice - promo.discountValue);
-    }
-
-    return {
-      originalPrice: basePrice,
-      finalPrice: Math.round(finalPrice * 100) / 100,
-      discount: promo,
+  const getTierColor = (tier: string) => {
+    const colors: Record<string, string> = {
+      FREE: 'text-gray-600',
+      BRONZE: 'text-orange-600',
+      SILVER: 'text-gray-400',
+      GOLD: 'text-yellow-600',
+      PLATINUM: 'text-purple-600',
     };
+    return colors[tier] || 'text-blue-600';
+  };
+
+  const handlePurchase = async (packId: string) => {
+    setPurchasing(packId);
+    try {
+      const res = await fetch('/api/credits/purchase', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pack_id: packId }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.url) {
+        // Rediriger vers FedaPay
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Erreur lors de la création du paiement');
+        setPurchasing(null);
+      }
+    } catch (error) {
+      console.error('Erreur achat:', error);
+      alert('Erreur lors de la création du paiement');
+      setPurchasing(null);
+    }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <Header />
-        <div className="flex items-center justify-center py-24">
-          <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+      <div className="relative">
+        {/* Background Effects */}
+        <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+          <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/10 dark:bg-purple-500/20 blur-[120px]" />
+          <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 blur-[120px]" />
+        </div>
+
+        <div className="container mx-auto px-4 py-16 md:py-24">
+          {/* Hero Section Skeleton */}
+          <div className="text-center mb-12 md:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
+              <Sparkles className="h-4 w-4 text-purple-600 animate-pulse" />
+              <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+                Tarification Simple et Transparente
+              </span>
+            </div>
+
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              Achetez des Crédits
+            </h1>
+
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+              Choisissez le pack qui correspond à vos besoins. Plus vous achetez, plus vous économisez !
+            </p>
+
+            {/* Currency Selector Skeleton */}
+            <div className="flex justify-center mb-6">
+              <div className="h-10 w-40 bg-muted rounded-lg animate-pulse" />
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-4">
+              <div className="h-12 w-52 bg-muted rounded-lg animate-pulse" />
+              <div className="h-12 w-40 bg-muted rounded-lg animate-pulse" />
+            </div>
+          </div>
+
+          {/* Packs Grid Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+            {[1, 2, 3, 4].map((i) => (
+              <Card
+                key={i}
+                className={`relative h-full flex flex-col bg-gradient-to-b from-background to-muted/20 backdrop-blur-sm ${
+                  i === 2 ? 'lg:-mt-4 lg:mb-4 border-2 border-purple-500/50' : 'border-border/50'
+                }`}
+              >
+                <div className="p-6 md:p-8 flex flex-col flex-1 space-y-6 animate-pulse">
+                  {/* Badge */}
+                  <div className="h-8 w-24 bg-muted rounded-full" />
+
+                  {/* Title */}
+                  <div className="h-8 w-3/4 bg-muted rounded" />
+
+                  {/* Description */}
+                  <div className="h-4 w-full bg-muted rounded" />
+
+                  {/* Price */}
+                  <div className="space-y-2">
+                    <div className="h-12 w-32 bg-muted rounded" />
+                    <div className="h-4 w-20 bg-muted rounded" />
+                  </div>
+
+                  {/* Credits Info */}
+                  <div className="space-y-3 flex-1">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-muted rounded-lg" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-24 bg-muted rounded" />
+                        <div className="h-3 w-16 bg-muted rounded" />
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 bg-muted rounded-lg" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 w-24 bg-muted rounded" />
+                        <div className="h-3 w-16 bg-muted rounded" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Button */}
+                  <div className="h-12 w-full bg-muted rounded-lg" />
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Loading Indicator */}
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 text-muted-foreground">
+              <Sparkles className="h-5 w-5 animate-spin text-purple-500" />
+              Chargement des packs...
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
-      {/* Header */}
-      <Header />
-
-      {/* Promo Banner - positioned after header */}
-      <div className="relative z-10 w-full">
-        <PromoBanner />
-      </div>
-
+    <div className="relative">
       {/* Background Effects */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <motion.div
-          className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 dark:bg-purple-500/30 blur-[120px]"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/20 dark:bg-cyan-500/30 blur-[120px]"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.3, 0.2],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-        />
+      <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/10 dark:bg-purple-500/20 blur-[120px]" />
+        <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/10 dark:bg-cyan-500/20 blur-[120px]" />
       </div>
 
-      {/* Pricing Section */}
-      <div className="container mx-auto px-4 py-12 sm:py-16 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          {/* Title */}
-          <motion.div
-            className="mb-12 sm:mb-16 text-center"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <span className="inline-flex items-center gap-2 rounded-full border border-purple-500/30 bg-purple-500/10 px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-purple-600 dark:text-purple-400 backdrop-blur-sm mb-4">
-              <Sparkles className="h-3 w-3 sm:h-4 sm:w-4" />
-              {t('pricing')}
+      <div className="container mx-auto px-4 py-16 md:py-24">
+        {/* Hero Section */}
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
+            <Sparkles className="h-4 w-4 text-purple-600" />
+            <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
+              Tarification Simple et Transparente
             </span>
-            <h1 className="mb-3 sm:mb-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-foreground px-4">
-              {t('title')}
-            </h1>
-            <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 px-4">
-              {t('subtitle')}
-            </p>
+          </div>
 
-            {/* Billing Cycle Toggle */}
-            <div className="inline-flex items-center gap-2 sm:gap-3 rounded-full border border-border bg-card p-1 w-full max-w-xs sm:max-w-sm mx-auto">
-              <button
-                type="button"
-                onClick={() => setBillingCycle('monthly')}
-                className={`flex-1 rounded-full px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium transition-all ${
-                  billingCycle === 'monthly'
-                    ? 'bg-purple-600 text-white shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground'
+          <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Achetez des Crédits
+          </h1>
+
+          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
+            Choisissez le pack qui correspond à vos besoins. Plus vous achetez, plus vous économisez !
+          </p>
+
+          {/* Currency Selector */}
+          <div className="flex justify-center mb-6">
+            <CurrencySelector value={currency} onChange={setCurrency} />
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            <Link href="/dashboard">
+              <Button size="lg" variant="outline">
+                Voir mon Solde
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Packs Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-20">
+          {packs.map((pack) => (
+            <div
+              key={pack.id}
+              className={`group relative ${
+                pack.is_featured ? 'lg:-mt-4 lg:mb-4' : ''
+              }`}
+            >
+              {/* Glow Effect */}
+              {pack.is_featured && (
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition-opacity" />
+              )}
+
+              <Card
+                className={`relative h-full flex flex-col bg-gradient-to-b from-background to-muted/20 backdrop-blur-sm transition-all duration-300 ${
+                  pack.is_featured
+                    ? 'border-2 border-purple-500/50 shadow-xl shadow-purple-500/20'
+                    : 'border-border/50 hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/5'
                 }`}
               >
-                Mensuel
-              </button>
-              <button
-                type="button"
-                onClick={() => setBillingCycle('yearly')}
-                className={`flex-1 rounded-full px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium transition-all ${
-                  billingCycle === 'yearly'
-                    ? 'bg-purple-600 text-white shadow-lg'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <span className="inline sm:inline">Annuel</span>
-                <span className="ml-1 sm:ml-2 text-[10px] sm:text-xs text-green-500 font-semibold whitespace-nowrap">
-                  -17%
-                </span>
-              </button>
-            </div>
-          </motion.div>
+                {/* Popular Badge */}
+                {pack.is_featured && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                    <div className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold shadow-lg">
+                      <Star className="h-3.5 w-3.5 fill-current" />
+                      <span>POPULAIRE</span>
+                    </div>
+                  </div>
+                )}
 
-          {/* Plans Grid */}
-          <motion.div
-            className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 xl:grid-cols-4"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {Object.entries(planFeatures).map(([key, plan], index) => {
-              const planKey = key as Plan;
-              const isFree = planKey === Plan.FREE;
-              const isEnterprise = planKey === Plan.ENTERPRISE;
-              const isPro = planKey === Plan.PRO;
-              const priceInfo = getPriceWithDiscount(planKey, billingCycle);
-              const hasDiscount = priceInfo.discount !== null;
+                {/* Promo Badge */}
+                {pack.active_promotion && pack.active_promotion.badge_text && (
+                  <div className="absolute top-0 left-0 z-10">
+                    <div
+                      className={`px-3 py-1 rounded-br-lg text-white text-xs font-bold ${
+                        pack.active_promotion.badge_color === 'red'
+                          ? 'bg-red-500'
+                          : pack.active_promotion.badge_color === 'orange'
+                          ? 'bg-orange-500'
+                          : pack.active_promotion.badge_color === 'purple'
+                          ? 'bg-purple-500'
+                          : pack.active_promotion.badge_color === 'blue'
+                          ? 'bg-blue-500'
+                          : pack.active_promotion.badge_color === 'green'
+                          ? 'bg-green-500'
+                          : 'bg-red-500'
+                      }`}
+                    >
+                      <Tag className="h-3 w-3 inline mr-1" />
+                      {pack.active_promotion.badge_text}
+                    </div>
+                  </div>
+                )}
 
-              return (
-                <motion.div
-                  key={key}
-                  variants={cardVariants}
-                  whileHover={{ y: -8, transition: { duration: 0.2 } }}
-                >
-                  <Card
-                    className={`relative flex flex-col h-full border transition-all duration-300 ${
-                      isPro
-                        ? 'ring-2 ring-purple-500 shadow-lg shadow-purple-500/20 border-purple-500/50'
-                        : 'hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10'
-                    }`}
-                  >
-                    {/* Gradient Glow */}
-                    {isPro && (
-                      <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 opacity-0 blur-xl transition-opacity duration-500 group-hover:opacity-20 -z-10" />
-                    )}
+                <div className="p-6 md:p-8 flex flex-col flex-1">
+                  {/* Tier Badge */}
+                  <div className="mb-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20">
+                      <span className="text-xl">{getTierEmoji(pack.tier_unlock)}</span>
+                      <span className={`text-sm font-bold ${getTierColor(pack.tier_unlock)}`}>
+                        {pack.tier_unlock}
+                      </span>
+                    </div>
+                  </div>
 
-                    {isPro && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                        <span className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-3 py-1 text-xs font-medium text-white shadow-lg">
-                          {t('popular')}
-                        </span>
+                  {/* Title */}
+                  <h3 className="text-2xl font-bold mb-2 bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    {pack.display_name}
+                  </h3>
+
+                  {pack.description && (
+                    <p className="text-sm text-muted-foreground mb-6">{pack.description}</p>
+                  )}
+
+                  {/* Price */}
+                  <div className="mb-8">
+                    {pack.active_promotion && (
+                      <div className="text-sm text-muted-foreground line-through mb-1">
+                        {formatCurrency(pack.original_price, currency)}
                       </div>
                     )}
-
-                    <CardHeader>
-                      <CardTitle className="text-foreground text-xl">{plan.name}</CardTitle>
-                      <CardDescription className="text-muted-foreground">
-                        {plan.description}
-                      </CardDescription>
-                    </CardHeader>
-
-                    <CardContent className="flex flex-col flex-1">
-                      {/* Price */}
-                      <div className="mb-6">
-                        {isEnterprise ? (
-                          <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                            {t('custom')}
-                          </div>
-                        ) : (
-                          <div>
-                            {hasDiscount && (
-                              <div className="mb-1 flex flex-wrap items-center gap-2">
-                                <span className="text-base sm:text-lg text-muted-foreground line-through">
-                                  {priceInfo.originalPrice}€
-                                </span>
-                                <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-semibold text-green-600 dark:text-green-400 whitespace-nowrap">
-                                  -{priceInfo.discount?.discountType === 'PERCENTAGE'
-                                    ? `${priceInfo.discount.discountValue}%`
-                                    : `${priceInfo.discount?.discountValue}€`}
-                                </span>
-                              </div>
-                            )}
-                            <div className="flex flex-wrap items-baseline gap-1">
-                              <span className={`text-3xl sm:text-4xl font-bold ${hasDiscount ? 'text-green-600 dark:text-green-400' : 'text-foreground'}`}>
-                                {priceInfo.finalPrice}€
-                              </span>
-                              <span className="text-sm sm:text-base text-muted-foreground whitespace-nowrap">
-                                {billingCycle === 'monthly' ? t('perMonth') : '/an'}
-                              </span>
-                            </div>
-                            {billingCycle === 'yearly' && !isFree && (
-                              <p className="text-xs text-muted-foreground mt-1 whitespace-nowrap">
-                                Soit {Math.round((priceInfo.finalPrice / 12) * 100) / 100}€/mois
-                              </p>
-                            )}
-                          </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 via-purple-500 to-pink-600 bg-clip-text text-transparent">
+                        {formatCurrency(pack.active_promotion?.final_price || pack.price, currency).split(' ')[0]}
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-lg font-semibold text-muted-foreground">{pack.currency}</span>
+                        {pack.price_per_credit && (
+                          <span className="text-xs text-muted-foreground/60">
+                            ~{pack.price_per_credit.toFixed(currency === 'XOF' ? 0 : 2)} {currency}/crédit
+                          </span>
                         )}
                       </div>
+                    </div>
+                    {pack.active_promotion && (
+                      <Badge className="mt-2 bg-green-500 text-white">
+                        Économisez {formatCurrency(pack.active_promotion.calculated_discount, currency)}
+                      </Badge>
+                    )}
+                  </div>
 
-                      {/* Features */}
-                      <div className="mb-8 flex-1 space-y-3">
-                        {plan.features.map((feature, featureIndex) => (
-                          <motion.div
-                            key={featureIndex}
-                            className="flex items-start gap-3"
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: index * 0.1 + featureIndex * 0.05 }}
-                          >
-                            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-purple-500/20 flex-shrink-0">
-                              <Check className="h-3 w-3 text-purple-500" />
-                            </div>
-                            <span className="text-sm text-muted-foreground">{feature}</span>
-                          </motion.div>
-                        ))}
+                  {/* Credits Info */}
+                  <div className="space-y-3 mb-8 flex-1">
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5 p-2 rounded-lg bg-purple-500/10">
+                        <Zap className="h-4 w-4 text-purple-600" />
                       </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-sm text-foreground">
+                          {pack.credits.toLocaleString('fr-FR')} crédits
+                        </p>
+                        <p className="text-xs text-muted-foreground">Crédits de base</p>
+                      </div>
+                    </div>
 
-                      {/* CTA Button */}
-                      {isFree ? (
-                        <Link href="/sign-up" className="w-full">
-                          <Button
-                            variant="outline"
-                            className="w-full hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 transition-all"
-                          >
-                            {t('startFree')}
-                          </Button>
-                        </Link>
-                      ) : isEnterprise ? (
-                        <Button
-                          variant="outline"
-                          className="w-full"
-                          disabled
-                        >
-                          {t('contactUs')}
-                        </Button>
-                      ) : (
-                        <Link href={`/${locale}/checkout?plan=${planKey}&cycle=${billingCycle}`} className="w-full">
-                          <Button
-                            className={`w-full ${
-                              isPro
-                                ? 'btn-gradient text-white shadow-lg shadow-purple-500/25'
-                                : 'bg-purple-600 hover:bg-purple-700 text-white'
-                            }`}
-                          >
-                            {t('subscribe')}
-                          </Button>
-                        </Link>
-                      )}
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </motion.div>
+                    {pack.bonus_credits > 0 && (
+                      <div className="flex items-start gap-3">
+                        <div className="mt-0.5 p-2 rounded-lg bg-green-500/10">
+                          <Gift className="h-4 w-4 text-green-600" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm text-green-600 dark:text-green-400">
+                            +{pack.bonus_credits} bonus gratuits
+                          </p>
+                          <p className="text-xs text-muted-foreground">Ajoutés automatiquement</p>
+                        </div>
+                      </div>
+                    )}
 
-          {/* Footer Info */}
-          <motion.div
-            className="mt-16 text-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-          >
-            <p className="text-sm text-muted-foreground">
-              {t('footer')}
+                    <div className="pt-4 border-t border-border/50">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Total</span>
+                        <span className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-cyan-500 bg-clip-text text-transparent">
+                          {pack.total_credits.toLocaleString('fr-FR')} crédits
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CTA Button */}
+                  <Button
+                    onClick={() => handlePurchase(pack.id)}
+                    disabled={purchasing === pack.id}
+                    className={`w-full group/btn mt-auto ${
+                      pack.is_featured
+                        ? 'btn-gradient text-white shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40'
+                        : 'bg-muted hover:bg-muted/80 text-foreground'
+                    }`}
+                    size="lg"
+                  >
+                    <span>{purchasing === pack.id ? 'Redirection...' : 'Acheter'}</span>
+                    <ArrowRight className={`h-4 w-4 ml-2 ${purchasing === pack.id ? '' : 'group-hover/btn:translate-x-1'} transition-transform`} />
+                  </Button>
+                </div>
+              </Card>
+            </div>
+          ))}
+        </div>
+
+        {/* Features Grid */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center mb-8">
+            Pourquoi choisir nos Crédits ?
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <Card className="p-6 hover:shadow-lg hover:shadow-purple-500/10 transition-all border-purple-500/20">
+              <div className="mb-4 p-3 bg-purple-500/10 rounded-lg w-fit">
+                <Shield className="h-6 w-6 text-purple-600" />
+              </div>
+              <h3 className="font-bold mb-2">Paiement Sécurisé</h3>
+              <p className="text-sm text-muted-foreground">
+                Transactions protégées par FedaPay. Carte bancaire et Mobile Money acceptés.
+              </p>
+            </Card>
+
+            <Card className="p-6 hover:shadow-lg hover:shadow-cyan-500/10 transition-all border-cyan-500/20">
+              <div className="mb-4 p-3 bg-cyan-500/10 rounded-lg w-fit">
+                <Zap className="h-6 w-6 text-cyan-600" />
+              </div>
+              <h3 className="font-bold mb-2">Ajout Instantané</h3>
+              <p className="text-sm text-muted-foreground">
+                Vos crédits sont ajoutés immédiatement après le paiement. Commencez tout de suite !
+              </p>
+            </Card>
+
+            <Card className="p-6 hover:shadow-lg hover:shadow-green-500/10 transition-all border-green-500/20">
+              <div className="mb-4 p-3 bg-green-500/10 rounded-lg w-fit">
+                <Clock className="h-6 w-6 text-green-600" />
+              </div>
+              <h3 className="font-bold mb-2">Sans Expiration</h3>
+              <p className="text-sm text-muted-foreground">
+                Vos crédits n'expirent jamais. Utilisez-les quand vous voulez, à votre rythme.
+              </p>
+            </Card>
+
+            <Card className="p-6 hover:shadow-lg hover:shadow-pink-500/10 transition-all border-pink-500/20">
+              <div className="mb-4 p-3 bg-pink-500/10 rounded-lg w-fit">
+                <Gift className="h-6 w-6 text-pink-600" />
+              </div>
+              <h3 className="font-bold mb-2">Bonus Gratuits</h3>
+              <p className="text-sm text-muted-foreground">
+                Chaque pack inclut des crédits bonus gratuits. Plus vous achetez, plus vous gagnez !
+              </p>
+            </Card>
+          </div>
+        </div>
+
+        {/* FAQ Section */}
+        <div className="mb-20">
+          <h2 className="text-3xl font-bold text-center mb-12">Questions Fréquentes</h2>
+
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <Card className="p-6 border-border/50 hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/5 transition-all">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
+                  <Check className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Comment fonctionnent les crédits ?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Chaque action (génération de prompt, amélioration, etc.) consomme un certain nombre de crédits selon la complexité.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 border-border/50 hover:border-cyan-500/30 hover:shadow-lg hover:shadow-cyan-500/5 transition-all">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center">
+                  <Clock className="h-5 w-5 text-cyan-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Les crédits expirent-ils ?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Non ! Vos crédits sont valables à vie et ne s'épuisent jamais.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 border-border/50 hover:border-pink-500/30 hover:shadow-lg hover:shadow-pink-500/5 transition-all">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-pink-500/10 flex items-center justify-center">
+                  <TrendingUp className="h-5 w-5 text-pink-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Qu'est-ce qu'un tier ?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Les tiers vous donnent accès à plus de fonctionnalités. Plus vous dépensez, plus votre tier augmente automatiquement.
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <Card className="p-6 border-border/50 hover:border-green-500/30 hover:shadow-lg hover:shadow-green-500/5 transition-all">
+              <div className="flex gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                  <Gift className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-2">Puis-je utiliser un code promo ?</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Oui ! Entrez votre code promo lors de l'achat pour bénéficier de réductions ou de crédits bonus.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          <div className="mt-8 max-w-2xl mx-auto">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-cyan-500/10 border border-purple-500/20 p-6">
+              <div className="relative z-10 flex items-start gap-4">
+                <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                  <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-bold mb-2 text-lg">Conseil Pro</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Plus le pack est grand, plus le prix par crédit est avantageux. Les packs supérieurs offrent les meilleurs bonus et débloquent des tiers plus élevés !
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA Final */}
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-purple-600 via-purple-500 to-pink-600 p-12 md:p-16 text-center">
+          <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,black)]" />
+          <div className="relative z-10">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+              Prêt à booster votre créativité ?
+            </h2>
+            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+              Rejoignez des milliers d'utilisateurs qui créent des prompts exceptionnels avec Promptor
             </p>
-          </motion.div>
-
-          {/* Feature Comparison Table */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9 }}
-          >
-            <FeatureComparisonTable />
-          </motion.div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link href="/dashboard">
+                <Button size="lg" className="bg-white text-purple-600 hover:bg-white/90 shadow-xl group">
+                  <Sparkles className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform" />
+                  Voir mon Dashboard
+                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }

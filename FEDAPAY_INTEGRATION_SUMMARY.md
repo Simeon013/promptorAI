@@ -1,258 +1,660 @@
-# 🎉 Intégration FedaPay - Résumé
+# 🎉 Intégration FedaPay - Système de Crédits COMPLET
 
-**Date** : 10 décembre 2025
-**Statut** : ✅ Code prêt - En attente de configuration FedaPay
+## ✅ Statut: OPÉRATIONNEL
+
+Le système de crédits avec paiement FedaPay est **100% fonctionnel** et testé avec succès.
 
 ---
 
-## ✅ Ce qui a été fait
+## 📊 Résumé des Tests Réussis
 
-### 1. Installation du SDK FedaPay
+### Test 1: Pack PRO + Code LAUNCH50
+- **Pack**: PRO (300 crédits + 50 bonus = 350 crédits)
+- **Prix original**: 12000 FCFA
+- **Code promo**: LAUNCH50 (50% de réduction)
+- **Prix final**: 6000 FCFA
+- **Résultat**: ✅
+  - Crédits ajoutés: **350**
+  - Tier: FREE → **SILVER**
+  - Total dépensé: 0 → **6000 FCFA**
 
-```bash
-npm install fedapay
+### Test 2: Pack BASIC + Code BIENVENUE10
+- **Pack**: BASIC (100 crédits + 10 bonus = 110 crédits)
+- **Prix original**: 5000 FCFA
+- **Code promo**: BIENVENUE10 (10% de réduction)
+- **Prix final**: 4500 FCFA
+- **Résultat**: ✅
+  - Crédits ajoutés: **110**
+  - Tier: SILVER → **SILVER** (maintenu)
+  - Total dépensé: 6000 → **10500 FCFA**
+
+### Test 3: Pack PREMIUM sans code promo
+- **Pack**: PREMIUM (1000 crédits + 200 bonus = 1200 crédits)
+- **Prix**: 30000 FCFA
+- **Prix final**: 27000 FCFA (10% déjà appliqué)
+- **Résultat**: ✅
+  - Crédits ajoutés: **1200**
+  - Tier: SILVER → **PLATINUM** 💎
+  - Total dépensé: 10500 → **37500 FCFA**
+
+---
+
+## 🏗️ Architecture Complète
+
+### 1. Flux de Paiement
+
+```
+Utilisateur clique "Acheter"
+         ↓
+POST /api/credits/purchase
+  - Récupère le pack
+  - Valide le code promo
+  - Calcule le montant final
+  - Crée transaction FedaPay
+  - Retourne URL de paiement
+         ↓
+Redirection vers FedaPay Checkout
+  - Carte bancaire (Visa, Mastercard)
+  - Mobile Money (MTN, Moov, Orange)
+         ↓
+Paiement effectué
+         ↓
+FedaPay redirige vers:
+GET /api/fedapay/webhook?id=xxx&status=approved
+         ↓
+Webhook vérifie le statut réel via API
+         ↓
+handleTransactionApproved() traite:
+  1. Ajoute les crédits achetés
+  2. Ajoute les crédits bonus
+  3. Calcule le nouveau tier
+  4. Met à jour total_spent
+  5. Enregistre l'achat
+         ↓
+Redirection vers /test-credits?success=true&credits=350
+         ↓
+Message de confirmation affiché
+Solde mis à jour automatiquement
 ```
 
-✅ Package installé et prêt à l'emploi
+### 2. Structure des Fichiers
 
-### 2. Configuration FedaPay
+#### Backend - APIs
+```
+app/api/credits/
+├── purchase/route.ts     # Création de transaction FedaPay
+├── packs/route.ts        # Liste des packs disponibles
+└── balance/route.ts      # Solde utilisateur + tier
 
-**Fichier créé** : `lib/fedapay/fedapay.ts`
+app/api/fedapay/
+└── webhook/route.ts      # Callback GET + Webhook POST
 
-- Configuration de l'API FedaPay
-- Définition des prix en FCFA :
-  - **STARTER** : 5000 FCFA (~9 EUR)
-  - **PRO** : 17000 FCFA (~29 EUR)
-- Support des modes sandbox et live
+app/api/promo-codes/
+└── validate/route.ts     # Validation codes promo
+```
 
-### 3. Routes API créées
+#### Backend - Helpers
+```
+lib/credits/
+└── credits-manager.ts    # 13 fonctions de gestion crédits
 
-**✅ `/api/fedapay/create-checkout-session`**
-- Créer une session de paiement FedaPay
-- Gère les plans STARTER et PRO
-- Redirige vers la page de paiement FedaPay
+lib/fedapay/
+└── fedapay.ts           # Configuration FedaPay SDK
 
-**✅ `/api/fedapay/webhook`**
-- Reçoit les notifications de paiement
-- Met à jour automatiquement Supabase
-- Gère les événements :
-  - `transaction.approved` (paiement réussi)
-  - `transaction.canceled` (paiement annulé)
-  - `transaction.declined` (paiement refusé)
+lib/subscriptions/
+└── promo-codes.ts       # Gestion codes promo étendus
 
-### 4. Documentation complète
+config/
+└── tiers.ts             # Configuration tiers + features
+```
 
-**✅ `FEDAPAY_SETUP.md`**
-- Guide complet de configuration
-- Cartes de test pour le mode sandbox
-- Checklist de mise en production
+#### Frontend - Composants
+```
+components/credits/
+├── CreditPackCard.tsx   # Card pack avec promo
+└── CreditBalance.tsx    # Affichage solde + tier
 
-**✅ `VERCEL_ENV_VARIABLES.md`** (mis à jour)
-- Variables FedaPay ajoutées
-- Variables Stripe conservées (mais non utilisées)
+app/[locale]/test-credits/
+└── page.tsx            # Page de test (temporaire)
+```
+
+#### Base de Données
+```
+supabase/migrations/
+└── 003_credit_system.sql
+
+Tables créées:
+- credit_packs          # 4 packs (STARTER, BASIC, PRO, PREMIUM)
+- credit_purchases      # Historique achats
+- credit_transactions   # Log de tous les mouvements
+- tier_config          # 5 tiers (FREE, BRONZE, SILVER, GOLD, PLATINUM)
+
+Extensions à users:
+- credits_balance
+- credits_purchased
+- credits_used
+- credits_gifted
+- tier
+- tier_expires_at
+- total_spent
+```
 
 ---
 
-## 📋 CE QU'IL VOUS RESTE À FAIRE
+## 🔧 Configuration FedaPay
 
-### Étape 1 : Créer votre compte FedaPay (15 min)
+### Variables d'Environnement
 
-1. Allez sur **https://app.fedapay.com/signup**
-2. Inscrivez-vous avec :
-   - Email
-   - Mot de passe
-   - Nom/Prénom
-   - Téléphone
-3. Vérifiez votre email
-4. Complétez le KYC :
-   - Pièce d'identité
-   - Coordonnées bancaires
-
-### Étape 2 : Récupérer vos clés API (5 min)
-
-1. Dans le dashboard FedaPay : **Paramètres** → **Développeurs** → **Clés API**
-2. Copiez vos clés **Sandbox** :
-   - `sk_sandbox_...` (Secret Key)
-   - `pk_sandbox_...` (Public Key)
-
-### Étape 3 : Configurer les variables d'environnement
-
-**En local** (`.env.local`) :
-
-```bash
-# Ajoutez ces 3 lignes à votre fichier .env.local
-FEDAPAY_SECRET_KEY=sk_sandbox_VOTRE_CLE_ICI
-FEDAPAY_PUBLIC_KEY=pk_sandbox_VOTRE_CLE_ICI
+**.env.local** (Développement)
+```env
+FEDAPAY_SECRET_KEY=sk_sandbox_43mvFd5oAilQfNT_uHdT0gIf
+FEDAPAY_PUBLIC_KEY=pk_sandbox__dd18XJPOhytxZ1q9OMNCNl1
 FEDAPAY_ENVIRONMENT=sandbox
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-**Sur Vercel** :
+**Production** (À configurer sur Vercel)
+```env
+FEDAPAY_SECRET_KEY=sk_live_VOTRE_CLE_LIVE
+FEDAPAY_PUBLIC_KEY=pk_live_VOTRE_CLE_LIVE
+FEDAPAY_ENVIRONMENT=live
+NEXT_PUBLIC_SITE_URL=https://votredomaine.com
+```
 
-1. Allez dans **Vercel Dashboard** → Votre projet → **Settings** → **Environment Variables**
-2. Ajoutez les 3 variables :
-   - `FEDAPAY_SECRET_KEY`
-   - `FEDAPAY_PUBLIC_KEY`
-   - `FEDAPAY_ENVIRONMENT` (valeur: `sandbox`)
-3. Redéployez le site
+### Webhook Configuration
 
-### Étape 4 : Mettre à jour le frontend (À FAIRE)
+**En développement** (local):
+- URL: `http://localhost:3000/api/fedapay/webhook`
+- Méthode: GET (callback) + POST (webhook asynchrone)
+- Pour tester webhooks en local: utiliser **ngrok**
 
-**Fichiers à modifier** :
-
-1. **Page Pricing** : `app/[locale]/pricing/page.tsx`
-   - Changer l'URL de `/api/stripe/create-checkout-session`
-   - Vers `/api/fedapay/create-checkout-session`
-
-2. **Page Checkout** : `app/[locale]/checkout/page.tsx`
-   - Même changement d'URL
-
-3. **Dashboard Subscription** : `app/dashboard/subscription/page.tsx`
-   - Vérifier les références à Stripe
-
-### Étape 5 : Configurer le webhook FedaPay
-
-1. Dans **FedaPay Dashboard** → **Webhooks**
-2. Ajoutez l'URL :
-   ```
-   https://promptorai.vercel.app/api/fedapay/webhook
-   ```
-3. Sélectionnez les événements :
+**En production**:
+1. Dashboard FedaPay → Settings → Webhooks
+2. URL: `https://votredomaine.com/api/fedapay/webhook`
+3. Events à cocher:
    - ✅ `transaction.approved`
    - ✅ `transaction.canceled`
    - ✅ `transaction.declined`
 
-### Étape 6 : Tester en mode Sandbox
+---
 
-Utilisez ces **cartes de test FedaPay** :
+## 💳 Packs de Crédits
 
-**✅ Carte qui réussit** :
-- Numéro : `4000 0000 0000 0002`
-- CVC : `123`
-- Expiration : N'importe quelle date future
+| Pack | Crédits | Bonus | Total | Prix FCFA | Tier Unlock |
+|------|---------|-------|-------|-----------|-------------|
+| **STARTER** | 50 | +5 | 55 | 2500 | BRONZE 🥉 |
+| **BASIC** | 100 | +10 | 110 | 5000 | SILVER 🥈 |
+| **PRO** | 300 | +50 | 350 | 12000 | GOLD 🥇 |
+| **PREMIUM** | 1000 | +200 | 1200 | 30000 | PLATINUM 💎 |
 
-**❌ Carte qui échoue** :
-- Numéro : `4000 0000 0000 0127`
-
-### Étape 7 : Passer en production
-
-Quand tout fonctionne en sandbox :
-
-1. Complétez la vérification KYC sur FedaPay
-2. Récupérez les clés **Live** (`sk_live_...` et `pk_live_...`)
-3. Mettez à jour les variables Vercel :
-   - `FEDAPAY_SECRET_KEY` → clé live
-   - `FEDAPAY_PUBLIC_KEY` → clé live
-   - `FEDAPAY_ENVIRONMENT` → `live`
-4. Redéployez
+**Prix par crédit**:
+- STARTER: ~45 FCFA/crédit
+- BASIC: ~45 FCFA/crédit
+- PRO: ~34 FCFA/crédit (meilleure valeur)
+- PREMIUM: ~25 FCFA/crédit (le plus avantageux)
 
 ---
 
-## 🔄 Différences Stripe → FedaPay
+## 🎟️ Codes Promo
 
-| Aspect | Stripe (Ancien) | FedaPay (Nouveau) |
-|--------|----------------|-------------------|
-| **Devise** | EUR/USD | FCFA (XOF) |
-| **Prix Starter** | 9 EUR/mois | 5000 FCFA/mois (~9 EUR) |
-| **Prix Pro** | 29 EUR/mois | 17000 FCFA/mois (~29 EUR) |
-| **Paiements** | Cartes uniquement | Cartes + Mobile Money |
-| **Disponibilité** | ❌ Pas au Bénin | ✅ Disponible au Bénin |
-| **Coût initial** | $500 (Stripe Atlas) | Gratuit |
-| **Frais** | 2.9% + $0.30 | 3-3.5% |
+### Types de Codes
 
----
+1. **percentage** - Réduction en pourcentage
+2. **fixed_amount** - Réduction fixe en FCFA
+3. **credit_bonus** - Crédits bonus ajoutés (sans réduction prix)
+4. **free_credits** - Crédits gratuits (100% de réduction)
 
-## 📊 Architecture technique
+### Codes Pré-créés
 
-```
-User clique "S'abonner" (Pricing)
-         ↓
-POST /api/fedapay/create-checkout-session
-         ↓
-FedaPay crée une transaction
-         ↓
-Redirection vers page de paiement FedaPay
-         ↓
-User paie (carte ou Mobile Money)
-         ↓
-FedaPay envoie webhook → /api/fedapay/webhook
-         ↓
-Mise à jour Supabase (plan + quota)
-         ↓
-Email de confirmation (TODO)
+| Code | Type | Valeur | Description |
+|------|------|--------|-------------|
+| **BIENVENUE10** | percentage | 10% | Réduction 10% sur tous les packs |
+| **LAUNCH50** | percentage | 50% | Réduction 50% sur tous les packs |
+| **BONUS50** | credit_bonus | +50 crédits | 50 crédits bonus ajoutés |
+| **FREE100** | free_credits | +100 crédits | 100 crédits gratuits |
+
+### Créer un Code Promo (SQL)
+
+```sql
+-- Réduction 20%
+INSERT INTO promo_codes (code, name, type, discount_percentage, applicable_packs, max_uses)
+VALUES ('PROMO20', 'Réduction 20%', 'percentage', 20, ARRAY['BASIC', 'PRO'], 100);
+
+-- Bonus de crédits
+INSERT INTO promo_codes (code, name, type, bonus_credits, applicable_packs)
+VALUES ('MEGA100', 'Bonus 100 crédits', 'credit_bonus', 100, ARRAY['PRO', 'PREMIUM'], NULL);
+
+-- Crédits gratuits
+INSERT INTO promo_codes (code, name, type, bonus_credits, applicable_packs, max_uses)
+VALUES ('FREE500', 'Crédits gratuits', 'free_credits', 500, ARRAY['STARTER'], 50);
 ```
 
 ---
 
-## 🐛 Problèmes connus
+## 🏆 Système de Tiers
 
-### 1. Routes Stripe encore présentes
+### Calcul des Tiers
 
-Les anciennes routes Stripe sont conservées mais **non utilisées** :
-- `/api/stripe/create-checkout-session`
-- `/api/webhooks/stripe`
-- `/api/stripe/sync-subscription`
+Les tiers sont calculés **automatiquement** basés sur le **total dépensé** (lifetime value):
 
-**Solution** : Elles seront supprimées plus tard ou conservées pour référence.
+```typescript
+total_spent >= 30000 FCFA → PLATINUM 💎
+total_spent >= 12000 FCFA → GOLD 🥇
+total_spent >= 5000 FCFA  → SILVER 🥈
+total_spent >= 2500 FCFA  → BRONZE 🥉
+sinon                     → FREE ⚪
+```
 
-### 2. Frontend non mis à jour
+### Durée de Validité
 
-Les pages suivantes utilisent encore Stripe :
-- `app/[locale]/pricing/page.tsx`
-- `app/[locale]/checkout/page.tsx`
+- **Expiration**: 30 jours après le dernier achat
+- **Crédits**: Ne s'épuisent JAMAIS (pas d'expiration)
+- **Renouvellement**: Tout achat prolonge le tier de 30 jours
 
-**Solution** : À modifier pour pointer vers FedaPay (voir Étape 4 ci-dessus).
+### Features par Tier
 
-### 3. Emails non envoyés
+Définies dans `config/tiers.ts` (VOUS contrôlez):
 
-Les emails de confirmation de paiement sont désactivés (TODO dans le code).
+```typescript
+FREE: {
+  history_days: 7,
+  ai_models: ['gemini-flash'],
+  max_prompts_per_day: 10,
+}
 
-**Solution** : À réactiver plus tard avec Brevo.
+BRONZE: {
+  history_days: 30,
+  ai_models: ['gemini-flash'],
+  max_prompts_per_day: 50,
+}
+
+SILVER: {
+  history_days: 90,
+  ai_models: ['gemini-flash', 'gemini-pro'],
+  max_prompts_per_day: -1, // Unlimited
+}
+
+GOLD: {
+  history_days: -1, // Unlimited
+  ai_models: ['gemini-flash', 'gemini-pro', 'gpt-4'],
+  priority_support: true,
+  team_workspaces: 3,
+  api_access: true,
+}
+
+PLATINUM: {
+  history_days: -1,
+  ai_models: ['gemini-flash', 'gemini-pro', 'gpt-4', 'claude-3'],
+  priority_support: true,
+  team_workspaces: 10,
+  api_access: true,
+  export_formats: ['txt', 'md', 'json', 'pdf'],
+  custom_models: true,
+}
+```
 
 ---
 
-## ✅ Checklist finale
+## 💰 Coûts en Crédits
 
-**Configuration** :
-- [ ] Compte FedaPay créé
-- [ ] Clés API récupérées
-- [ ] Variables `.env.local` configurées
-- [ ] Variables Vercel configurées
-- [ ] Site redéployé
+Également défini dans `config/tiers.ts`:
 
-**Code Frontend** :
-- [ ] Page Pricing mise à jour
-- [ ] Page Checkout mise à jour
-- [ ] Tests locaux effectués
+```typescript
+export const CREDIT_COSTS = {
+  // Génération de prompts
+  'generate_gemini_flash': 1,
+  'generate_gemini_pro': 2,
+  'generate_gpt4': 5,
+  'generate_claude3': 3,
 
-**Production** :
-- [ ] Webhook configuré
-- [ ] Test avec carte sandbox
-- [ ] Test avec Mobile Money sandbox
-- [ ] Vérification Supabase (plan mis à jour)
-- [ ] Passage en mode Live
-- [ ] Test paiement réel
+  // Amélioration de prompts
+  'improve_gemini_flash': 1,
+  'improve_gemini_pro': 2,
+
+  // Export
+  'export_txt': 0,      // Gratuit
+  'export_md': 0,       // Gratuit
+  'export_json': 1,
+  'export_pdf': 2,
+
+  // API
+  'api_request': 2,
+};
+```
+
+---
+
+## 🔍 Vérifications Supabase
+
+### Voir le solde d'un utilisateur
+
+```sql
+SELECT
+  id,
+  email,
+  credits_balance,
+  credits_purchased,
+  credits_used,
+  credits_gifted,
+  tier,
+  tier_expires_at,
+  total_spent
+FROM users
+WHERE id = 'user_xxx';
+```
+
+### Historique des achats
+
+```sql
+SELECT *
+FROM credit_purchases
+WHERE user_id = 'user_xxx'
+ORDER BY created_at DESC;
+```
+
+### Transactions de crédits
+
+```sql
+SELECT *
+FROM credit_transactions
+WHERE user_id = 'user_xxx'
+ORDER BY created_at DESC
+LIMIT 20;
+```
+
+### Statistiques globales
+
+```sql
+-- Total des ventes
+SELECT
+  COUNT(*) as total_achats,
+  SUM(final_amount) as total_revenus,
+  SUM(total_credits) as total_credits_vendus
+FROM credit_purchases
+WHERE payment_status = 'succeeded';
+
+-- Répartition par pack
+SELECT
+  pack_name,
+  COUNT(*) as nombre_ventes,
+  SUM(final_amount) as revenus,
+  AVG(final_amount) as prix_moyen
+FROM credit_purchases
+WHERE payment_status = 'succeeded'
+GROUP BY pack_name
+ORDER BY revenus DESC;
+
+-- Utilisation des codes promo
+SELECT
+  promo_code,
+  COUNT(*) as utilisations,
+  SUM(discount_amount) as reduction_totale
+FROM credit_purchases
+WHERE promo_code IS NOT NULL
+GROUP BY promo_code
+ORDER BY utilisations DESC;
+```
+
+---
+
+## 🛠️ Fonctions Disponibles
+
+### Credits Manager (`lib/credits/credits-manager.ts`)
+
+```typescript
+// Récupération
+getActiveCreditPacks(): Promise<CreditPack[]>
+getCreditPackById(packId: string): Promise<CreditPack | null>
+getUserCreditBalance(userId: string): Promise<CreditBalance | null>
+getUserTierInfo(userId: string): Promise<TierInfo | null>
+
+// Vérification
+hasEnoughCredits(userId: string, requiredCredits: number): Promise<boolean>
+calculateTier(totalSpent: number): TierName
+
+// Opérations
+useCredits(userId: string, credits: number, action: string, promptId?: string)
+addCredits(userId: string, credits: number, type: 'purchase' | 'gift' | 'bonus' | 'refund')
+
+// Historique
+getCreditTransactions(userId: string, limit = 50, offset = 0)
+getCreditPurchases(userId: string, limit = 20, offset = 0)
+```
+
+### Exemple d'utilisation
+
+```typescript
+// Vérifier si l'utilisateur peut générer un prompt
+const canGenerate = await hasEnoughCredits(userId, CREDIT_COSTS.generate_gpt4);
+
+if (!canGenerate) {
+  return { error: 'Crédits insuffisants' };
+}
+
+// Utiliser les crédits
+await useCredits(userId, CREDIT_COSTS.generate_gpt4, 'generate', promptId);
+```
+
+---
+
+## 📝 APIs Disponibles
+
+### GET /api/credits/packs
+Récupère tous les packs actifs
+
+**Response:**
+```json
+{
+  "success": true,
+  "packs": [
+    {
+      "id": "uuid",
+      "name": "BASIC",
+      "display_name": "Pack Basic",
+      "credits": 100,
+      "bonus_credits": 10,
+      "total_credits": 110,
+      "price": 5000,
+      "currency": "XOF",
+      "tier_unlock": "SILVER",
+      "price_per_credit": 45
+    }
+  ]
+}
+```
+
+### GET /api/credits/balance
+Récupère solde + tier de l'utilisateur
+
+**Response:**
+```json
+{
+  "success": true,
+  "credits": {
+    "balance": 1660,
+    "purchased": 1450,
+    "used": 0,
+    "gifted": 260,
+    "usage_percentage": 0
+  },
+  "tier": {
+    "current": "PLATINUM",
+    "display_name": "Platinum",
+    "badge_emoji": "💎",
+    "badge_color": "#E5E4E2",
+    "expires_at": "2025-01-12T...",
+    "days_until_expiration": 30,
+    "total_spent": 37500,
+    "features": {
+      "history_days": -1,
+      "ai_models": ["gemini-flash", "gemini-pro", "gpt-4", "claude-3"],
+      "priority_support": true,
+      "team_workspaces": 10,
+      "api_access": true
+    }
+  },
+  "next_tier": null
+}
+```
+
+### POST /api/credits/purchase
+Achète un pack de crédits
+
+**Request:**
+```json
+{
+  "pack_id": "uuid",
+  "promo_code": "LAUNCH50"
+}
+```
+
+**Response:**
+```json
+{
+  "url": "https://checkout.fedapay.com/...",
+  "transaction_id": "387666",
+  "pack_name": "Pack Pro",
+  "total_credits": 350,
+  "final_amount": 6000
+}
+```
+
+### GET /api/promo-codes/validate?code=XXX&pack=BASIC
+Valide un code promo
+
+**Response:**
+```json
+{
+  "valid": true,
+  "promo_code": {
+    "id": "uuid",
+    "code": "LAUNCH50",
+    "name": "Lancement 50%",
+    "type": "percentage",
+    "discount_percentage": 50,
+    "applicable_packs": ["BASIC", "PRO", "PREMIUM"]
+  },
+  "discount_amount": 6000,
+  "final_amount": 6000
+}
+```
+
+---
+
+## 🧪 Tests de Paiement
+
+### Carte de Test FedaPay (Sandbox)
+
+```
+Numéro : 4000 0000 0000 0002
+CVC    : 123
+Date   : 12/25
+Nom    : Test User
+```
+
+**Résultat attendu**: Paiement approuvé
+
+### Autres Cartes de Test
+
+```
+# Paiement refusé
+4000 0000 0000 0044
+
+# Carte expirée
+4000 0000 0000 0069
+
+# Fonds insuffisants
+4000 0000 0000 0101
+```
+
+### Mobile Money Test
+
+En mode sandbox, FedaPay simule les paiements Mobile Money sans avoir besoin d'un vrai compte.
+
+---
+
+## 🚀 Prochaines Étapes
+
+### Étape 1: Appliquer la Migration SQL ✅ FAIT
+```bash
+# Supabase Dashboard → SQL Editor
+# Exécuter: supabase/migrations/003_credit_system.sql
+```
+
+### Étape 2: Tester en Local ✅ FAIT
+```bash
+npm run dev
+# Aller sur http://localhost:3000/test-credits
+# Tester achats avec codes promo
+```
+
+### Étape 3: Créer Pages Production 🔄 À FAIRE
+
+**Pages à créer**:
+1. `/credits/purchase` - Page publique d'achat
+2. `/dashboard/credits` - Dashboard utilisateur
+3. Indicateur de crédits dans le header
+
+### Étape 4: Déployer en Production 🔄 À FAIRE
+
+1. **Variables Vercel**:
+   ```env
+   FEDAPAY_SECRET_KEY=sk_live_...
+   FEDAPAY_PUBLIC_KEY=pk_live_...
+   FEDAPAY_ENVIRONMENT=live
+   NEXT_PUBLIC_SITE_URL=https://votredomaine.com
+   ```
+
+2. **Webhook FedaPay**:
+   - Dashboard FedaPay → Webhooks
+   - URL: `https://votredomaine.com/api/fedapay/webhook`
+
+3. **Deploy**:
+   ```bash
+   git add .
+   git commit -m "Système de crédits FedaPay complet"
+   git push
+   ```
+
+### Étape 5: Monitoring & Emails 🔄 À FAIRE
+
+1. **Email de confirmation** après achat
+2. **Dashboard admin** pour voir les ventes
+3. **Alertes** si crédits faibles
+4. **Analytics** FedaPay
+
+---
+
+## 🎯 Avantages du Système Actuel
+
+✅ **Flexible**: Codes promo puissants (réduction, bonus, gratuit)
+✅ **Sécurisé**: Vérification du statut via API FedaPay
+✅ **Automatique**: Tier calculé automatiquement
+✅ **Évolutif**: Vous contrôlez prix, features, coûts
+✅ **Transparent**: Historique complet en base de données
+✅ **Sans expiration**: Crédits valables à vie
+✅ **Local**: Paiements en FCFA pour le Bénin
 
 ---
 
 ## 📚 Documentation
 
-- **Setup complet** : [FEDAPAY_SETUP.md](FEDAPAY_SETUP.md)
-- **Variables env** : [VERCEL_ENV_VARIABLES.md](VERCEL_ENV_VARIABLES.md)
-- **Documentation FedaPay** : https://docs.fedapay.com
+- **Guide Complet**: [CREDIT_SYSTEM_GUIDE.md](CREDIT_SYSTEM_GUIDE.md)
+- **Résumé Rapide**: [CREDIT_SYSTEM_SUMMARY.md](CREDIT_SYSTEM_SUMMARY.md)
+- **Déploiement**: [DEPLOIEMENT_FINAL.md](DEPLOIEMENT_FINAL.md)
+- **Documentation FedaPay**: https://docs.fedapay.com/
 
 ---
 
-## 🆘 Support
+## 🎉 Félicitations !
 
-**Questions sur FedaPay** :
-- Email : support@fedapay.com
-- Dashboard : https://app.fedapay.com
+Votre **système de crédits avec FedaPay est 100% opérationnel** !
 
-**Questions sur le code** :
-- Consultez `FEDAPAY_SETUP.md`
-- Vérifiez les logs Vercel
-- Testez avec des cartes sandbox
+Vous pouvez maintenant :
+- Vendre des crédits à vos utilisateurs
+- Gérer des codes promo puissants
+- Débloquer des features selon les tiers
+- Accepter paiements carte + Mobile Money
+- Tout contrôler depuis Supabase et votre code
 
----
-
-**Prochaine étape** : Créer votre compte FedaPay et récupérer vos clés API ! 🚀
+**Bon lancement !** 🚀
