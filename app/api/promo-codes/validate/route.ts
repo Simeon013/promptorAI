@@ -2,6 +2,57 @@ import { NextRequest, NextResponse } from 'next/server';
 import { currentUser } from '@clerk/nextjs/server';
 import { validatePromoCode } from '@/lib/subscriptions/promo-codes';
 
+export async function POST(request: NextRequest) {
+  try {
+    const user = await currentUser();
+
+    if (!user) {
+      return NextResponse.json({ error: 'Non authentifie', valid: false }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { code, pack_name, amount, userId } = body;
+
+    if (!code || !pack_name || !amount) {
+      return NextResponse.json(
+        { error: 'Parametres manquants', valid: false },
+        { status: 400 }
+      );
+    }
+
+    const amountNum = typeof amount === 'number' ? amount : parseInt(amount, 10);
+    if (isNaN(amountNum) || amountNum <= 0) {
+      return NextResponse.json({ error: 'Montant invalide', valid: false }, { status: 400 });
+    }
+
+    const validation = await validatePromoCode(code, userId || user.id, pack_name, amountNum);
+
+    return NextResponse.json({
+      valid: validation.valid,
+      error: validation.error,
+      discount_amount: validation.discount_amount,
+      final_amount: validation.final_amount,
+      promo_code: validation.promo_code
+        ? {
+            id: validation.promo_code.id,
+            code: validation.promo_code.code,
+            name: validation.promo_code.name,
+            description: validation.promo_code.description,
+            type: validation.promo_code.type,
+            discount_value: validation.promo_code.discount_value,
+            bonus_credits: validation.promo_code.bonus_credits,
+          }
+        : null,
+    });
+  } catch (error: any) {
+    console.error('Erreur validation code promo (POST):', error);
+    return NextResponse.json(
+      { error: 'Erreur lors de la validation du code promo', details: error.message, valid: false },
+      { status: 500 }
+    );
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const user = await currentUser();

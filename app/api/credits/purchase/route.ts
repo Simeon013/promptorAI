@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // 5. Generer le token de paiement
+    // 5. Générer le token de paiement FedaPay
     const token = await transaction.generateToken();
 
     return NextResponse.json({

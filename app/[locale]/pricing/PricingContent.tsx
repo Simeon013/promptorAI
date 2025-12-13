@@ -85,29 +85,9 @@ export function PricingContent() {
     return colors[tier] || 'text-blue-600';
   };
 
-  const handlePurchase = async (packId: string) => {
-    setPurchasing(packId);
-    try {
-      const res = await fetch('/api/credits/purchase', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pack_id: packId }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.url) {
-        // Rediriger vers FedaPay
-        window.location.href = data.url;
-      } else {
-        alert(data.error || 'Erreur lors de la création du paiement');
-        setPurchasing(null);
-      }
-    } catch (error) {
-      console.error('Erreur achat:', error);
-      alert('Erreur lors de la création du paiement');
-      setPurchasing(null);
-    }
+  const handlePurchase = (packId: string) => {
+    // Rediriger vers la page de checkout
+    window.location.href = `/fr/credits/checkout?pack=${packId}`;
   };
 
   if (loading) {
@@ -283,23 +263,23 @@ export function PricingContent() {
 
                 {/* Promo Badge */}
                 {pack.active_promotion && pack.active_promotion.badge_text && (
-                  <div className="absolute top-0 left-0 z-10">
+                  <div className="absolute -top-3 -right-3 z-10">
                     <div
-                      className={`px-3 py-1 rounded-br-lg text-white text-xs font-bold ${
+                      className={`px-4 py-2 rounded-lg text-white text-sm font-bold shadow-lg flex items-center gap-1.5 animate-pulse ${
                         pack.active_promotion.badge_color === 'red'
-                          ? 'bg-red-500'
+                          ? 'bg-gradient-to-r from-red-500 to-red-600'
                           : pack.active_promotion.badge_color === 'orange'
-                          ? 'bg-orange-500'
+                          ? 'bg-gradient-to-r from-orange-500 to-orange-600'
                           : pack.active_promotion.badge_color === 'purple'
-                          ? 'bg-purple-500'
+                          ? 'bg-gradient-to-r from-purple-500 to-purple-600'
                           : pack.active_promotion.badge_color === 'blue'
-                          ? 'bg-blue-500'
+                          ? 'bg-gradient-to-r from-blue-500 to-blue-600'
                           : pack.active_promotion.badge_color === 'green'
-                          ? 'bg-green-500'
-                          : 'bg-red-500'
+                          ? 'bg-gradient-to-r from-green-500 to-green-600'
+                          : 'bg-gradient-to-r from-red-500 to-red-600'
                       }`}
                     >
-                      <Tag className="h-3 w-3 inline mr-1" />
+                      <Tag className="h-4 w-4" />
                       {pack.active_promotion.badge_text}
                     </div>
                   </div>

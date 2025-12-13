@@ -38,14 +38,21 @@ export async function GET(request: NextRequest) {
 
     // Traiter la transaction si approuvee
     if (realStatus === 'approved') {
-      await handleTransactionApproved(transaction);
-      redirect('/credits/purchase?success=true&credits=' + (transaction.custom_metadata?.total_credits || 0));
+      const result = await handleTransactionApproved(transaction);
+
+      // Construire l'URL de redirection avec tous les parametres
+      const credits = transaction.custom_metadata?.total_credits || 0;
+      const packName = transaction.custom_metadata?.pack_name || '';
+      const tier = result?.newTier || '';
+      const oldTier = result?.oldTier || '';
+
+      redirect(`/fr/credits/success?credits=${credits}&pack=${encodeURIComponent(packName)}&tier=${tier}&old_tier=${oldTier}`);
     } else if (realStatus === 'declined') {
-      redirect('/credits/purchase?error=payment_declined');
+      redirect('/fr/credits/purchase?error=payment_declined');
     } else if (realStatus === 'canceled') {
-      redirect('/credits/purchase?error=payment_canceled');
+      redirect('/fr/credits/purchase?error=payment_canceled');
     } else {
-      redirect('/credits/purchase?error=unknown_status&status=' + realStatus);
+      redirect('/fr/credits/purchase?error=unknown_status&status=' + realStatus);
     }
   } catch (error: any) {
     // Ignorer l'erreur NEXT_REDIRECT (comportement normal)
@@ -119,21 +126,23 @@ async function handleTransactionApproved(data: any) {
 
     if (!userId) {
       console.error('Metadonnees manquantes (user_id introuvable):', metadata);
-      return;
+      return null;
     }
 
     console.log('User ID trouve:', userId, '| Type:', type);
 
     // Traiter selon le type de transaction
     if (type === 'credit_purchase') {
-      await handleCreditPurchase(data, metadata);
+      return await handleCreditPurchase(data, metadata);
     } else {
       // Anciens achats d'abonnements (pour compatibilite)
       console.log('Transaction legacy (abonnement) detectee');
       await handleLegacySubscription(data, metadata);
+      return null;
     }
   } catch (error) {
     console.error('Erreur handleTransactionApproved:', error);
+    return null;
   }
 }
 
@@ -262,8 +271,17 @@ async function handleCreditPurchase(data: any, metadata: any) {
     // TODO: Envoyer email de confirmation
     // await sendCreditPurchaseEmail(userId, packName, totalCredits, newTier);
 
+    // Retourner les informations de tier pour la redirection
+    return {
+      oldTier,
+      newTier,
+      totalCredits,
+      packName
+    };
+
   } catch (error) {
     console.error('Erreur handleCreditPurchase:', error);
+    return null;
   }
 }
 
