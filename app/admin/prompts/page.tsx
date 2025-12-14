@@ -154,7 +154,7 @@ export default function AdminPromptsPage() {
             </div>
             <p className="text-sm text-muted-foreground">Total Tokens</p>
             <p className="text-3xl font-bold text-foreground mt-1">
-              {stats.totalTokens.toLocaleString()}
+              {(stats.totalTokens ?? 0).toLocaleString()}
             </p>
           </Card>
         </div>
@@ -296,7 +296,7 @@ export default function AdminPromptsPage() {
                     </span>
                     {prompt.tokens && (
                       <span className="flex items-center gap-1">
-                        <span className="font-medium">Tokens:</span> {prompt.tokens.toLocaleString()}
+                        <span className="font-medium">Tokens:</span> {(prompt.tokens ?? 0).toLocaleString()}
                       </span>
                     )}
                   </div>

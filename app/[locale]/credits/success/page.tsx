@@ -117,7 +117,7 @@ function SuccessContent() {
                     Solde Actuel
                   </div>
                   <div className="text-3xl font-bold text-blue-900 dark:text-blue-100">
-                    {balance.balance?.toLocaleString() || '0'}
+                    {(balance.credits?.balance ?? 0).toLocaleString()}
                   </div>
                   <div className="text-xs text-blue-600 dark:text-blue-400">crédits disponibles</div>
                 </div>

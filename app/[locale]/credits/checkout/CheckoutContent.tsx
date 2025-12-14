@@ -322,7 +322,7 @@ function CheckoutContent() {
               <div className="grid grid-cols-2 gap-6 mb-6">
                 <div className="bg-purple-50 dark:bg-purple-950/30 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
                   <div className="text-sm text-purple-600 dark:text-purple-400 font-medium mb-2">Crédits de base</div>
-                  <div className="text-3xl font-bold">{pack.credits.toLocaleString()}</div>
+                  <div className="text-3xl font-bold">{(pack.credits ?? 0).toLocaleString()}</div>
                 </div>
 
                 {(pack.bonus_credits > 0 || (activePromotion && (activePromotion.discount_type === 'credit_bonus' || activePromotion.discount_type === 'free_credits'))) && (
@@ -332,7 +332,7 @@ function CheckoutContent() {
                       Crédits bonus
                     </div>
                     <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                      +{(pack.bonus_credits + (activePromotion?.discount_type === 'credit_bonus' || activePromotion?.discount_type === 'free_credits' ? (activePromotion.bonus_credits || 0) : 0)).toLocaleString()}
+                      +{((pack.bonus_credits ?? 0) + (activePromotion?.discount_type === 'credit_bonus' || activePromotion?.discount_type === 'free_credits' ? (activePromotion.bonus_credits || 0) : 0)).toLocaleString()}
                     </div>
                   </div>
                 )}
@@ -342,7 +342,7 @@ function CheckoutContent() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-sm opacity-90 mb-1">Total de crédits</div>
-                    <div className="text-4xl font-bold">{totalCredits.toLocaleString()}</div>
+                    <div className="text-4xl font-bold">{(totalCredits ?? 0).toLocaleString()}</div>
                   </div>
                   <CheckCircle className="h-12 w-12 opacity-80" />
                 </div>
@@ -500,7 +500,7 @@ function CheckoutContent() {
 
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Prix de base</span>
-                    <span className="font-semibold">{pack.price.toLocaleString()} {pack.currency}</span>
+                    <span className="font-semibold">{(pack.price ?? 0).toLocaleString()} {pack.currency}</span>
                   </div>
 
                   {discount > 0 && (
@@ -509,7 +509,7 @@ function CheckoutContent() {
                         <Sparkles className="h-4 w-4" />
                         Réduction
                       </span>
-                      <span className="font-semibold">-{discount.toLocaleString()} {pack.currency}</span>
+                      <span className="font-semibold">-{(discount ?? 0).toLocaleString()} {pack.currency}</span>
                     </div>
                   )}
 
@@ -518,7 +518,7 @@ function CheckoutContent() {
                       <span className="font-semibold text-lg">Total</span>
                       <div className="text-right">
                         <div className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                          {finalPrice.toLocaleString()}
+                          {(finalPrice ?? 0).toLocaleString()}
                         </div>
                         <div className="text-sm text-muted-foreground">{pack.currency}</div>
                       </div>
@@ -530,7 +530,7 @@ function CheckoutContent() {
                       Vous recevrez
                     </div>
                     <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      {totalCredits.toLocaleString()} crédits
+                      {(totalCredits ?? 0).toLocaleString()} crédits
                     </div>
                   </div>
                 </div>
@@ -562,7 +562,7 @@ function CheckoutContent() {
                 ) : (
                   <>
                     <Shield className="h-5 w-5 mr-2" />
-                    Payer {finalPrice.toLocaleString()} {pack.currency}
+                    Payer {(finalPrice ?? 0).toLocaleString()} {pack.currency}
                   </>
                 )}
               </Button>

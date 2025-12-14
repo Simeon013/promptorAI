@@ -1,8 +1,18 @@
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import { supabase } from '@/lib/db/supabase';
-import { getQuotaInfo } from '@/lib/auth/supabase-clerk';
-import { Sparkles, TrendingUp, Clock, Zap, History, ArrowRight, CreditCard } from 'lucide-react';
+import {
+  Sparkles,
+  TrendingUp,
+  Zap,
+  History,
+  ArrowRight,
+  Coins,
+  Trophy,
+  Wallet,
+  Activity,
+  ShoppingCart
+} from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -35,18 +45,16 @@ export default async function DashboardPage() {
           email: clerkUser.emailAddresses[0]?.emailAddress ?? '',
           name: `${clerkUser.firstName ?? ''} ${clerkUser.lastName ?? ''}`.trim() || null,
           avatar: clerkUser.imageUrl,
-          plan: 'FREE',
-          quota_used: 0,
-          quota_limit: 10,
+          tier: 'FREE',
+          credits_balance: 0,
+          total_spent: 0,
         })
         .select()
         .single();
 
       if (error) {
         console.error('❌ Error creating user:', error.message);
-        // Si erreur de duplication, récupérer l'utilisateur existant
         if (error.code === '23505') {
-          console.log('ℹ️ User already exists, fetching...');
           const { data: existingUser } = await supabase
             .from('users')
             .select('*')
@@ -67,10 +75,7 @@ export default async function DashboardPage() {
     .select('*')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
-    .limit(10);
-
-  // Récupérer les infos de quota
-  const quotaInfo = await getQuotaInfo(userId);
+    .limit(5);
 
   // Stats
   const { count: totalPrompts } = await supabase
@@ -85,186 +90,270 @@ export default async function DashboardPage() {
     .eq('user_id', userId)
     .gte('created_at', firstDayOfMonth);
 
+  // Récupérer les achats récents
+  const { data: recentPurchases } = await supabase
+    .from('credit_purchases')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(3);
+
   const clerkUser = await currentUser();
+
+  const creditsBalance = user?.credits_balance || 0;
+  const tier = user?.tier || 'FREE';
+  const totalSpent = user?.total_spent || 0;
+
+  // Calculer le prochain tier
+  const tierThresholds = {
+    FREE: 0,
+    BRONZE: 1000,
+    SILVER: 5000,
+    GOLD: 10000,
+    PLATINUM: 20000
+  };
+
+  const currentTierValue = tierThresholds[tier as keyof typeof tierThresholds] || 0;
+  const nextTierKey = Object.entries(tierThresholds).find(([_, value]) => value > currentTierValue)?.[0];
+  const nextTierValue = nextTierKey ? tierThresholds[nextTierKey as keyof typeof tierThresholds] : currentTierValue;
+  const progressToNextTier = nextTierKey ? ((totalSpent - currentTierValue) / (nextTierValue - currentTierValue)) * 100 : 100;
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <HeaderSimple />
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 dark:bg-purple-500/30 blur-[120px]" />
-        <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/20 dark:bg-cyan-500/30 blur-[120px]" />
+      {/* Animated Background Effects */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 dark:from-purple-500/10 dark:to-pink-500/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 dark:from-cyan-500/10 dark:to-blue-500/10 blur-[120px] animate-pulse delay-700" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[400px] w-[400px] rounded-full bg-gradient-to-br from-yellow-500/10 to-orange-500/10 blur-[120px] animate-pulse delay-1000" />
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Ad Banner for FREE users */}
-        {user?.plan === 'FREE' && (
-          <div className="mb-6">
-            <Card className="border-2 border-purple-500/30 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-orange-500/10">
-              <CardContent className="p-3 sm:p-4">
-                <div className="flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                    <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs sm:text-sm font-medium text-foreground truncate">
-                        <span className="font-semibold">Sans publicité avec Starter</span>
-                        <span className="hidden sm:inline ml-2">• 100 prompts/mois + Suggestions IA pour 9€/mois</span>
-                      </p>
-                    </div>
-                  </div>
-                  <Link href="/pricing">
-                    <Button size="sm" className="btn-gradient text-white flex-shrink-0 text-xs sm:text-sm">
-                      Découvrir
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2 shadow-lg">
-              <Sparkles className="h-6 w-6 text-white" />
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Welcome Section with Quick Actions */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 p-3 shadow-xl shadow-purple-500/20 animate-in zoom-in duration-500">
+              <Sparkles className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-              <p className="text-sm text-muted-foreground">
-                Bienvenue, {clerkUser?.firstName || clerkUser?.emailAddresses[0]?.emailAddress}
+              <h1 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                Dashboard
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Bienvenue, <span className="font-semibold">{clerkUser?.firstName || clerkUser?.emailAddresses[0]?.emailAddress}</span>
               </p>
             </div>
           </div>
-          <Link
-            href="/editor"
-            className="inline-flex items-center gap-2 rounded-lg btn-gradient text-white px-4 py-2 text-sm font-medium transition-all hover:shadow-lg hover:shadow-purple-500/50 mt-4"
-          >
-            <Sparkles className="h-4 w-4" />
-            Générer un Prompt
-            <ArrowRight className="h-4 w-4" />
-          </Link>
+
+          <div className="flex gap-3">
+            <Link href="/fr/credits/purchase">
+              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transition-all">
+                <ShoppingCart className="h-5 w-5 mr-2" />
+                Acheter des Crédits
+              </Button>
+            </Link>
+            <Link href="/editor">
+              <Button size="lg" variant="outline" className="border-2 hover:border-purple-500 hover:bg-purple-500/10 transition-all">
+                <Sparkles className="h-5 w-5 mr-2" />
+                Générer
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Plan Card */}
-          <Link href="/dashboard/credits">
-            <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10 cursor-pointer h-full">
+        {/* Main Stats Grid - Credits, Tier, Balance */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Credits Balance Card */}
+          <Card className="border-2 border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 hover:shadow-xl hover:shadow-purple-500/20 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 cursor-pointer group">
+            <Link href="/dashboard/credits">
               <CardHeader className="pb-3">
-                <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  <Zap className="h-4 w-4 text-purple-500" />
-                  Tier Actuel
+                <CardTitle className="flex items-center gap-2 text-sm font-medium text-purple-600 dark:text-purple-400">
+                  <div className="p-2 bg-purple-500/20 rounded-lg group-hover:scale-110 transition-transform">
+                    <Coins className="h-5 w-5" />
+                  </div>
+                  Solde de Crédits
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold gradient-text">
-                  {user?.tier || 'FREE'}
+                <div className="text-5xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                  {(creditsBalance ?? 0).toLocaleString()}
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  {(!user?.tier || user?.tier === 'FREE') && 'Achetez des crédits pour débloquer plus'}
-                  {user?.tier === 'BRONZE' && '1 000 FCFA dépensés'}
-                  {user?.tier === 'SILVER' && '5 000 FCFA dépensés'}
-                  {user?.tier === 'GOLD' && '10 000 FCFA dépensés'}
-                  {user?.tier === 'PLATINUM' && '20 000 FCFA dépensés'}
+                <p className="text-xs text-muted-foreground mb-3">
+                  crédits disponibles
                 </p>
-                <div className="mt-2 flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400">
-                  <CreditCard className="h-3 w-3" />
-                  Voir mes crédits
+                <div className="flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400 font-medium group-hover:gap-2 transition-all">
+                  <span>Voir les détails</span>
+                  <ArrowRight className="h-3 w-3" />
                 </div>
               </CardContent>
-            </Card>
-          </Link>
+            </Link>
+          </Card>
 
-          {/* Quota Card */}
-          <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+          {/* Tier Card with Progress */}
+          <Card className="border-2 border-yellow-200 dark:border-yellow-800 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-950/30 dark:to-orange-950/30 hover:shadow-xl hover:shadow-yellow-500/20 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 delay-100">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <TrendingUp className="h-4 w-4 text-purple-500" />
-                Quota
+              <CardTitle className="flex items-center gap-2 text-sm font-medium text-yellow-700 dark:text-yellow-400">
+                <div className="p-2 bg-yellow-500/20 rounded-lg">
+                  <Trophy className="h-5 w-5" />
+                </div>
+                Tier Actuel
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">
-                {quotaInfo?.used || 0} / {quotaInfo?.limit || 10}
+              <div className="text-5xl font-black bg-gradient-to-r from-yellow-600 to-orange-600 bg-clip-text text-transparent mb-2">
+                {tier}
               </div>
-              <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted">
-                <div
-                  className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all"
-                  style={{
-                    width: `${quotaInfo ? (quotaInfo.used / quotaInfo.limit) * 100 : 0}%`,
-                  }}
-                />
-              </div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                {quotaInfo?.remaining || 0} prompts restants
+              <p className="text-xs text-muted-foreground mb-3">
+                {(totalSpent ?? 0).toLocaleString()} FCFA dépensés
               </p>
+
+              {nextTierKey && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-muted-foreground">Prochain: {nextTierKey}</span>
+                    <span className="font-semibold text-yellow-600 dark:text-yellow-400">
+                      {Math.round(progressToNextTier)}%
+                    </span>
+                  </div>
+                  <div className="h-2 bg-yellow-200 dark:bg-yellow-900/30 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full transition-all duration-1000 ease-out"
+                      style={{ width: `${Math.min(progressToNextTier, 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Encore {((nextTierValue - totalSpent) ?? 0).toLocaleString()} FCFA
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
+          {/* Total Spent Card */}
+          <Card className="border-2 border-green-200 dark:border-green-800 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 hover:shadow-xl hover:shadow-green-500/20 transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 delay-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium text-green-700 dark:text-green-400">
+                <div className="p-2 bg-green-500/20 rounded-lg">
+                  <Wallet className="h-5 w-5" />
+                </div>
+                Total Dépensé
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
+                {(totalSpent ?? 0).toLocaleString()}
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                FCFA depuis le début
+              </p>
+              {recentPurchases && recentPurchases.length > 0 && (
+                <p className="text-xs text-green-600 dark:text-green-400">
+                  Dernier achat: {new Date(recentPurchases[0].created_at).toLocaleDateString('fr-FR')}
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Activity Stats */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {/* Total Prompts */}
-          <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+          <Card className="hover:shadow-lg hover:border-purple-500/50 transition-all duration-300 animate-in fade-in slide-in-from-left delay-300">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <Sparkles className="h-4 w-4 text-purple-500" />
+                <Activity className="h-4 w-4 text-purple-500" />
                 Total Prompts
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{totalPrompts}</div>
+              <div className="text-3xl font-bold text-foreground">{totalPrompts || 0}</div>
               <p className="mt-1 text-xs text-muted-foreground">Depuis le début</p>
             </CardContent>
           </Card>
 
           {/* This Month */}
-          <Card className="border transition-all hover:border-purple-500/50 hover:shadow-lg hover:shadow-purple-500/10">
+          <Card className="hover:shadow-lg hover:border-purple-500/50 transition-all duration-300 animate-in fade-in slide-in-from-left delay-400">
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <Clock className="h-4 w-4 text-purple-500" />
+                <TrendingUp className="h-4 w-4 text-purple-500" />
                 Ce Mois-ci
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-foreground">{promptsThisMonth}</div>
+              <div className="text-3xl font-bold text-foreground">{promptsThisMonth || 0}</div>
               <p className="mt-1 text-xs text-muted-foreground">Prompts générés</p>
             </CardContent>
           </Card>
+
+          {/* Recent Purchases */}
+          <Card className="hover:shadow-lg hover:border-purple-500/50 transition-all duration-300 animate-in fade-in slide-in-from-right delay-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <ShoppingCart className="h-4 w-4 text-purple-500" />
+                Achats
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-3xl font-bold text-foreground">{recentPurchases?.length || 0}</div>
+              <p className="mt-1 text-xs text-muted-foreground">Transactions</p>
+            </CardContent>
+          </Card>
+
+          {/* Quick Action - History */}
+          <Link href="/dashboard/history">
+            <Card className="hover:shadow-lg hover:border-purple-500 hover:bg-purple-500/5 transition-all duration-300 cursor-pointer animate-in fade-in slide-in-from-right delay-400 h-full">
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <History className="h-4 w-4 text-purple-500" />
+                  Historique
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 font-medium">
+                  <span>Voir tout</span>
+                  <ArrowRight className="h-4 w-4" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
-        {/* Recent Prompts */}
-        <Card className="border">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-foreground">Prompts Récents</CardTitle>
-                <CardDescription className="text-muted-foreground">
-                  Vos 10 derniers prompts générés
-                </CardDescription>
+        {/* Recent Activity */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Recent Prompts */}
+          <Card className="border animate-in fade-in slide-in-from-bottom-8 delay-500">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-foreground flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-500" />
+                    Prompts Récents
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Vos dernières générations
+                  </CardDescription>
+                </div>
+                <Link href="/dashboard/history">
+                  <Button variant="outline" size="sm" className="gap-2 hover:border-purple-500">
+                    <History className="h-4 w-4" />
+                    Tout voir
+                  </Button>
+                </Link>
               </div>
-              <Link
-                href="/dashboard/history"
-                className="flex items-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm font-medium text-foreground transition-all hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 sm:px-4"
-              >
-                <History className="h-4 w-4" />
-                <span className="hidden sm:inline">Voir l'Historique</span>
-                <span className="sm:hidden">Historique</span>
-              </Link>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {prompts && prompts.length > 0 ? (
-              <div className="space-y-4">
-                {prompts.map((prompt) => (
-                  <div
-                    key={prompt.id}
-                    className="rounded-lg border bg-card p-4 transition-all hover:border-purple-500/50 hover:shadow-md"
-                  >
-                    <div className="mb-2 flex items-start justify-between">
-                      <div className="flex items-center gap-2">
+            </CardHeader>
+            <CardContent>
+              {prompts && prompts.length > 0 ? (
+                <div className="space-y-3">
+                  {prompts.map((prompt) => (
+                    <div
+                      key={prompt.id}
+                      className="rounded-lg border bg-card/50 p-4 hover:bg-card hover:border-purple-500/50 hover:shadow-md transition-all duration-200"
+                    >
+                      <div className="flex items-start justify-between mb-2">
                         <span
-                          className={`rounded-full px-2 py-1 text-xs font-medium ${
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${
                             prompt.type === 'GENERATE'
                               ? 'bg-purple-500/20 text-purple-600 dark:text-purple-400'
                               : 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-400'
@@ -272,78 +361,153 @@ export default async function DashboardPage() {
                         >
                           {prompt.type === 'GENERATE' ? 'Généré' : 'Amélioré'}
                         </span>
-                        {prompt.language && (
-                          <span className="rounded-full bg-muted px-2 py-1 text-xs text-muted-foreground">
-                            {prompt.language}
-                          </span>
-                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {new Date(prompt.created_at).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
                       </div>
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(prompt.created_at).toLocaleDateString('fr-FR', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </span>
+                      <p className="text-sm text-foreground line-clamp-2">
+                        {prompt.output.substring(0, 120)}
+                        {prompt.output.length > 120 && '...'}
+                      </p>
                     </div>
-                    <p className="mb-2 text-sm text-muted-foreground">
-                      <strong className="text-foreground">Input:</strong> {prompt.input.substring(0, 100)}
-                      {prompt.input.length > 100 && '...'}
-                    </p>
-                    <p className="text-sm text-foreground">
-                      <strong>Output:</strong> {prompt.output.substring(0, 150)}
-                      {prompt.output.length > 150 && '...'}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="py-12 text-center">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10">
-                  <Sparkles className="h-8 w-8 text-purple-500" />
+                  ))}
                 </div>
-                <h3 className="mt-4 text-lg font-medium text-foreground">
-                  Aucun prompt pour le moment
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Commencez par générer votre premier prompt !
-                </p>
-                <Link
-                  href="/editor"
-                  className="mt-4 inline-flex items-center gap-2 rounded-lg btn-gradient text-white px-4 py-2 text-sm font-medium transition-all hover:shadow-lg hover:shadow-purple-500/50"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  Générer un Prompt
+              ) : (
+                <div className="py-8 text-center">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10 mb-3">
+                    <Sparkles className="h-8 w-8 text-purple-500" />
+                  </div>
+                  <h3 className="text-lg font-medium text-foreground mb-2">
+                    Aucun prompt pour le moment
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Commencez par générer votre premier prompt !
+                  </p>
+                  <Link href="/editor">
+                    <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                      <Sparkles className="h-4 w-4 mr-2" />
+                      Générer un Prompt
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Recent Purchases */}
+          <Card className="border animate-in fade-in slide-in-from-bottom-8 delay-600">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-foreground flex items-center gap-2">
+                    <ShoppingCart className="h-5 w-5 text-purple-500" />
+                    Achats Récents
+                  </CardTitle>
+                  <CardDescription className="text-muted-foreground">
+                    Vos dernières transactions
+                  </CardDescription>
+                </div>
+                <Link href="/dashboard/credits">
+                  <Button variant="outline" size="sm" className="gap-2 hover:border-purple-500">
+                    <Zap className="h-4 w-4" />
+                    Détails
+                  </Button>
                 </Link>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardHeader>
+            <CardContent>
+              {recentPurchases && recentPurchases.length > 0 ? (
+                <div className="space-y-3">
+                  {recentPurchases.map((purchase) => (
+                    <div
+                      key={purchase.id}
+                      className="rounded-lg border bg-card/50 p-4 hover:bg-card hover:border-green-500/50 hover:shadow-md transition-all duration-200"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <div className="p-1.5 bg-green-500/20 rounded-lg">
+                            <Coins className="h-4 w-4 text-green-600" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-sm">{purchase.pack_name}</p>
+                            <p className="text-xs text-green-600 dark:text-green-400">
+                              +{purchase.total_credits} crédits
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm font-semibold">
+                            {(purchase.final_amount ?? 0).toLocaleString()} {purchase.currency}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {new Date(purchase.created_at).toLocaleDateString('fr-FR', {
+                              day: 'numeric',
+                              month: 'short',
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                      {purchase.tier_after !== purchase.tier_before && (
+                        <div className="mt-2 flex items-center gap-2 text-xs bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 px-2 py-1 rounded">
+                          <Trophy className="h-3 w-3" />
+                          Tier: {purchase.tier_before} → {purchase.tier_after}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center">
+                  <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 mb-3">
+                    <ShoppingCart className="h-8 w-8 text-green-500" />
+                  </div>
+                  <h3 className="text-lg font-medium text-foreground mb-2">
+                    Aucun achat
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Achetez des crédits pour débloquer des fonctionnalités
+                  </p>
+                  <Link href="/fr/credits/purchase">
+                    <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      Acheter des Crédits
+                    </Button>
+                  </Link>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* Upgrade CTA (for free users) */}
-        {user?.plan === 'FREE' && (
-          <Card className="mt-6 border-purple-500/50 bg-gradient-to-br from-purple-500/10 to-pink-500/10 backdrop-blur-sm">
+        {/* Call to Action - LOW Credits Warning */}
+        {creditsBalance < 50 && (
+          <Card className="border-2 border-orange-500/50 bg-gradient-to-br from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20 animate-in fade-in slide-in-from-bottom-8 delay-700">
             <CardHeader>
-              <CardTitle className="text-foreground">Passez à Pro</CardTitle>
-              <CardDescription className="text-muted-foreground">
-                Débloquez des prompts illimités et des fonctionnalités avancées
+              <CardTitle className="text-orange-900 dark:text-orange-100 flex items-center gap-2">
+                <Zap className="h-5 w-5 text-orange-600" />
+                Crédits Faibles
+              </CardTitle>
+              <CardDescription className="text-orange-700 dark:text-orange-300">
+                Votre solde est bas. Rechargez pour continuer à générer des prompts.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-col sm:gap-1">
-                  <p className="text-sm text-foreground">✨ Prompts illimités</p>
-                  <p className="text-sm text-foreground">🚀 Génération prioritaire</p>
-                  <p className="text-sm text-foreground">📊 Analytics avancées</p>
-                  <p className="text-sm text-foreground">🤝 Support premium</p>
+              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center sm:justify-between">
+                <div className="text-sm space-y-1">
+                  <p className="text-orange-900 dark:text-orange-100">✨ Crédits bonus sur certains packs</p>
+                  <p className="text-orange-900 dark:text-orange-100">🎯 Utilisez un code promo pour plus d'économies</p>
+                  <p className="text-orange-900 dark:text-orange-100">🏆 Montez de tier en achetant des crédits</p>
                 </div>
-                <Link
-                  href="/pricing"
-                  className="inline-flex items-center gap-2 rounded-lg btn-gradient text-white px-6 py-3 text-center text-sm font-medium transition-all hover:shadow-lg hover:shadow-purple-500/50"
-                >
-                  Voir les Plans
-                  <ArrowRight className="h-4 w-4" />
+                <Link href="/fr/credits/purchase">
+                  <Button size="lg" className="bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white shadow-lg hover:shadow-xl">
+                    Recharger Maintenant
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
                 </Link>
               </div>
             </CardContent>

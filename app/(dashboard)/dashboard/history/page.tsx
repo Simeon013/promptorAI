@@ -4,12 +4,11 @@ import { useEffect, useState } from 'react';
 import { PromptCard } from '@/components/PromptCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, ChevronLeft, ChevronRight, Filter, History, Sparkles, Download, Lock } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Filter, History, Sparkles, Download, ArrowLeft, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { HeaderSimple } from '@/components/layout/HeaderSimple';
-import { Plan } from '@/types';
-import { canExport, getExportFormats } from '@/lib/features/plan-features';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 interface Prompt {
   id: string;
@@ -38,7 +37,6 @@ export default function HistoryPage() {
     total: 0,
     totalPages: 0,
   });
-  const [userPlan, setUserPlan] = useState<Plan>(Plan.FREE);
 
   // Filtres
   const [search, setSearch] = useState('');
@@ -65,6 +63,7 @@ export default function HistoryPage() {
       setPagination(data.pagination);
     } catch (error) {
       console.error('Erreur lors du chargement des prompts:', error);
+      toast.error('Erreur lors du chargement des prompts');
     } finally {
       setLoading(false);
     }
@@ -72,16 +71,6 @@ export default function HistoryPage() {
 
   useEffect(() => {
     fetchPrompts();
-
-    // Récupérer le plan de l'utilisateur
-    fetch('/api/subscription')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.user?.plan) {
-          setUserPlan(data.user.plan as Plan);
-        }
-      })
-      .catch((error) => console.error('Error fetching user plan:', error));
   }, []);
 
   const handleSearch = () => {
@@ -96,21 +85,16 @@ export default function HistoryPage() {
 
   const handleDelete = (id: string) => {
     setPrompts((prev) => prev.filter((p) => p.id !== id));
+    setPagination(prev => ({ ...prev, total: prev.total - 1 }));
+    toast.success('Prompt supprimé');
   };
 
   const handleExportCSV = () => {
-    if (!canExport(userPlan)) {
-      toast.error('Passez au plan STARTER pour exporter vos prompts');
+    if (prompts.length === 0) {
+      toast.error('Aucun prompt à exporter');
       return;
     }
 
-    const formats = getExportFormats(userPlan);
-    if (!formats.includes('csv')) {
-      toast.error('Format CSV non disponible pour votre plan');
-      return;
-    }
-
-    // Créer le CSV
     const headers = ['Type', 'Input', 'Output', 'Language', 'Model', 'Date', 'Favorited'];
     const rows = prompts.map((p) => [
       p.type,
@@ -133,14 +117,8 @@ export default function HistoryPage() {
   };
 
   const handleExportJSON = () => {
-    if (!canExport(userPlan)) {
-      toast.error('Passez au plan PRO pour exporter en JSON');
-      return;
-    }
-
-    const formats = getExportFormats(userPlan);
-    if (!formats.includes('json')) {
-      toast.error('Format JSON disponible uniquement pour le plan PRO');
+    if (prompts.length === 0) {
+      toast.error('Aucun prompt à exporter');
       return;
     }
 
@@ -154,194 +132,241 @@ export default function HistoryPage() {
     toast.success('Export JSON réussi !');
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <HeaderSimple />
 
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-purple-500/20 dark:bg-purple-500/30 blur-[120px]" />
-        <div className="absolute bottom-40 right-1/4 h-[400px] w-[400px] rounded-full bg-cyan-500/20 dark:bg-cyan-500/30 blur-[120px]" />
+      {/* Animated Background */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-0 left-1/4 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 dark:from-purple-500/10 dark:to-pink-500/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-500/20 dark:from-cyan-500/10 dark:to-blue-500/10 blur-[120px] animate-pulse" />
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2 shadow-lg">
-              <History className="h-6 w-6 text-white" />
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-4"
+        >
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm" className="gap-2 hover:bg-purple-500/10">
+              <ArrowLeft className="h-4 w-4" />
+              Retour au Dashboard
+            </Button>
+          </Link>
+
+          <div className="flex items-center gap-4">
+            <div className="rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 p-3 shadow-xl shadow-purple-500/20">
+              <History className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Historique</h1>
+              <h1 className="text-4xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent">
+                Historique
+              </h1>
               <p className="text-sm text-muted-foreground">
                 {pagination.total} prompt{pagination.total > 1 ? 's' : ''} au total
               </p>
             </div>
           </div>
-          <Link href="/dashboard">
-            <Button variant="outline" size="sm" className="mt-4 transition-all hover:border-purple-500">
-              Retour au Dashboard
-            </Button>
-          </Link>
-        </div>
+        </motion.div>
 
         {/* Barre de recherche et filtres */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-8">
-          <div className="flex-1 flex gap-2">
-            <Input
-              placeholder="Rechercher dans vos prompts..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              className="bg-background border-input transition-all focus:border-purple-500"
-            />
-            <Button onClick={handleSearch} size="sm" className="btn-gradient text-white">
-              <Search className="h-4 w-4" />
-            </Button>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-4"
+        >
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex-1 flex gap-2">
+              <Input
+                placeholder="Rechercher dans vos prompts..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                className="bg-background border-input transition-all focus:border-purple-500"
+              />
+              <Button onClick={handleSearch} size="default" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white">
+                <Search className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Filtres */}
+            <div className="flex gap-2">
+              <select
+                value={typeFilter}
+                onChange={(e) => {
+                  setTypeFilter(e.target.value as any);
+                  fetchPrompts(1);
+                }}
+                aria-label="Filtrer par type de prompt"
+                className="bg-background border-2 border-input text-foreground rounded-lg px-4 py-2 text-sm transition-all hover:border-purple-500 focus:border-purple-500 focus:outline-none cursor-pointer"
+              >
+                <option value="ALL">Tous types</option>
+                <option value="GENERATE">Générés</option>
+                <option value="IMPROVE">Améliorés</option>
+              </select>
+
+              <Button
+                variant={showFavoritesOnly ? 'default' : 'outline'}
+                size="default"
+                onClick={() => {
+                  setShowFavoritesOnly(!showFavoritesOnly);
+                  fetchPrompts(1);
+                }}
+                className={showFavoritesOnly ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white' : 'border-2 hover:border-purple-500'}
+              >
+                <Filter className="h-4 w-4 mr-2" />
+                Favoris
+              </Button>
+            </div>
           </div>
 
-          {/* Filtres */}
-          <div className="flex gap-2">
-            <select
-              value={typeFilter}
-              onChange={(e) => {
-                setTypeFilter(e.target.value as any);
-                fetchPrompts(1);
-              }}
-              aria-label="Filtrer par type de prompt"
-              className="bg-background border border-input text-foreground rounded-md px-3 py-2 text-sm transition-all hover:border-purple-500 focus:border-purple-500 focus:outline-none"
-            >
-              <option value="ALL">Tous types</option>
-              <option value="GENERATE">Générés</option>
-              <option value="IMPROVE">Améliorés</option>
-            </select>
-
-            <Button
-              variant={showFavoritesOnly ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => {
-                setShowFavoritesOnly(!showFavoritesOnly);
-                fetchPrompts(1);
-              }}
-              className={showFavoritesOnly ? 'btn-gradient text-white' : 'transition-all hover:border-purple-500'}
-            >
-              <Filter className="h-4 w-4 mr-2" />
-              Favoris
-            </Button>
-          </div>
-        </div>
-
-        {/* Export Buttons */}
-        {prompts.length > 0 && (
-          <div className="flex gap-2 mb-6 justify-end">
-            {canExport(userPlan) ? (
-              <>
-                <Button
-                  onClick={handleExportCSV}
-                  variant="outline"
-                  size="sm"
-                  className="transition-all hover:border-purple-500"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Export CSV
-                </Button>
-                {getExportFormats(userPlan).includes('json') && (
-                  <Button
-                    onClick={handleExportJSON}
-                    variant="outline"
-                    size="sm"
-                    className="transition-all hover:border-purple-500"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export JSON
-                  </Button>
-                )}
-              </>
-            ) : (
-              <Link href="/pricing">
-                <Button variant="outline" size="sm" className="border-purple-500 text-purple-600 hover:bg-purple-500/10">
-                  <Lock className="h-4 w-4 mr-2" />
-                  Export (STARTER+)
-                </Button>
-              </Link>
-            )}
-          </div>
-        )}
+          {/* Export Buttons */}
+          {prompts.length > 0 && (
+            <div className="flex gap-2 justify-end">
+              <Button
+                onClick={handleExportCSV}
+                variant="outline"
+                size="sm"
+                className="border-2 hover:border-purple-500"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export CSV
+              </Button>
+              <Button
+                onClick={handleExportJSON}
+                variant="outline"
+                size="sm"
+                className="border-2 hover:border-green-500"
+              >
+                <Download className="h-4 w-4 mr-2" />
+                Export JSON
+              </Button>
+            </div>
+          )}
+        </motion.div>
 
         {/* Liste des prompts */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-flex items-center gap-2 text-muted-foreground">
-              <Sparkles className="h-5 w-5 animate-spin text-purple-500" />
-              Chargement...
-            </div>
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="h-12 w-12 animate-spin text-purple-600 mb-4" />
+            <p className="text-muted-foreground">Chargement de vos prompts...</p>
           </div>
         ) : prompts.length === 0 ? (
-          <div className="text-center py-12">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-purple-500/10 mb-4">
-              <History className="h-8 w-8 text-purple-500" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-20"
+          >
+            <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-purple-500/10 to-pink-500/10 mb-6">
+              <History className="h-12 w-12 text-purple-500" />
             </div>
-            <h3 className="text-lg font-medium text-foreground mb-2">
+            <h3 className="text-2xl font-bold text-foreground mb-2">
               {search || typeFilter !== 'ALL' || showFavoritesOnly
                 ? 'Aucun prompt trouvé'
                 : 'Aucun prompt pour le moment'}
             </h3>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               {search || typeFilter !== 'ALL' || showFavoritesOnly
                 ? 'Essayez de modifier vos filtres de recherche'
                 : "Vous n'avez pas encore généré de prompts"}
             </p>
-            <Link href="/editor">
-              <Button className="btn-gradient text-white">
-                <Sparkles className="mr-2 h-4 w-4" />
-                Créer un prompt
-              </Button>
-            </Link>
-          </div>
+            {!search && typeFilter === 'ALL' && !showFavoritesOnly && (
+              <Link href="/editor">
+                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Créer un prompt
+                </Button>
+              </Link>
+            )}
+          </motion.div>
         ) : (
           <>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <motion.div
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+            >
               {prompts.map((prompt) => (
-                <PromptCard
-                  key={prompt.id}
-                  prompt={prompt}
-                  onToggleFavorite={handleToggleFavorite}
-                  onDelete={handleDelete}
-                />
+                <motion.div key={prompt.id} variants={item}>
+                  <PromptCard
+                    prompt={prompt}
+                    onToggleFavorite={handleToggleFavorite}
+                    onDelete={handleDelete}
+                  />
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             {/* Pagination */}
             {pagination.totalPages > 1 && (
-              <div className="mt-8 flex items-center justify-center gap-2">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="flex items-center justify-center gap-2 pt-4"
+              >
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="default"
                   disabled={pagination.page === 1}
                   onClick={() => fetchPrompts(pagination.page - 1)}
-                  className="transition-all hover:border-purple-500 disabled:opacity-50"
+                  className="border-2 hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Précédent
                 </Button>
 
-                <span className="text-sm text-muted-foreground px-4">
-                  Page {pagination.page} sur {pagination.totalPages}
-                </span>
+                <div className="flex items-center gap-2 px-4">
+                  <span className="text-sm font-medium">
+                    Page {pagination.page} sur {pagination.totalPages}
+                  </span>
+                </div>
 
                 <Button
                   variant="outline"
-                  size="sm"
+                  size="default"
                   disabled={pagination.page === pagination.totalPages}
                   onClick={() => fetchPrompts(pagination.page + 1)}
-                  className="transition-all hover:border-purple-500 disabled:opacity-50"
+                  className="border-2 hover:border-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  Suivant
+                  <ChevronRight className="h-4 w-4 ml-2" />
                 </Button>
-              </div>
+              </motion.div>
             )}
           </>
         )}
+
+        {/* Info footer */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-center text-sm text-muted-foreground pt-8"
+        >
+          <p>
+            💡 Astuce : Utilisez les favoris pour retrouver rapidement vos meilleurs prompts
+          </p>
+        </motion.div>
       </div>
     </div>
   );
