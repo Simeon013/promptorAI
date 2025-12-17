@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generatePrompt, improvePrompt } from '@/lib/ai/router';
-import { verifyAuthAndQuota, useQuota } from '@/lib/api/auth-helper';
+import { verifyAuth, verifyAuthAndQuota, useGenerationCredits, getGenerationCost } from '@/lib/api/auth-helper';
 import { getOrCreateUser } from '@/lib/auth/supabase-clerk';
 import { supabase } from '@/lib/db/supabase';
 import { generatePromptSchema, validateInput } from '@/lib/validations/schemas';
 import { applyRateLimit, getRateLimitIdentifier } from '@/lib/ratelimit';
 import { getModelForPlan, getProviderFromModel } from '@/lib/api/model-helper';
 import { checkProviderAvailability } from '@/lib/api/quota-checker';
+import { getModelCostConfig } from '@/config/model-costs';
 
 export async function POST(request: NextRequest) {
-  // Vérifier l'authentification et les quotas
-  const authResult = await verifyAuthAndQuota();
+  // D'abord vérifier seulement l'authentification
+  const authResult = await verifyAuth();
   if (authResult instanceof NextResponse) {
-    return authResult; // Erreur d'auth ou quota dépassé
+    return authResult; // Erreur d'auth
   }
   const { userId } = authResult;
 
@@ -84,6 +85,17 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Calculer le coût en crédits pour ce modèle
+    const creditCost = getGenerationCost(finalModelId);
+    const modelConfig = getModelCostConfig(finalModelId);
+    console.log(`[GENERATE] Coût: ${creditCost} crédit(s) - Catégorie: ${modelConfig?.category || 'economic'}`);
+
+    // Vérifier que l'utilisateur a assez de crédits AVANT la génération
+    const creditCheckResult = await verifyAuthAndQuota(creditCost);
+    if (creditCheckResult instanceof NextResponse) {
+      return creditCheckResult; // Pas assez de crédits
+    }
+
     // Générer ou améliorer le prompt avec le modèle final
     let result: string;
     const languageValue = language ?? null; // Convert undefined to null
@@ -123,12 +135,20 @@ export async function POST(request: NextRequest) {
       // On continue même si la sauvegarde échoue
     }
 
-    // Utiliser des crédits pour la génération
-    await useQuota(userId, 'generation', prompt?.id);
+    // Consommer les crédits pour la génération
+    const creditResult = await useGenerationCredits(userId, finalModelId, prompt?.id);
+    if (!creditResult.success) {
+      console.error(`[GENERATE] Erreur déduction crédits: ${creditResult.error}`);
+      // On continue car le prompt a été généré
+    }
 
     return NextResponse.json({
       result,
       promptId: prompt?.id,
+      creditsUsed: creditResult.cost,
+      creditsRemaining: creditResult.newBalance,
+      model: finalModelId,
+      modelCategory: modelConfig?.category || 'economic',
     });
   } catch (error) {
     console.error('API Error:', error);

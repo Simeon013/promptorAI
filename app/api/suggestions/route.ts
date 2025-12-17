@@ -1,17 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSuggestions } from '@/lib/ai/suggestions-router';
-import { verifyAuthAndQuota, useQuota } from '@/lib/api/auth-helper';
+import { verifyAuthAndQuota, useSuggestionCredits, getSuggestionCost } from '@/lib/api/auth-helper';
 import { getOrCreateUser } from '@/lib/auth/supabase-clerk';
 import { suggestionsSchema, validateInput } from '@/lib/validations/schemas';
 import { applyRateLimit, getRateLimitIdentifier } from '@/lib/ratelimit';
 import { checkProviderAvailability } from '@/lib/api/quota-checker';
-import { getSuggestionModel, getProviderFromModel } from '@/lib/api/model-helper';
+import { getSuggestionModel } from '@/lib/api/model-helper';
 
 export async function POST(request: NextRequest) {
-  // Vérifier l'authentification et les quotas
-  const authResult = await verifyAuthAndQuota();
+  // Le coût des suggestions est fixe (1 crédit)
+  const suggestionCost = getSuggestionCost();
+
+  // Vérifier l'authentification et les crédits
+  const authResult = await verifyAuthAndQuota(suggestionCost);
   if (authResult instanceof NextResponse) {
-    return authResult; // Erreur d'auth ou quota dépassé
+    return authResult; // Erreur d'auth ou pas assez de crédits
   }
   const { userId } = authResult;
 
@@ -113,10 +116,18 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Utiliser des crédits pour les suggestions
-    await useQuota(userId, 'suggestions');
+    // Consommer les crédits pour les suggestions
+    const creditResult = await useSuggestionCredits(userId);
+    if (!creditResult.success) {
+      console.error(`[SUGGESTIONS] Erreur déduction crédits: ${creditResult.error}`);
+      // On continue car les suggestions ont été générées
+    }
 
-    return NextResponse.json({ suggestions });
+    return NextResponse.json({
+      suggestions,
+      creditsUsed: creditResult.cost,
+      creditsRemaining: creditResult.newBalance,
+    });
   } catch (error) {
     console.error('API Error:', error);
     return NextResponse.json(
