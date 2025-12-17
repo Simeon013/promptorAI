@@ -14,13 +14,16 @@ import {
   X,
   LogOut,
   ChevronRight,
+  ChevronDown,
   Sun,
   Moon,
-  DollarSign,
-  Percent,
+  Coins,
+  Package,
   Tag,
+  Receipt,
   Brain,
-  CheckCircle2,
+  DollarSign,
+  TestTube,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -31,10 +34,22 @@ interface NavItem {
   name: string;
   href: string;
   icon: typeof LayoutDashboard;
-  description: string;
+  description?: string;
 }
 
-const navigation: NavItem[] = [
+interface NavGroup {
+  name: string;
+  icon: typeof LayoutDashboard;
+  items: NavItem[];
+}
+
+type NavEntry = NavItem | NavGroup;
+
+function isNavGroup(entry: NavEntry): entry is NavGroup {
+  return 'items' in entry;
+}
+
+const navigation: NavEntry[] = [
   {
     name: 'Dashboard',
     href: '/admin',
@@ -42,76 +57,41 @@ const navigation: NavItem[] = [
     description: 'Vue d\'ensemble',
   },
   {
-    name: 'Crédits - Vue',
-    href: '/admin/credits',
-    icon: DollarSign,
-    description: 'Statistiques crédits',
+    name: 'Credits',
+    icon: Coins,
+    items: [
+      { name: 'Vue generale', href: '/admin/credits', icon: Coins },
+      { name: 'Packs', href: '/admin/credits/packs', icon: Package },
+      { name: 'Promotions auto', href: '/admin/credits/promotions', icon: Tag },
+      { name: 'Codes promo', href: '/admin/credits/promo-codes', icon: Tag },
+      { name: 'Transactions', href: '/admin/credits/transactions', icon: Receipt },
+    ],
   },
   {
-    name: 'Crédits - Packs',
-    href: '/admin/credits/packs',
-    icon: DollarSign,
-    description: 'Gérer les packs',
-  },
-  {
-    name: 'Crédits - Promos',
-    href: '/admin/credits/promotions',
-    icon: Tag,
-    description: 'Réductions auto',
-  },
-  {
-    name: 'Utilisateurs',
-    href: '/admin/users',
-    icon: Users,
-    description: 'Gestion des comptes',
-  },
-  {
-    name: 'Prompts',
-    href: '/admin/prompts',
-    icon: FileText,
-    description: 'Contenu généré',
-  },
-  {
-    name: 'Tarifs',
-    href: '/admin/pricing',
-    icon: Percent,
-    description: 'Plans & quotas',
-  },
-  {
-    name: 'Codes Promo',
-    href: '/admin/promo-codes',
-    icon: Tag,
-    description: 'Coupons Stripe',
-  },
-  {
-    name: 'Modèles IA',
-    href: '/admin/models',
+    name: 'Intelligence Artificielle',
     icon: Brain,
-    description: 'Config par tier',
+    items: [
+      { name: 'Modeles par tier', href: '/admin/models', icon: Brain },
+      { name: 'Couts des modeles', href: '/admin/models/costs', icon: DollarSign },
+      { name: 'Cles API', href: '/admin/api-keys', icon: Key },
+      { name: 'Test des cles', href: '/admin/api-keys/test', icon: TestTube },
+    ],
   },
   {
-    name: 'Clés API',
-    href: '/admin/api-keys',
-    icon: Key,
-    description: 'Configuration IA',
+    name: 'Contenu',
+    icon: FileText,
+    items: [
+      { name: 'Utilisateurs', href: '/admin/users', icon: Users },
+      { name: 'Prompts', href: '/admin/prompts', icon: FileText },
+    ],
   },
   {
-    name: 'Test Clés API',
-    href: '/admin/api-keys/test',
-    icon: CheckCircle2,
-    description: 'Vérifier les clés',
-  },
-  {
-    name: 'Logs',
-    href: '/admin/logs',
-    icon: Activity,
-    description: 'Activité système',
-  },
-  {
-    name: 'Paramètres',
-    href: '/admin/settings',
+    name: 'Systeme',
     icon: Settings,
-    description: 'Configuration',
+    items: [
+      { name: 'Logs', href: '/admin/logs', icon: Activity },
+      { name: 'Parametres', href: '/admin/settings', icon: Settings },
+    ],
   },
 ];
 
@@ -127,13 +107,14 @@ export default function AdminLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<string[]>(['Credits', 'Intelligence Artificielle']);
 
-  // Éviter le flash pendant l'hydratation
+  // Eviter le flash pendant l'hydratation
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Détecter la taille de l'écran
+  // Detecter la taille de l'ecran
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
@@ -147,7 +128,7 @@ export default function AdminLayout({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Vérifier les permissions admin
+  // Verifier les permissions admin
   useEffect(() => {
     if (isLoaded && user) {
       if (!isAdminUser(user.emailAddresses)) {
@@ -155,6 +136,35 @@ export default function AdminLayout({
       }
     }
   }, [user, isLoaded, router]);
+
+  // Auto-expand le groupe qui contient la page active
+  useEffect(() => {
+    navigation.forEach(entry => {
+      if (isNavGroup(entry)) {
+        const hasActivePage = entry.items.some(item =>
+          pathname === item.href || pathname.startsWith(item.href + '/')
+        );
+        if (hasActivePage && !expandedGroups.includes(entry.name)) {
+          setExpandedGroups(prev => [...prev, entry.name]);
+        }
+      }
+    });
+  }, [pathname, expandedGroups]);
+
+  const toggleGroup = (groupName: string) => {
+    setExpandedGroups(prev =>
+      prev.includes(groupName)
+        ? prev.filter(g => g !== groupName)
+        : [...prev, groupName]
+    );
+  };
+
+  const isActive = (href: string) => {
+    if (href === '/admin') {
+      return pathname === '/admin';
+    }
+    return pathname === href || pathname.startsWith(href + '/');
+  };
 
   if (!isLoaded || !user) {
     return (
@@ -173,100 +183,143 @@ export default function AdminLayout({
     return null;
   }
 
+  const renderNavItem = (item: NavItem, onClick?: () => void) => {
+    const Icon = item.icon;
+    const active = isActive(item.href);
+
+    return (
+      <Link key={item.href} href={item.href} onClick={onClick}>
+        <div
+          className={`group flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all cursor-pointer ${
+            active
+              ? 'bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          }`}
+        >
+          <Icon className={`h-4 w-4 ${active ? 'text-purple-500' : ''}`} />
+          <span className="font-medium text-sm">{item.name}</span>
+          {active && <ChevronRight className="h-4 w-4 ml-auto text-purple-500" />}
+        </div>
+      </Link>
+    );
+  };
+
+  const renderNavGroup = (group: NavGroup, onClick?: () => void) => {
+    const Icon = group.icon;
+    const isExpanded = expandedGroups.includes(group.name);
+    const hasActivePage = group.items.some(item => isActive(item.href));
+
+    return (
+      <div key={group.name} className="space-y-1">
+        <button
+          type="button"
+          onClick={() => toggleGroup(group.name)}
+          className={`w-full group flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all cursor-pointer ${
+            hasActivePage
+              ? 'text-purple-600 dark:text-purple-400'
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          }`}
+        >
+          <Icon className={`h-4 w-4 ${hasActivePage ? 'text-purple-500' : ''}`} />
+          <span className="font-medium text-sm flex-1 text-left">{group.name}</span>
+          <ChevronDown
+            className={`h-4 w-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          />
+        </button>
+        {isExpanded && (
+          <div className="ml-4 pl-4 border-l border-border space-y-1">
+            {group.items.map(item => renderNavItem(item, onClick))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderNavigation = (onClick?: () => void) => (
+    <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+      {navigation.map(entry =>
+        isNavGroup(entry)
+          ? renderNavGroup(entry, onClick)
+          : renderNavItem(entry, onClick)
+      )}
+    </nav>
+  );
+
+  const renderUserInfo = () => (
+    <div className="p-4 border-t border-border">
+      <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted">
+        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
+          {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || 'A'}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="font-medium text-sm text-foreground truncate">
+            {user.firstName} {user.lastName}
+          </div>
+          <div className="text-xs text-muted-foreground truncate">
+            {user.emailAddresses[0]?.emailAddress}
+          </div>
+        </div>
+      </div>
+      <Link href="/dashboard">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-3 transition-all hover:border-purple-500"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Quitter Admin
+        </Button>
+      </Link>
+    </div>
+  );
+
+  const renderThemeToggle = () => (
+    <div className="px-4 pb-4">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        className="w-full transition-all hover:border-purple-500"
+      >
+        {mounted && (
+          <>
+            {theme === 'dark' ? (
+              <>
+                <Sun className="h-4 w-4 mr-2" />
+                Mode Clair
+              </>
+            ) : (
+              <>
+                <Moon className="h-4 w-4 mr-2" />
+                Mode Sombre
+              </>
+            )}
+          </>
+        )}
+      </Button>
+    </div>
+  );
+
+  const renderHeader = () => (
+    <div className="h-16 flex items-center gap-3 px-6 border-b border-border">
+      <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2">
+        <LayoutDashboard className="h-5 w-5 text-white" />
+      </div>
+      <div>
+        <h1 className="font-bold text-foreground">Admin Panel</h1>
+        <p className="text-xs text-muted-foreground">Promptor</p>
+      </div>
+    </div>
+  );
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar Desktop */}
       <aside className="hidden lg:flex lg:flex-col lg:w-72 lg:border-r lg:border-border bg-card">
-        {/* Logo / Header */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-border">
-          <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2">
-            <LayoutDashboard className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="font-bold text-foreground">Admin Panel</h1>
-            <p className="text-xs text-muted-foreground">Promptor</p>
-          </div>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-          {navigation.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-
-            return (
-              <Link key={item.href} href={item.href}>
-                <div
-                  className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
-                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                  }`}
-                >
-                  <Icon className={`h-5 w-5 ${isActive ? 'text-purple-500' : ''}`} />
-                  <div className="flex-1">
-                    <div className="font-medium text-sm">{item.name}</div>
-                    <div className="text-xs text-muted-foreground">{item.description}</div>
-                  </div>
-                  {isActive && <ChevronRight className="h-4 w-4 text-purple-500" />}
-                </div>
-              </Link>
-            );
-          })}
-        </nav>
-
-        {/* Theme Toggle */}
-        <div className="px-4 pb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="w-full transition-all hover:border-purple-500"
-          >
-            {mounted && (
-              <>
-                {theme === 'dark' ? (
-                  <>
-                    <Sun className="h-4 w-4 mr-2" />
-                    Mode Clair
-                  </>
-                ) : (
-                  <>
-                    <Moon className="h-4 w-4 mr-2" />
-                    Mode Sombre
-                  </>
-                )}
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* User Info */}
-        <div className="p-4 border-t border-border">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-              {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || 'A'}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm text-foreground truncate">
-                {user.firstName} {user.lastName}
-              </div>
-              <div className="text-xs text-muted-foreground truncate">
-                {user.emailAddresses[0]?.emailAddress}
-              </div>
-            </div>
-          </div>
-          <Link href="/dashboard">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full mt-3 transition-all hover:border-purple-500"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Quitter Admin
-            </Button>
-          </Link>
-        </div>
+        {renderHeader()}
+        {renderNavigation()}
+        {renderThemeToggle()}
+        {renderUserInfo()}
       </aside>
 
       {/* Sidebar Mobile */}
@@ -276,11 +329,15 @@ export default function AdminLayout({
           <div
             className="fixed inset-0 bg-black/50 z-40 lg:hidden"
             onClick={() => setSidebarOpen(false)}
+            onKeyDown={e => e.key === 'Escape' && setSidebarOpen(false)}
+            role="button"
+            tabIndex={0}
+            aria-label="Fermer le menu"
           />
 
           {/* Sidebar */}
           <aside className="fixed inset-y-0 left-0 w-72 bg-card border-r border-border z-50 lg:hidden flex flex-col">
-            {/* Logo / Header */}
+            {/* Header avec bouton fermer */}
             <div className="h-16 flex items-center justify-between px-6 border-b border-border">
               <div className="flex items-center gap-3">
                 <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2">
@@ -301,85 +358,9 @@ export default function AdminLayout({
               </button>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-
-                return (
-                  <Link key={item.href} href={item.href} onClick={() => setSidebarOpen(false)}>
-                    <div
-                      className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all cursor-pointer ${
-                        isActive
-                          ? 'bg-gradient-to-r from-purple-500/10 to-pink-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20'
-                          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                      }`}
-                    >
-                      <Icon className={`h-5 w-5 ${isActive ? 'text-purple-500' : ''}`} />
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{item.name}</div>
-                        <div className="text-xs text-muted-foreground">{item.description}</div>
-                      </div>
-                      {isActive && <ChevronRight className="h-4 w-4 text-purple-500" />}
-                    </div>
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Theme Toggle */}
-            <div className="px-4 pb-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="w-full transition-all hover:border-purple-500"
-              >
-                {mounted && (
-                  <>
-                    {theme === 'dark' ? (
-                      <>
-                        <Sun className="h-4 w-4 mr-2" />
-                        Mode Clair
-                      </>
-                    ) : (
-                      <>
-                        <Moon className="h-4 w-4 mr-2" />
-                        Mode Sombre
-                      </>
-                    )}
-                  </>
-                )}
-              </Button>
-            </div>
-
-            {/* User Info */}
-            <div className="p-4 border-t border-border">
-              <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-muted">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-                  {user.firstName?.[0] || user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || 'A'}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm text-foreground truncate">
-                    {user.firstName} {user.lastName}
-                  </div>
-                  <div className="text-xs text-muted-foreground truncate">
-                    {user.emailAddresses[0]?.emailAddress}
-                  </div>
-                </div>
-              </div>
-              <Link href="/dashboard">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full mt-3 transition-all hover:border-purple-500"
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Quitter Admin
-                </Button>
-              </Link>
-            </div>
+            {renderNavigation(() => setSidebarOpen(false))}
+            {renderThemeToggle()}
+            {renderUserInfo()}
           </aside>
         </>
       )}
@@ -402,7 +383,7 @@ export default function AdminLayout({
             </div>
             <span className="font-bold text-foreground">Admin Panel</span>
           </div>
-          <div className="w-9" /> {/* Spacer for centering */}
+          <div className="w-9" />
         </header>
 
         {/* Page Content */}
