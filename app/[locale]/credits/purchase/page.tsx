@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CreditPackCard } from '@/components/credits/CreditPackCard';
 import { CreditBalance } from '@/components/credits/CreditBalance';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
-export default function CreditsPurchasePage() {
+function CreditsPurchaseContent() {
   const searchParams = useSearchParams();
   const [packs, setPacks] = useState([]);
   const [balance, setBalance] = useState(null);
@@ -194,5 +194,13 @@ export default function CreditsPurchasePage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CreditsPurchasePage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-8">Chargement...</div>}>
+      <CreditsPurchaseContent />
+    </Suspense>
   );
 }

@@ -40,7 +40,7 @@ export interface PromoCodeValidation {
 export async function validatePromoCode(
   code: string,
   userId: string,
-  plan: 'STARTER' | 'PRO',
+  plan: string,
   originalAmount: number
 ): Promise<PromoCodeValidation> {
   try {
@@ -144,11 +144,23 @@ export async function applyPromoCode(
   finalAmount: number
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // 1. Incrémenter le compteur d'utilisations
+    // 1. Récupérer le compteur actuel
+    const { data: promoCode, error: fetchError } = await supabase
+      .from('promo_codes')
+      .select('current_uses')
+      .eq('id', promoCodeId)
+      .single();
+
+    if (fetchError || !promoCode) {
+      console.error('❌ Erreur récupération code promo:', fetchError);
+      return { success: false, error: 'Code promo introuvable' };
+    }
+
+    // 2. Incrémenter le compteur d'utilisations
     const { error: updateError } = await supabase
       .from('promo_codes')
       .update({
-        current_uses: supabase.raw('current_uses + 1'),
+        current_uses: (promoCode.current_uses || 0) + 1,
       })
       .eq('id', promoCodeId);
 

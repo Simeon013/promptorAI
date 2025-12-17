@@ -261,7 +261,8 @@ export function getNextTier(currentTier: TierName): TierName | null {
   const currentIndex = tiers.indexOf(currentTier);
 
   if (currentIndex < tiers.length - 1) {
-    return tiers[currentIndex + 1];
+    const nextTier = tiers[currentIndex + 1];
+    return nextTier ?? null;
   }
 
   return null; // Déjà au tier maximum

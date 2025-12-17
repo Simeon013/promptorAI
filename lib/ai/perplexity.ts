@@ -34,9 +34,17 @@ function handlePerplexityError(error: unknown): Error {
 
 /**
  * Nettoie la réponse de l'IA en retirant les introductions et textes superflus
+ * Gère spécialement les réponses des modèles reasoning/research avec balises <think>
  */
 function cleanAIResponse(text: string): string {
   let cleaned = text.trim();
+
+  // Supprimer les balises <think>...</think> des modèles reasoning/research
+  // Ces balises contiennent le raisonnement interne du modèle
+  cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/gi, '');
+
+  // Supprimer les titres de type rapport/research qui ne sont pas des prompts
+  cleaned = cleaned.replace(/^#+ .+?\n+/gm, '');
 
   // Patterns à retirer (introductions communes)
   const patternsToRemove = [
@@ -54,6 +62,10 @@ function cleanAIResponse(text: string): string {
     // Mentions de contraintes/suggestions
     /Suggestions à inclure\s*:.*?\.\s*/gi,
     /Type de prompt\s*:.*?\.\s*/gi,
+    // Introductions anglaises (pour modèles research)
+    /^When considering.*?\.\s*/i,
+    /^This comprehensive report.*?\.\s*/i,
+    /^The concept of.*?\.\s*/i,
   ];
 
   for (const pattern of patternsToRemove) {
@@ -191,6 +203,73 @@ IMPORTANT : Commence directement par le prompt amélioré. N'ajoute AUCUNE intro
     const data = await response.json();
     const rawText = data.choices?.[0]?.message?.content?.trim() || '';
     return cleanAIResponse(rawText);
+  } catch (error) {
+    throw handlePerplexityError(error);
+  }
+}
+
+/**
+ * Génère des suggestions de mots-clés via Perplexity (fallback quand Gemini est indisponible)
+ */
+export async function getPromptSuggestionsPerplexity(
+  context: string,
+  language: string | null = null
+): Promise<{ category: string; suggestions: string[] }[]> {
+  const apiKey = await getPerplexityKey();
+
+  const languageInstruction = language
+    ? `All suggestions MUST be in ${language}.`
+    : `Detect the language used in the user input and provide all suggestions in that same language.`;
+
+  const systemPrompt = `You are an AI prompt engineering expert. Based on the user's input, provide keyword suggestions to enrich their prompt.
+
+Analyze the input to infer the likely goal (image generation, code, story writing, etc.) and suggest relevant additions.
+For visual prompts: suggest Style, Lighting, Composition categories.
+For text prompts: suggest Tone, Format, Structure categories.
+For code prompts: suggest Language, Features, Constraints categories.
+
+${languageInstruction}
+
+Respond ONLY with valid JSON in this exact format (no markdown, no explanation):
+[{"category": "Category Name", "suggestions": ["suggestion1", "suggestion2", "suggestion3"]}]
+
+Provide 3-5 suggestions per category, maximum 4 categories.`;
+
+  try {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: 'sonar', // Utiliser sonar (rapide et économique) pour les suggestions
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: context },
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+    const rawText = data.choices?.[0]?.message?.content?.trim() || '[]';
+
+    // Nettoyer le JSON (retirer les balises markdown si présentes)
+    const jsonStr = rawText.replace(/```json\s*/gi, '').replace(/```\s*/gi, '').trim();
+
+    try {
+      return JSON.parse(jsonStr);
+    } catch {
+      console.error('[PERPLEXITY] Failed to parse suggestions JSON:', jsonStr);
+      return [];
+    }
   } catch (error) {
     throw handlePerplexityError(error);
   }

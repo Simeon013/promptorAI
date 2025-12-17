@@ -312,6 +312,7 @@ export interface CreatePackPromotionRequest {
   max_uses?: number;
   max_uses_per_user?: number;
   is_stackable?: boolean;
+  is_active?: boolean;
   priority?: number;
   show_on_pricing?: boolean;
   badge_text?: string;

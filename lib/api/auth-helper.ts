@@ -1,9 +1,15 @@
 import { auth } from '@clerk/nextjs/server';
 import { NextResponse } from 'next/server';
-import { checkQuota, incrementQuota } from '@/lib/auth/supabase-clerk';
+import { hasEnoughCredits, useCredits } from '@/lib/credits/credits-manager';
+
+// Coût en crédits par opération
+const CREDIT_COSTS = {
+  generation: 1,   // Génération ou amélioration de prompt
+  suggestions: 1,  // Suggestions de mots-clés
+};
 
 /**
- * Vérifie l'authentification et les quotas
+ * Vérifie l'authentification et les crédits
  * Retourne l'userId si tout est OK, sinon une NextResponse d'erreur
  */
 export async function verifyAuthAndQuota(): Promise<
@@ -19,17 +25,17 @@ export async function verifyAuthAndQuota(): Promise<
     );
   }
 
-  // Vérifier les quotas
-  const hasQuota = await checkQuota(userId);
+  // Vérifier les crédits (au moins 1 crédit pour une opération)
+  const hasCredits = await hasEnoughCredits(userId, 1);
 
-  if (!hasQuota) {
+  if (!hasCredits) {
     return NextResponse.json(
       {
         error:
-          'Vous avez atteint votre limite de prompts pour ce mois. Passez à un plan supérieur pour continuer.',
-        code: 'QUOTA_EXCEEDED',
+          'Vous n\'avez plus de crédits. Achetez un pack de crédits pour continuer à générer des prompts.',
+        code: 'NO_CREDITS',
       },
-      { status: 429 }
+      { status: 402 } // 402 Payment Required
     );
   }
 
@@ -37,8 +43,23 @@ export async function verifyAuthAndQuota(): Promise<
 }
 
 /**
- * Incrémente le quota après une utilisation réussie
+ * Utilise des crédits après une opération réussie
+ * @param userId - L'ID de l'utilisateur
+ * @param action - Le type d'action ('generation' ou 'suggestions')
+ * @param promptId - L'ID du prompt généré (optionnel)
  */
-export async function useQuota(userId: string): Promise<void> {
-  await incrementQuota(userId);
+export async function useQuota(
+  userId: string,
+  action: 'generation' | 'suggestions' = 'generation',
+  promptId?: string
+): Promise<void> {
+  const creditCost = CREDIT_COSTS[action] || 1;
+  const result = await useCredits(userId, creditCost, action, promptId);
+
+  if (!result.success) {
+    console.error(`[CREDITS] Failed to deduct credits for user ${userId}:`, result.error);
+    // On ne bloque pas l'opération si la déduction échoue (l'utilisateur a déjà été vérifié)
+  } else {
+    console.log(`[CREDITS] Deducted ${creditCost} credit(s) for ${action}. New balance: ${result.new_balance}`);
+  }
 }

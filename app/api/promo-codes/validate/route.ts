@@ -39,7 +39,8 @@ export async function POST(request: NextRequest) {
             name: validation.promo_code.name,
             description: validation.promo_code.description,
             type: validation.promo_code.type,
-            discount_value: validation.promo_code.discount_value,
+            discount_percentage: validation.promo_code.discount_percentage,
+            discount_fixed_amount: validation.promo_code.discount_amount,
             bonus_credits: validation.promo_code.bonus_credits,
           }
         : null,

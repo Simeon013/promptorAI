@@ -224,7 +224,7 @@ export default async function DashboardPage() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Encore {((nextTierValue - totalSpent) ?? 0).toLocaleString()} FCFA
+                    Encore {(nextTierValue - totalSpent).toLocaleString()} FCFA
                   </p>
                 </div>
               )}

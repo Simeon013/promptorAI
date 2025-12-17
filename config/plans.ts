@@ -1,5 +1,18 @@
 import { Plan } from '@/types';
 
+/**
+ * ⚠️ DEPRECATED - Ce fichier utilise l'ancien système Stripe
+ *
+ * Le système de plans (FREE, STARTER, PRO, ENTERPRISE) est obsolète.
+ * Utilisez le nouveau système de tiers basé sur les crédits :
+ * @see config/tiers.ts - Configuration des tiers (FREE, BRONZE, SILVER, GOLD, PLATINUM)
+ *
+ * Ce fichier est conservé uniquement pour compatibilité avec l'ancien code.
+ * Il sera supprimé dans une future version.
+ *
+ * Migration effectuée le: 2025-12-14
+ */
+
 export interface PlanFeatures {
   plan: Plan;
   name: string;

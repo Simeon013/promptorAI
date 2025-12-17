@@ -22,14 +22,67 @@ async function getGeminiClient(): Promise<GoogleGenAI> {
 function handleGeminiError(error: unknown): Error {
   console.error('Gemini API Error:', error);
   if (error instanceof Error) {
-    if (error.message.includes('API key not valid')) {
+    const message = error.message.toLowerCase();
+
+    // Clé API invalide
+    if (message.includes('api key not valid') || message.includes('invalid api key')) {
       return new Error('Votre clé API est invalide. Veuillez vérifier sa configuration.');
     }
-    if (error.message.includes('429') || error.message.toLowerCase().includes('resource has been exhausted')) {
+
+    // Quota dépassé (429)
+    if (message.includes('429') || message.includes('resource has been exhausted') || message.includes('quota')) {
       return new Error('La limite de requêtes a été atteinte. Veuillez patienter avant de réessayer.');
+    }
+
+    // Modèle surchargé (503)
+    if (message.includes('503') || message.includes('overloaded') || message.includes('unavailable')) {
+      return new Error('Le modèle IA est temporairement surchargé. Veuillez réessayer dans quelques secondes.');
+    }
+
+    // Timeout ou connexion
+    if (message.includes('timeout') || message.includes('network') || message.includes('econnrefused')) {
+      return new Error('Impossible de contacter le serveur IA. Vérifiez votre connexion internet.');
     }
   }
   return new Error("Une erreur est survenue lors de la communication avec l'API. Veuillez réessayer.");
+}
+
+/**
+ * Retry wrapper avec backoff exponentiel pour les erreurs temporaires
+ */
+async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 2,
+  initialDelay: number = 1000
+): Promise<T> {
+  let lastError: Error | undefined;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+      const message = error?.message?.toLowerCase() || '';
+
+      // Ne retry que pour les erreurs temporaires (503, timeout)
+      const isRetryable =
+        message.includes('503') ||
+        message.includes('overloaded') ||
+        message.includes('unavailable') ||
+        message.includes('timeout');
+
+      if (!isRetryable || attempt === maxRetries) {
+        throw error;
+      }
+
+      // Backoff exponentiel
+      const delay = initialDelay * Math.pow(2, attempt);
+      console.log(`[GEMINI] Retry ${attempt + 1}/${maxRetries} après ${delay}ms...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+    }
+  }
+
+  throw lastError;
 }
 
 /**
@@ -105,9 +158,11 @@ export async function generatePrompt(topic: string, constraints: string, languag
 
   try {
     const client = await getGeminiClient();
-    const response = await client.models.generateContent({
-      model: modelId,
-      contents: generationPrompt,
+    const response = await withRetry(async () => {
+      return await client.models.generateContent({
+        model: modelId,
+        contents: generationPrompt,
+      });
     });
     const rawText = response.text?.trim() || '';
     return cleanAIResponse(rawText);
@@ -147,9 +202,11 @@ export async function improvePrompt(existingPrompt: string, constraints: string,
 
   try {
     const client = await getGeminiClient();
-    const response = await client.models.generateContent({
-      model: modelId,
-      contents: improvementPrompt,
+    const response = await withRetry(async () => {
+      return await client.models.generateContent({
+        model: modelId,
+        contents: improvementPrompt,
+      });
     });
     const rawText = response.text?.trim() || '';
     return cleanAIResponse(rawText);
@@ -183,32 +240,34 @@ export async function getPromptSuggestions(context: string, language: string | n
 
   try {
     const client = await getGeminiClient();
-    const response = await client.models.generateContent({
-      model: modelId,
-      contents: suggestionPrompt,
-      config: {
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              category: {
-                type: Type.STRING,
-                description: 'The category of the suggestions, e.g., "Style", "Tone", "Language".',
-              },
-              suggestions: {
-                type: Type.ARRAY,
-                items: {
+    const response = await withRetry(async () => {
+      return await client.models.generateContent({
+        model: modelId,
+        contents: suggestionPrompt,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                category: {
                   type: Type.STRING,
+                  description: 'The category of the suggestions, e.g., "Style", "Tone", "Language".',
                 },
-                description: 'A list of suggested keywords for this category.',
+                suggestions: {
+                  type: Type.ARRAY,
+                  items: {
+                    type: Type.STRING,
+                  },
+                  description: 'A list of suggested keywords for this category.',
+                },
               },
+              required: ['category', 'suggestions'],
             },
-            required: ['category', 'suggestions'],
           },
         },
-      },
+      });
     });
 
     const jsonStr = response.text?.trim() || '[]';

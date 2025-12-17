@@ -268,10 +268,6 @@ export default function PromotionsManagementPage() {
 
           <DialogContent
             className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gradient-to-br from-background via-background to-purple-50/20 dark:to-purple-950/20 shadow-2xl"
-            onInteractOutside={() => {
-              setDialogOpen(false);
-              resetForm();
-            }}
           >
             <DialogHeader className="border-b pb-4">
               <DialogTitle className="text-2xl font-bold flex items-center gap-3">

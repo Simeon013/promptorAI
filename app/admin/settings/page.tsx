@@ -11,11 +11,6 @@ interface SiteSettings {
   siteName: string;
   siteUrl: string;
   supportEmail: string;
-  defaultQuotaFree: number;
-  defaultQuotaStarter: number;
-  defaultQuotaPro: number;
-  priceStarter: number;
-  pricePro: number;
   maintenanceMode: boolean;
   registrationEnabled: boolean;
 }
@@ -27,11 +22,6 @@ export default function AdminSettingsPage() {
     siteName: 'Promptor',
     siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://promptor.app',
     supportEmail: 'support@promptor.app',
-    defaultQuotaFree: 10,
-    defaultQuotaStarter: 100,
-    defaultQuotaPro: 999999,
-    priceStarter: 9,
-    pricePro: 29,
     maintenanceMode: false,
     registrationEnabled: true,
   });
@@ -96,7 +86,10 @@ export default function AdminSettingsPage() {
               Paramètres du Site
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Configuration globale de la plateforme Promptor
+              Configuration globale de la plateforme (informations générales, maintenance)
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              💡 Les crédits, tiers et modèles IA sont configurés séparément
             </p>
           </div>
         </div>
@@ -165,134 +158,52 @@ export default function AdminSettingsPage() {
           </div>
         </Card>
 
-        {/* Quotas par défaut */}
-        <Card className="border p-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b">
-            <div className="rounded-lg bg-cyan-500/10 p-2">
-              <Zap className="h-5 w-5 text-cyan-500" />
+        {/* Info: Système de Crédits */}
+        <Card className="border p-6 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-950/20 dark:to-pink-950/20">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="rounded-lg bg-purple-500/10 p-2">
+              <Sparkles className="h-5 w-5 text-purple-500" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-foreground">
-                Quotas par Défaut
+                Système de Crédits et Tiers
               </h2>
               <p className="text-xs text-muted-foreground">
-                Limites mensuelles pour chaque plan
+                Configuration via le dashboard admin
               </p>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Plan FREE (prompts/mois)
-              </label>
-              <Input
-                type="number"
-                value={settings.defaultQuotaFree}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    defaultQuotaFree: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="bg-background border-input transition-all focus:border-purple-500"
-              />
+          <div className="space-y-3 text-sm">
+            <div className="flex items-start gap-2">
+              <span className="text-purple-600 dark:text-purple-400">💰</span>
+              <div>
+                <p className="font-medium text-foreground">Packs de crédits</p>
+                <p className="text-xs text-muted-foreground">
+                  Gérez les packs dans <Link href="/admin/credits/packs" className="text-purple-600 hover:underline">Admin → Crédits → Packs</Link>
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Plan STARTER (prompts/mois)
-              </label>
-              <Input
-                type="number"
-                value={settings.defaultQuotaStarter}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    defaultQuotaStarter: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="bg-background border-input transition-all focus:border-purple-500"
-              />
+            <div className="flex items-start gap-2">
+              <span className="text-cyan-600 dark:text-cyan-400">🎯</span>
+              <div>
+                <p className="font-medium text-foreground">Tiers (FREE, BRONZE, SILVER, GOLD, PLATINUM)</p>
+                <p className="text-xs text-muted-foreground">
+                  Configuration dans <code className="text-xs bg-muted px-1 py-0.5 rounded">config/tiers.ts</code>
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Plan PRO (prompts/mois)
-              </label>
-              <Input
-                type="number"
-                value={settings.defaultQuotaPro}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    defaultQuotaPro: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="bg-background border-input transition-all focus:border-purple-500"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                999999 = Illimité
-              </p>
+            <div className="flex items-start gap-2">
+              <span className="text-yellow-600 dark:text-yellow-400">🤖</span>
+              <div>
+                <p className="font-medium text-foreground">Modèles IA par tier</p>
+                <p className="text-xs text-muted-foreground">
+                  Configurez dans la table <code className="text-xs bg-muted px-1 py-0.5 rounded">admin_model_config</code>
+                </p>
+              </div>
             </div>
-          </div>
-        </Card>
-
-        {/* Tarification */}
-        <Card className="border p-6">
-          <div className="flex items-center gap-3 mb-6 pb-4 border-b">
-            <div className="rounded-lg bg-yellow-500/10 p-2">
-              <DollarSign className="h-5 w-5 text-yellow-500" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-foreground">
-                Tarification
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                Prix mensuels en euros (€)
-              </p>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Prix STARTER
-              </label>
-              <Input
-                type="number"
-                value={settings.priceStarter}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    priceStarter: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="bg-background border-input transition-all focus:border-purple-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Prix PRO
-              </label>
-              <Input
-                type="number"
-                value={settings.pricePro}
-                onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    pricePro: parseInt(e.target.value) || 0,
-                  })
-                }
-                className="bg-background border-input transition-all focus:border-purple-500"
-              />
-            </div>
-
-            <p className="text-xs text-muted-foreground">
-              ⚠️ Ces prix sont indicatifs. Les prix Stripe sont configurés dans
-              le dashboard Stripe.
-            </p>
           </div>
         </Card>
 

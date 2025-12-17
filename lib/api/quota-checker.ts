@@ -121,7 +121,7 @@ async function checkPerplexityQuota(
   apiKey: string
 ): Promise<{ available: boolean; reason?: string }> {
   try {
-    // Perplexity n'a pas d'endpoint de vérification, on fait un appel minimal
+    // Utiliser sonar-pro pour le test (modèle stable)
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
       headers: {
@@ -129,11 +129,13 @@ async function checkPerplexityQuota(
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'sonar',
+        model: 'sonar-pro',
         messages: [{ role: 'user', content: 'test' }],
         max_tokens: 1,
       }),
     });
+
+    console.log(`[PERPLEXITY-CHECK] Status: ${response.status}`);
 
     if (response.status === 401) {
       return { available: false, reason: 'Clé API Perplexity invalide' };
@@ -143,13 +145,27 @@ async function checkPerplexityQuota(
       return { available: false, reason: 'Quota Perplexity dépassé' };
     }
 
-    if (response.ok || response.status === 400) {
-      // 400 peut signifier une erreur de format mais la clé est valide
+    if (response.ok) {
       return { available: true };
     }
 
-    return { available: false, reason: 'Erreur API Perplexity' };
-  } catch (error) {
+    // Pour les erreurs, lire le détail
+    const errorData = await response.json().catch(() => ({}));
+    console.log(`[PERPLEXITY-CHECK] Error data:`, errorData);
+
+    // 400 peut signifier modèle invalide ou autre erreur
+    if (response.status === 400) {
+      const errorMessage = errorData?.error?.message || '';
+      if (errorMessage.includes('model')) {
+        return { available: false, reason: `Modèle Perplexity invalide: ${errorMessage}` };
+      }
+      // Autre erreur 400 mais clé valide
+      return { available: true };
+    }
+
+    return { available: false, reason: `Erreur API Perplexity (${response.status})` };
+  } catch (error: any) {
+    console.error(`[PERPLEXITY-CHECK] Exception:`, error);
     return { available: false, reason: 'Impossible de contacter Perplexity' };
   }
 }

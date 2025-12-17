@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { CreditPackCard } from '@/components/credits/CreditPackCard';
 import { CreditBalance } from '@/components/credits/CreditBalance';
 
-export default function TestCreditsPage() {
+function TestCreditsContent() {
   const searchParams = useSearchParams();
   const [packs, setPacks] = useState([]);
   const [balance, setBalance] = useState(null);
@@ -235,5 +235,13 @@ LIMIT 5;`}
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TestCreditsPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto p-8">Chargement...</div>}>
+      <TestCreditsContent />
+    </Suspense>
   );
 }

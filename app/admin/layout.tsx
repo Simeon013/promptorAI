@@ -19,6 +19,8 @@ import {
   DollarSign,
   Percent,
   Tag,
+  Brain,
+  CheckCircle2,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -82,10 +84,22 @@ const navigation: NavItem[] = [
     description: 'Coupons Stripe',
   },
   {
+    name: 'Modèles IA',
+    href: '/admin/models',
+    icon: Brain,
+    description: 'Config par tier',
+  },
+  {
     name: 'Clés API',
     href: '/admin/api-keys',
     icon: Key,
     description: 'Configuration IA',
+  },
+  {
+    name: 'Test Clés API',
+    href: '/admin/api-keys/test',
+    icon: CheckCircle2,
+    description: 'Vérifier les clés',
   },
   {
     name: 'Logs',

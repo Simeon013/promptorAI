@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth, currentUser } from '@clerk/nextjs/server';
 import { isAdminUser } from '@/lib/auth/admin';
+import { checkProviderAvailability } from '@/lib/api/quota-checker';
+import { getApiKey } from '@/lib/api/api-keys-helper';
 
 export async function POST(request: NextRequest) {
   try {
@@ -17,13 +19,55 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Accès refusé' }, { status: 403 });
     }
 
-    const { keyName, keyValue } = await request.json();
+    const body = await request.json();
 
+    // Support de l'ancienne interface (keyName, keyValue)
+    const { keyName, keyValue, provider } = body;
+
+    // Nouveau format avec provider
+    if (provider) {
+      const validProviders = ['GEMINI', 'OPENAI', 'CLAUDE', 'MISTRAL', 'PERPLEXITY'];
+      if (!validProviders.includes(provider)) {
+        return NextResponse.json({
+          success: false,
+          message: `Provider invalide. Valeurs acceptées: ${validProviders.join(', ')}`,
+        });
+      }
+
+      // 1. Vérifier si la clé existe
+      const apiKey = await getApiKey(provider);
+
+      if (!apiKey) {
+        return NextResponse.json({
+          success: false,
+          message: 'Clé API non configurée',
+          details: `Aucune clé trouvée dans admin_api_keys ni dans .env.local pour ${provider}`,
+        });
+      }
+
+      // 2. Vérifier la disponibilité du provider
+      const availability = await checkProviderAvailability(provider);
+
+      if (availability.available) {
+        return NextResponse.json({
+          success: true,
+          message: '✅ API opérationnelle',
+          details: `La clé ${provider} est valide et le quota est disponible`,
+        });
+      } else {
+        return NextResponse.json({
+          success: false,
+          message: `❌ ${availability.reason}`,
+          details: 'Vérifiez la validité de la clé ou le quota disponible',
+        });
+      }
+    }
+
+    // Ancien format (pour compatibilité)
     if (!keyValue) {
       return NextResponse.json({ isValid: false, message: 'Clé vide' });
     }
 
-    // Tester la clé selon le provider
     let isValid = false;
     let message = '';
 
@@ -160,7 +204,7 @@ async function testMistralKey(apiKey: string): Promise<boolean> {
   }
 }
 
-// Fonction pour tester une clé Perplexity
+// Fonction pour tester une clé Perplexity (modèles 2025: sonar, sonar-pro, etc.)
 async function testPerplexityKey(apiKey: string): Promise<boolean> {
   try {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -170,7 +214,7 @@ async function testPerplexityKey(apiKey: string): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-small-128k-online',
+        model: 'sonar', // Modèle de base Perplexity 2025
         messages: [{ role: 'user', content: 'test' }],
         max_tokens: 1,
       }),

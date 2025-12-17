@@ -188,9 +188,87 @@ IMPORTANT : Commence directement par le prompt amélioré. N'ajoute AUCUNE intro
       throw new Error(errorData.error?.message || `HTTP ${response.status}`);
     }
 
-    const data = await response.json();
-    const rawText = data.choices?.[0]?.message?.content?.trim() || '';
-    return cleanAIResponse(rawText);
+    const improveData = await response.json();
+    const improvedText = improveData.choices?.[0]?.message?.content?.trim() || '';
+    return cleanAIResponse(improvedText);
+  } catch (error) {
+    throw handleOpenAIError(error);
+  }
+}
+
+/**
+ * Génère des suggestions de mots-clés via OpenAI
+ */
+export async function getPromptSuggestionsOpenAI(
+  context: string,
+  language: string | null = null,
+  modelId: string = 'gpt-4o-mini'
+): Promise<{ category: string; suggestions: string[] }[]> {
+  const apiKey = await getOpenAIKey();
+
+  const languageInstruction = language
+    ? `All suggestions MUST be in ${language}.`
+    : `Detect the language used in the user input and provide all suggestions in that same language.`;
+
+  const systemPrompt = `You are an AI prompt engineering expert. Based on the user's input, provide keyword suggestions to enrich their prompt.
+
+Analyze the input to infer the likely goal (image generation, code, story writing, etc.) and suggest relevant additions.
+For visual prompts: suggest Style, Lighting, Composition categories.
+For text prompts: suggest Tone, Format, Structure categories.
+For code prompts: suggest Language, Features, Constraints categories.
+
+${languageInstruction}
+
+Respond ONLY with valid JSON in this exact format (no markdown, no explanation):
+[{"category": "Category Name", "suggestions": ["suggestion1", "suggestion2", "suggestion3"]}]
+
+Provide 3-5 suggestions per category, maximum 4 categories.`;
+
+  try {
+    const suggestionsResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: modelId,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: context },
+        ],
+        temperature: 0.7,
+        max_tokens: 1000,
+        response_format: { type: 'json_object' },
+      }),
+    });
+
+    if (!suggestionsResponse.ok) {
+      const errorData = await suggestionsResponse.json().catch(() => ({}));
+      throw new Error(errorData.error?.message || `HTTP ${suggestionsResponse.status}`);
+    }
+
+    const suggestionsData = await suggestionsResponse.json();
+    const rawSuggestionsText = suggestionsData.choices?.[0]?.message?.content?.trim() || '[]';
+
+    try {
+      // OpenAI peut retourner { "suggestions": [...] } ou directement [...]
+      const parsed = JSON.parse(rawSuggestionsText);
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+      if (parsed.suggestions && Array.isArray(parsed.suggestions)) {
+        return parsed.suggestions;
+      }
+      if (parsed.categories && Array.isArray(parsed.categories)) {
+        return parsed.categories;
+      }
+      console.error('[OPENAI] Unexpected suggestions format:', parsed);
+      return [];
+    } catch {
+      console.error('[OPENAI] Failed to parse suggestions JSON:', rawSuggestionsText);
+      return [];
+    }
   } catch (error) {
     throw handleOpenAIError(error);
   }

@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Valider le code promo si fourni
-    let finalAmount = pricing.amount;
+    let finalAmount: number = pricing.amount;
     let discountAmount = 0;
     let promoCodeId: string | null = null;
 
