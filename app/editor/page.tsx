@@ -148,15 +148,17 @@ export default function EditorPage() {
 
       setResult(data.result);
 
-      // Mettre à jour le solde
-      if (creditsBalance !== null) {
-        setCreditsBalance(creditsBalance - 1);
+      // Mettre à jour le solde avec la valeur retournée par l'API
+      if (data.creditsRemaining !== undefined) {
+        setCreditsBalance(data.creditsRemaining);
       }
 
+      // Afficher le coût réel utilisé
+      const creditsUsed = data.creditsUsed || 1;
       toast.success(
         mode === Mode.Generate
-          ? '✨ Prompt généré ! (1 crédit utilisé)'
-          : '⚡ Prompt amélioré ! (1 crédit utilisé)'
+          ? `✨ Prompt généré ! (${creditsUsed} crédit${creditsUsed > 1 ? 's' : ''} utilisé${creditsUsed > 1 ? 's' : ''})`
+          : `⚡ Prompt amélioré ! (${creditsUsed} crédit${creditsUsed > 1 ? 's' : ''} utilisé${creditsUsed > 1 ? 's' : ''})`
       );
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Une erreur est survenue');
@@ -179,6 +181,18 @@ export default function EditorPage() {
   const handleGetSuggestions = async () => {
     if (!input.trim()) {
       toast.error('Veuillez entrer du texte pour obtenir des suggestions');
+      return;
+    }
+
+    // Vérifier le solde de crédits (1 crédit pour les suggestions)
+    if (creditsBalance !== null && creditsBalance < 1) {
+      toast.error('Solde insuffisant. Achetez des crédits pour continuer.', {
+        duration: 5000,
+        action: {
+          label: 'Acheter',
+          onClick: () => window.location.href = '/fr/credits/purchase'
+        }
+      });
       return;
     }
 
@@ -207,7 +221,14 @@ export default function EditorPage() {
 
       setSuggestions(data.suggestions);
       setSelectedSuggestions([]);
-      toast.success('Suggestions générées !');
+
+      // Mettre à jour le solde avec la valeur retournée par l'API
+      if (data.creditsRemaining !== undefined) {
+        setCreditsBalance(data.creditsRemaining);
+      }
+
+      const creditsUsed = data.creditsUsed || 1;
+      toast.success(`💡 Suggestions générées ! (${creditsUsed} crédit utilisé)`);
     } catch (error) {
       toast.error('Erreur lors de la génération des suggestions');
     } finally {
@@ -519,7 +540,7 @@ export default function EditorPage() {
 
                   <Button
                     onClick={handleGetSuggestions}
-                    disabled={loadingSuggestions}
+                    disabled={loadingSuggestions || (creditsBalance !== null && creditsBalance < 1)}
                     variant="outline"
                     size="lg"
                     className="w-full border-2 hover:border-purple-500"
@@ -651,48 +672,49 @@ export default function EditorPage() {
               <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-purple-600">
                   <Sparkles className="h-4 w-4" />
-                  💡 Conseils pour des prompts optimaux
+                  Conseils pour des prompts optimaux
                 </CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
-                    1
+              <CardContent className="space-y-4">
+                {/* Conseils de rédaction */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                      1
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm text-purple-700 dark:text-purple-400 mb-1">Soyez ultra-precis</h4>
+                      <p className="text-xs text-muted-foreground">Detaillez le contexte, l'audience et les objectifs specifiques</p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-purple-700 dark:text-purple-400 mb-1">Soyez ultra-précis</h4>
-                    <p className="text-xs text-muted-foreground">Détaillez le contexte, l'audience, et les objectifs spécifiques</p>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                      2
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm text-cyan-700 dark:text-cyan-400 mb-1">Definissez le style</h4>
+                      <p className="text-xs text-muted-foreground">Precisez le ton, le format et les references visuelles ou textuelles</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm">
+                      3
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-sm text-orange-700 dark:text-orange-400 mb-1">Utilisez les contraintes</h4>
+                      <p className="text-xs text-muted-foreground">Indiquez ce qu'il faut eviter ou les limites techniques a respecter</p>
+                    </div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center text-white font-bold text-sm">
-                    2
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-cyan-700 dark:text-cyan-400 mb-1">Définissez le style</h4>
-                    <p className="text-xs text-muted-foreground">Précisez le ton, le format et les références visuelles ou textuelles</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center text-white font-bold text-sm">
-                    3
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-orange-700 dark:text-orange-400 mb-1">Utilisez les contraintes</h4>
-                    <p className="text-xs text-muted-foreground">Indiquez ce qu'il faut éviter ou les limites techniques à respecter</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-white/50 dark:bg-gray-900/30 border border-purple-200 dark:border-purple-800">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center text-white font-bold text-sm">
-                    💳
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-sm text-green-700 dark:text-green-400 mb-1">1 crédit par génération</h4>
-                    <p className="text-xs text-muted-foreground">Optimisez votre prompt pour des résultats immédiats et précis</p>
-                  </div>
+                {/* Info crédits simplifiée */}
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-green-500/10 border border-green-300 dark:border-green-700">
+                  <Coins className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <p className="text-xs text-muted-foreground">
+                    La consommation varie selon votre tier (1 a 10 credits par generation). Les suggestions coutent 1 credit.
+                  </p>
                 </div>
               </CardContent>
             </Card>
