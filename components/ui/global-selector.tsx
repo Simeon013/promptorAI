@@ -141,10 +141,10 @@ export function GlobalSelector({ className = '', compact = false }: GlobalSelect
       >
         <div className="flex items-center gap-1.5">
           <FlagIcon code={locale} size="sm" />
-          {!compact && (
-            <span className="text-xs font-medium text-muted-foreground">/</span>
-          )}
-          <FlagIcon code={currency} size="sm" />
+          <span className="text-xs font-medium text-muted-foreground">/</span>
+          <span className="text-sm font-semibold text-foreground min-w-[28px]">
+            {selectedCurrency.symbol}
+          </span>
         </div>
         <ChevronDown
           className={`h-3.5 w-3.5 text-muted-foreground transition-transform duration-200 ${

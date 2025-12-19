@@ -1,39 +1,42 @@
 'use client';
 
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const footerLinks = {
-  product: {
-    title: 'Produit',
-    links: [
-      { name: 'Fonctionnalités', href: '/#features' },
-      { name: 'Comment ça marche', href: '/#how-it-works' },
-      { name: 'Tarifs', href: '/pricing' },
-      { name: 'FAQ', href: '/#faq' },
-    ],
-  },
-  resources: {
-    title: 'Ressources',
-    links: [
-      { name: 'Documentation', href: '/docs' },
-      { name: 'API', href: '/api-docs' },
-      { name: 'Blog', href: '/blog' },
-    ],
-  },
-  legal: {
-    title: 'Légal',
-    links: [
-      { name: 'Confidentialité', href: '/privacy' },
-      { name: 'CGU', href: '/terms' },
-      { name: 'Mentions légales', href: '/legal' },
-    ],
-  },
-};
-
 export function Footer() {
+  const t = useTranslations('footer');
+  const locale = useLocale();
   const currentYear = new Date().getFullYear();
+
+  const footerLinks = {
+    product: {
+      title: t('product.title'),
+      links: [
+        { name: t('product.features'), href: '/#features' },
+        { name: t('product.howItWorks'), href: '/#how-it-works' },
+        { name: t('product.pricing'), href: `/${locale}/pricing` },
+        { name: t('product.faq'), href: '/#faq' },
+      ],
+    },
+    resources: {
+      title: t('resources.title'),
+      links: [
+        { name: t('resources.documentation'), href: '/docs' },
+        { name: t('resources.api'), href: '/api-docs' },
+        { name: t('resources.blog'), href: '/blog' },
+      ],
+    },
+    legal: {
+      title: t('legal.title'),
+      links: [
+        { name: t('legal.privacy'), href: '/privacy' },
+        { name: t('legal.terms'), href: `/${locale}/cgu` },
+        { name: t('legal.legalNotice'), href: '/legal' },
+      ],
+    },
+  };
 
   return (
     <footer className="relative border-t border-border bg-card/50">
@@ -57,8 +60,7 @@ export function Footer() {
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
-              Générez et améliorez vos prompts IA en quelques secondes.
-              Optimisé pour tous les modèles d&apos;IA générative.
+              {t('description')}
             </p>
 
             {/* Social Links */}
@@ -143,13 +145,8 @@ export function Footer() {
         {/* Bottom */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 md:flex-row">
           <p className="text-sm text-muted-foreground">
-            &copy; {currentYear} Promptor. Tous droits réservés.
+            &copy; {currentYear} Promptor. {t('allRightsReserved')}
           </p>
-          {/* <p className="text-sm text-muted-foreground">
-            Fait avec{' '}
-            <span className="text-red-500">❤</span>
-            {' '}en France
-          </p> */}
         </div>
       </div>
     </footer>

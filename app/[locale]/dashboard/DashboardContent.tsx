@@ -17,6 +17,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { HeaderSimple } from '@/components/layout/HeaderSimple';
+import { useCurrency } from '@/hooks/useCurrency';
+import { formatCurrency, convertCurrency } from '@/config/currencies';
 
 interface Prompt {
   id: string;
@@ -65,13 +67,16 @@ export function DashboardContent({
   recentPurchases,
 }: DashboardContentProps) {
   const t = useTranslations('dashboard');
+  const { currency, format } = useCurrency();
 
   const creditsBalance = user?.credits_balance || 0;
   const tier = user?.tier || 'FREE';
-  const totalSpent = user?.total_spent || 0;
+  const totalSpentXOF = user?.total_spent || 0;
+  // Convert from XOF (base currency) to user's selected currency
+  const totalSpent = convertCurrency(totalSpentXOF, 'XOF', currency);
 
-  // Calculer le prochain tier
-  const tierThresholds = {
+  // Calculer le prochain tier (thresholds are in XOF)
+  const tierThresholdsXOF = {
     FREE: 0,
     BRONZE: 1000,
     SILVER: 5000,
@@ -79,10 +84,14 @@ export function DashboardContent({
     PLATINUM: 20000
   };
 
-  const currentTierValue = tierThresholds[tier as keyof typeof tierThresholds] || 0;
-  const nextTierKey = Object.entries(tierThresholds).find(([_, value]) => value > currentTierValue)?.[0];
-  const nextTierValue = nextTierKey ? tierThresholds[nextTierKey as keyof typeof tierThresholds] : currentTierValue;
-  const progressToNextTier = nextTierKey ? ((totalSpent - currentTierValue) / (nextTierValue - currentTierValue)) * 100 : 100;
+  const currentTierValueXOF = tierThresholdsXOF[tier as keyof typeof tierThresholdsXOF] || 0;
+  const nextTierKey = Object.entries(tierThresholdsXOF).find(([_, value]) => value > currentTierValueXOF)?.[0];
+  const nextTierValueXOF = nextTierKey ? tierThresholdsXOF[nextTierKey as keyof typeof tierThresholdsXOF] : currentTierValueXOF;
+  const progressToNextTier = nextTierKey ? ((totalSpentXOF - currentTierValueXOF) / (nextTierValueXOF - currentTierValueXOF)) * 100 : 100;
+
+  // Convert tier values to user's currency for display
+  const nextTierValue = convertCurrency(nextTierValueXOF, 'XOF', currency);
+  const remainingToNextTier = convertCurrency(nextTierValueXOF - totalSpentXOF, 'XOF', currency);
 
   return (
     <div className="min-h-screen bg-background">
@@ -172,7 +181,7 @@ export function DashboardContent({
                 {tier}
               </div>
               <p className="text-xs text-muted-foreground mb-3">
-                {(totalSpent ?? 0).toLocaleString()} XOF {t('spent')}
+                {format(totalSpent)} {t('spent')}
               </p>
 
               {nextTierKey && (
@@ -190,7 +199,7 @@ export function DashboardContent({
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('remaining')} {(nextTierValue - totalSpent).toLocaleString()} XOF
+                    {t('remaining')} {format(remainingToNextTier)}
                   </p>
                 </div>
               )}
@@ -208,11 +217,11 @@ export function DashboardContent({
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-5xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
-                {(totalSpent ?? 0).toLocaleString()}
+              <div className="text-4xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-2">
+                {format(totalSpent)}
               </div>
               <p className="text-xs text-muted-foreground mb-3">
-                XOF {t('sinceStart')}
+                {t('sinceStart')}
               </p>
               {recentPurchases && recentPurchases.length > 0 && recentPurchases[0] && (
                 <p className="text-xs text-green-600 dark:text-green-400">

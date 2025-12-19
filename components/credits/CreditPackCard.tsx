@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -29,7 +30,8 @@ interface CreditPackCardProps {
   currency?: CurrencyCode;
 }
 
-export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: CreditPackCardProps) {
+export function CreditPackCard({ pack, onPurchase, loading, currency = 'XOF' }: CreditPackCardProps) {
+  const t = useTranslations('creditPackCard');
   const [promoCode, setPromoCode] = useState('');
   const [showPromoInput, setShowPromoInput] = useState(false);
 
@@ -54,7 +56,7 @@ export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: 
       {pack.is_featured && (
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
           <span className="bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
-            POPULAIRE
+            {t('popular')}
           </span>
         </div>
       )}
@@ -75,7 +77,7 @@ export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: 
           </span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          {pricePerCredit} par crédit
+          {pricePerCredit} {t('perCredit')}
         </p>
       </div>
 
@@ -84,20 +86,20 @@ export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: 
         <div className="flex items-center gap-2">
           <Check className="h-4 w-4 text-primary" />
           <span className="font-semibold">
-            {pack.credits.toLocaleString('fr-FR')} credits
+            {pack.credits.toLocaleString()} {t('credits')}
           </span>
         </div>
         {pack.bonus_credits > 0 && (
           <div className="flex items-center gap-2">
             <Check className="h-4 w-4 text-green-600" />
             <span className="text-green-600 font-semibold">
-              +{pack.bonus_credits} credits bonus
+              +{pack.bonus_credits} {t('bonusCredits')}
             </span>
           </div>
         )}
         <div className="flex items-center gap-2 pt-2 border-t">
           <span className="text-sm font-bold">
-            = {pack.total_credits.toLocaleString('fr-FR')} credits total
+            = {pack.total_credits.toLocaleString()} {t('totalCredits')}
           </span>
         </div>
       </div>
@@ -106,7 +108,7 @@ export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: 
       {pack.tier_unlock && (
         <div className="mb-6">
           <div className="bg-muted rounded-lg p-3">
-            <p className="text-xs text-muted-foreground mb-1">Debloque</p>
+            <p className="text-xs text-muted-foreground mb-1">{t('unlocks')}</p>
             <p className="font-semibold">Tier {pack.tier_unlock}</p>
           </div>
         </div>
@@ -122,12 +124,12 @@ export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: 
             className="w-full"
             onClick={() => setShowPromoInput(true)}
           >
-            Vous avez un code promo ?
+            {t('havePromoCode')}
           </Button>
         ) : (
           <Input
             type="text"
-            placeholder="CODE PROMO"
+            placeholder={t('promoCodePlaceholder')}
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
             disabled={loading}
@@ -141,7 +143,7 @@ export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: 
           className="w-full"
           size="lg"
         >
-          {loading ? 'Traitement...' : 'Acheter'}
+          {loading ? t('processing') : t('buy')}
         </Button>
       </div>
     </Card>

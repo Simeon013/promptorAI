@@ -495,5 +495,40 @@
       "improved": "⚡ Prompt improved! ({credits} credit(s) used)",
       "suggestions": "💡 Suggestions generated! ({credits} credit used)"
     }
+  },
+  "creditPackCard": {
+    "popular": "POPULAR",
+    "perCredit": "per credit",
+    "credits": "credits",
+    "bonusCredits": "bonus credits",
+    "totalCredits": "credits total",
+    "unlocks": "Unlocks",
+    "havePromoCode": "Have a promo code?",
+    "promoCodePlaceholder": "PROMO CODE",
+    "processing": "Processing...",
+    "buy": "Buy"
+  },
+  "footer": {
+    "description": "Generate and improve your AI prompts in seconds. Optimized for all generative AI models.",
+    "allRightsReserved": "All rights reserved.",
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "howItWorks": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ"
+    },
+    "resources": {
+      "title": "Resources",
+      "documentation": "Documentation",
+      "api": "API",
+      "blog": "Blog"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "legalNotice": "Legal notice"
+    }
   }
 }

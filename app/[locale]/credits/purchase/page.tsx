@@ -7,11 +7,13 @@ import { CreditPackCard } from '@/components/credits/CreditPackCard';
 import { CreditBalance } from '@/components/credits/CreditBalance';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useCurrency } from '@/hooks/useCurrency';
 
 function CreditsPurchaseContent() {
   const t = useTranslations('creditsPurchase');
   const locale = useLocale();
   const searchParams = useSearchParams();
+  const { currency, isLoading: currencyLoading } = useCurrency();
   const [packs, setPacks] = useState([]);
   const [balance, setBalance] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,9 +43,13 @@ function CreditsPurchaseContent() {
         text: errorMessages[errorKey] || `${t('errors.generic')}: ${error}`
       });
     }
+  }, [searchParams, t]);
 
-    // Charger les packs
-    fetch('/api/credits/packs')
+  // Charger les packs avec la devise sélectionnée
+  useEffect(() => {
+    if (currencyLoading) return;
+
+    fetch(`/api/credits/packs?currency=${currency}`)
       .then(r => r.json())
       .then(data => {
         if (data.success) {
@@ -61,7 +67,7 @@ function CreditsPurchaseContent() {
         }
       })
       .catch(err => console.error('Erreur balance:', err));
-  }, [searchParams]);
+  }, [currency, currencyLoading]);
 
   const handlePurchase = async (packId: string, promoCode?: string) => {
     setLoading(true);
@@ -163,6 +169,7 @@ function CreditsPurchaseContent() {
                 pack={pack}
                 onPurchase={handlePurchase}
                 loading={loading}
+                currency={currency}
               />
             ))}
           </div>

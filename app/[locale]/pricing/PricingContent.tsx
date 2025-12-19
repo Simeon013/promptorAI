@@ -18,8 +18,8 @@ import {
   Star,
   Tag,
 } from 'lucide-react';
-import { CurrencySelector } from '@/components/credits/CurrencySelector';
-import { formatCurrency, DEFAULT_CURRENCY, type CurrencyCode } from '@/config/currencies';
+import { useCurrency } from '@/hooks/useCurrency';
+import { formatCurrency, type CurrencyCode } from '@/config/currencies';
 import type { ActivePromotion } from '@/types';
 
 interface CreditPack {
@@ -45,11 +45,13 @@ export function PricingContent() {
   const [packs, setPacks] = useState<CreditPack[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<string | null>(null);
-  const [currency, setCurrency] = useState<CurrencyCode>(DEFAULT_CURRENCY);
+  const { currency, isLoading: currencyLoading } = useCurrency();
 
   useEffect(() => {
-    fetchPacks(currency);
-  }, [currency]);
+    if (!currencyLoading) {
+      fetchPacks(currency);
+    }
+  }, [currency, currencyLoading]);
 
   const fetchPacks = async (curr: CurrencyCode) => {
     setLoading(true);
@@ -119,11 +121,6 @@ export function PricingContent() {
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
               {t('subtitle')}
             </p>
-
-            {/* Currency Selector Skeleton */}
-            <div className="flex justify-center mb-6">
-              <div className="h-10 w-40 bg-muted rounded-lg animate-pulse" />
-            </div>
 
             <div className="flex flex-wrap justify-center gap-4">
               <div className="h-12 w-52 bg-muted rounded-lg animate-pulse" />
@@ -218,11 +215,6 @@ export function PricingContent() {
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
             {t('subtitle')}
           </p>
-
-          {/* Currency Selector */}
-          <div className="flex justify-center mb-6">
-            <CurrencySelector value={currency} onChange={setCurrency} />
-          </div>
 
           <div className="flex flex-wrap justify-center gap-4">
             <Link href={`/${locale}/dashboard`}>

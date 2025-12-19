@@ -489,5 +489,40 @@
       "improved": "⚡ Prompt verbessert! ({credits} Credit(s) verwendet)",
       "suggestions": "💡 Vorschläge generiert! ({credits} Credit verwendet)"
     }
+  },
+  "creditPackCard": {
+    "popular": "BELIEBT",
+    "perCredit": "pro Credit",
+    "credits": "Credits",
+    "bonusCredits": "Bonus-Credits",
+    "totalCredits": "Credits insgesamt",
+    "unlocks": "Schaltet frei",
+    "havePromoCode": "Haben Sie einen Promo-Code?",
+    "promoCodePlaceholder": "PROMO-CODE",
+    "processing": "Verarbeitung...",
+    "buy": "Kaufen"
+  },
+  "footer": {
+    "description": "Generieren und verbessern Sie Ihre KI-Prompts in Sekunden. Optimiert für alle generativen KI-Modelle.",
+    "allRightsReserved": "Alle Rechte vorbehalten.",
+    "product": {
+      "title": "Produkt",
+      "features": "Funktionen",
+      "howItWorks": "So funktioniert's",
+      "pricing": "Preise",
+      "faq": "FAQ"
+    },
+    "resources": {
+      "title": "Ressourcen",
+      "documentation": "Dokumentation",
+      "api": "API",
+      "blog": "Blog"
+    },
+    "legal": {
+      "title": "Rechtliches",
+      "privacy": "Datenschutz",
+      "terms": "Bedingungen",
+      "legalNotice": "Impressum"
+    }
   }
 }

@@ -22,6 +22,8 @@ import {
   TrendingDown
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useCurrency } from '@/hooks/useCurrency';
+import { convertCurrency, formatCurrency, type CurrencyCode } from '@/config/currencies';
 
 interface CreditPurchase {
   id: string;
@@ -52,6 +54,7 @@ interface CreditTransaction {
 export default function CreditsDashboardPage() {
   const t = useTranslations('creditsPage');
   const locale = useLocale();
+  const { currency, format, isLoading: currencyLoading } = useCurrency();
 
   const [balance, setBalance] = useState<{
     credits: {
@@ -435,7 +438,10 @@ export default function CreditsDashboardPage() {
                           </p>
                           <p className="text-sm text-muted-foreground">{t('credits')}</p>
                           <p className="text-sm font-semibold mt-1">
-                            {purchase.final_amount.toLocaleString(locale)} {purchase.currency}
+                            {formatCurrency(
+                              convertCurrency(purchase.final_amount, purchase.currency as CurrencyCode, currency),
+                              currency
+                            )}
                           </p>
                         </div>
                       </div>
@@ -443,7 +449,12 @@ export default function CreditsDashboardPage() {
                         <div className="mt-4 flex items-center gap-2 text-sm bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-2 rounded-lg">
                           <Tag className="h-4 w-4" />
                           <span className="font-medium">{t('promoCode')}: {purchase.promo_code}</span>
-                          <span className="ml-auto">-{purchase.discount_amount.toLocaleString(locale)} {purchase.currency}</span>
+                          <span className="ml-auto">
+                            -{formatCurrency(
+                              convertCurrency(purchase.discount_amount, purchase.currency as CurrencyCode, currency),
+                              currency
+                            )}
+                          </span>
                         </div>
                       )}
                     </Card>

@@ -24,11 +24,14 @@ import {
   Brain,
   DollarSign,
   TestTube,
+  Globe,
 } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useTheme } from 'next-themes';
 import { isAdminUser } from '@/lib/auth/admin';
+import { NextIntlClientProvider } from 'next-intl';
+import { GlobalSelector } from '@/components/ui/global-selector';
 
 interface NavItem {
   name: string;
@@ -108,6 +111,18 @@ export default function AdminLayout({
   const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<string[]>(['Credits', 'Intelligence Artificielle']);
+  const [messages, setMessages] = useState<Record<string, unknown> | null>(null);
+
+  // Load messages for GlobalSelector
+  useEffect(() => {
+    fetch('/api/messages?locale=fr')
+      .then(r => r.json())
+      .then(data => setMessages(data))
+      .catch(() => {
+        // Fallback to basic messages
+        import('@/messages/fr.json').then(m => setMessages(m.default));
+      });
+  }, []);
 
   // Eviter le flash pendant l'hydratation
   useEffect(() => {
@@ -301,14 +316,21 @@ export default function AdminLayout({
   );
 
   const renderHeader = () => (
-    <div className="h-16 flex items-center gap-3 px-6 border-b border-border">
-      <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2">
-        <LayoutDashboard className="h-5 w-5 text-white" />
+    <div className="h-16 flex items-center justify-between px-6 border-b border-border">
+      <div className="flex items-center gap-3">
+        <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-2">
+          <LayoutDashboard className="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <h1 className="font-bold text-foreground">Admin Panel</h1>
+          <p className="text-xs text-muted-foreground">Promptor</p>
+        </div>
       </div>
-      <div>
-        <h1 className="font-bold text-foreground">Admin Panel</h1>
-        <p className="text-xs text-muted-foreground">Promptor</p>
-      </div>
+      {messages && (
+        <NextIntlClientProvider messages={messages} locale="fr">
+          <GlobalSelector compact />
+        </NextIntlClientProvider>
+      )}
     </div>
   );
 

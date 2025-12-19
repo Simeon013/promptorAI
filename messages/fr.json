@@ -495,5 +495,40 @@
       "improved": "⚡ Prompt amélioré ! ({credits} crédit(s) utilisé(s))",
       "suggestions": "💡 Suggestions générées ! ({credits} crédit utilisé)"
     }
+  },
+  "creditPackCard": {
+    "popular": "POPULAIRE",
+    "perCredit": "par crédit",
+    "credits": "crédits",
+    "bonusCredits": "crédits bonus",
+    "totalCredits": "crédits au total",
+    "unlocks": "Débloque",
+    "havePromoCode": "Vous avez un code promo ?",
+    "promoCodePlaceholder": "CODE PROMO",
+    "processing": "Traitement...",
+    "buy": "Acheter"
+  },
+  "footer": {
+    "description": "Générez et améliorez vos prompts IA en quelques secondes. Optimisé pour tous les modèles d'IA générative.",
+    "allRightsReserved": "Tous droits réservés.",
+    "product": {
+      "title": "Produit",
+      "features": "Fonctionnalités",
+      "howItWorks": "Comment ça marche",
+      "pricing": "Tarifs",
+      "faq": "FAQ"
+    },
+    "resources": {
+      "title": "Ressources",
+      "documentation": "Documentation",
+      "api": "API",
+      "blog": "Blog"
+    },
+    "legal": {
+      "title": "Légal",
+      "privacy": "Confidentialité",
+      "terms": "Conditions",
+      "legalNotice": "Mentions légales"
+    }
   }
 }

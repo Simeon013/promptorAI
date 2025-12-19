@@ -5,7 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Coins, TrendingUp, Award, Clock } from 'lucide-react';
 import Link from 'next/link';
-import { formatCurrency, type CurrencyCode } from '@/config/currencies';
+import { formatCurrency, convertCurrency } from '@/config/currencies';
+import { useCurrency } from '@/hooks/useCurrency';
 
 interface CreditBalanceData {
   credits: {
@@ -35,11 +36,17 @@ interface CreditBalanceData {
 interface CreditBalanceProps {
   data: CreditBalanceData;
   compact?: boolean;
-  currency?: CurrencyCode;
 }
 
-export function CreditBalance({ data, compact = false, currency = 'XOF' }: CreditBalanceProps) {
+export function CreditBalance({ data, compact = false }: CreditBalanceProps) {
   const { credits, tier, next_tier } = data;
+  const { currency } = useCurrency();
+
+  // Les montants de l'API sont en XOF, on les convertit vers la devise sélectionnée
+  const formatAmount = (amountInXOF: number) => {
+    const converted = convertCurrency(amountInXOF, 'XOF', currency);
+    return formatCurrency(converted, currency);
+  };
 
   if (compact) {
     return (
@@ -172,7 +179,7 @@ export function CreditBalance({ data, compact = false, currency = 'XOF' }: Credi
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Total depense</span>
               <span className="font-medium">
-                {formatCurrency(tier.total_spent, currency)}
+                {formatAmount(tier.total_spent)}
               </span>
             </div>
           </div>
@@ -197,7 +204,7 @@ export function CreditBalance({ data, compact = false, currency = 'XOF' }: Credi
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Encore {formatCurrency(next_tier.remaining, currency)} pour debloquer
+                  Encore {formatAmount(next_tier.remaining)} pour debloquer
                 </p>
               </div>
             </div>

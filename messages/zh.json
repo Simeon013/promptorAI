@@ -489,5 +489,40 @@
       "improved": "⚡ 提示词已改进！（已使用 {credits} 个积分）",
       "suggestions": "💡 建议已生成！（已使用 {credits} 个积分）"
     }
+  },
+  "creditPackCard": {
+    "popular": "热门",
+    "perCredit": "每积分",
+    "credits": "积分",
+    "bonusCredits": "奖励积分",
+    "totalCredits": "总积分",
+    "unlocks": "解锁",
+    "havePromoCode": "有促销码吗？",
+    "promoCodePlaceholder": "促销码",
+    "processing": "处理中...",
+    "buy": "购买"
+  },
+  "footer": {
+    "description": "在几秒钟内生成和改进您的AI提示词。针对所有生成式AI模型进行了优化。",
+    "allRightsReserved": "保留所有权利。",
+    "product": {
+      "title": "产品",
+      "features": "功能",
+      "howItWorks": "如何使用",
+      "pricing": "定价",
+      "faq": "常见问题"
+    },
+    "resources": {
+      "title": "资源",
+      "documentation": "文档",
+      "api": "API",
+      "blog": "博客"
+    },
+    "legal": {
+      "title": "法律",
+      "privacy": "隐私",
+      "terms": "条款",
+      "legalNotice": "法律声明"
+    }
   }
 }
