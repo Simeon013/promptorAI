@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Coins, TrendingUp, Award, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { formatCurrency, type CurrencyCode } from '@/config/currencies';
 
 interface CreditBalanceData {
   credits: {
@@ -34,9 +35,10 @@ interface CreditBalanceData {
 interface CreditBalanceProps {
   data: CreditBalanceData;
   compact?: boolean;
+  currency?: CurrencyCode;
 }
 
-export function CreditBalance({ data, compact = false }: CreditBalanceProps) {
+export function CreditBalance({ data, compact = false, currency = 'XOF' }: CreditBalanceProps) {
   const { credits, tier, next_tier } = data;
 
   if (compact) {
@@ -170,7 +172,7 @@ export function CreditBalance({ data, compact = false }: CreditBalanceProps) {
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Total depense</span>
               <span className="font-medium">
-                {tier.total_spent.toLocaleString('fr-FR')} FCFA
+                {formatCurrency(tier.total_spent, currency)}
               </span>
             </div>
           </div>
@@ -195,7 +197,7 @@ export function CreditBalance({ data, compact = false }: CreditBalanceProps) {
                   />
                 </div>
                 <p className="text-xs text-muted-foreground mt-2">
-                  Encore {next_tier.remaining.toLocaleString('fr-FR')} FCFA pour debloquer
+                  Encore {formatCurrency(next_tier.remaining, currency)} pour debloquer
                 </p>
               </div>
             </div>

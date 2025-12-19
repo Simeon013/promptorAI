@@ -97,13 +97,13 @@ export default function AdminCreditsPage() {
           </div>
           <div>
             <p className="text-2xl font-bold">
-              {stats?.total_revenue.toLocaleString('fr-FR') || 0} FCFA
+              {stats?.total_revenue.toLocaleString('fr-FR') || 0} XOF
             </p>
             <p className="text-sm text-muted-foreground mt-1">Revenus totaux</p>
           </div>
           <div className="mt-4 flex items-center text-xs text-green-600">
             <TrendingUp className="h-3 w-3 mr-1" />
-            {stats?.revenue_this_month.toLocaleString('fr-FR') || 0} FCFA ce mois
+            {stats?.revenue_this_month.toLocaleString('fr-FR') || 0} XOF ce mois
           </div>
         </Card>
 
@@ -265,7 +265,7 @@ export default function AdminCreditsPage() {
                     {purchase.total_credits} crédits
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {purchase.final_amount.toLocaleString('fr-FR')} FCFA
+                    {purchase.final_amount.toLocaleString('fr-FR')} XOF
                   </p>
                 </div>
                 <div className="text-right">

@@ -2,12 +2,15 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { CreditPackCard } from '@/components/credits/CreditPackCard';
 import { CreditBalance } from '@/components/credits/CreditBalance';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 function CreditsPurchaseContent() {
+  const t = useTranslations('creditsPurchase');
+  const locale = useLocale();
   const searchParams = useSearchParams();
   const [packs, setPacks] = useState([]);
   const [balance, setBalance] = useState(null);
@@ -23,18 +26,19 @@ function CreditsPurchaseContent() {
     if (success === 'true') {
       setMessage({
         type: 'success',
-        text: `Paiement reussi ! ${credits} credits ajoutes a votre compte.`
+        text: t('paymentSuccess', { credits: credits || '0' })
       });
     } else if (error) {
+      const errorKey = error as 'payment_declined' | 'payment_canceled' | 'callback_error' | 'missing_transaction_id';
       const errorMessages: Record<string, string> = {
-        'payment_declined': 'Paiement refuse. Verifiez vos informations bancaires.',
-        'payment_canceled': 'Paiement annule.',
-        'callback_error': 'Erreur lors du traitement du paiement.',
-        'missing_transaction_id': 'ID de transaction manquant.',
+        'payment_declined': t('errors.paymentDeclined'),
+        'payment_canceled': t('errors.paymentCanceled'),
+        'callback_error': t('errors.callbackError'),
+        'missing_transaction_id': t('errors.missingTransactionId'),
       };
       setMessage({
         type: 'error',
-        text: errorMessages[error] || `Erreur: ${error}`
+        text: errorMessages[errorKey] || `${t('errors.generic')}: ${error}`
       });
     }
 
@@ -82,12 +86,12 @@ function CreditsPurchaseContent() {
         // Redirection vers FedaPay
         window.location.href = data.url;
       } else {
-        alert(`Erreur: ${data.error}`);
+        alert(`${t('errors.generic')}: ${data.error}`);
         setLoading(false);
       }
     } catch (error) {
       console.error('Erreur:', error);
-      alert('Erreur lors de l achat');
+      alert(t('errors.purchaseError'));
       setLoading(false);
     }
   };
@@ -97,15 +101,15 @@ function CreditsPurchaseContent() {
       {/* Header avec retour */}
       <div>
         <Link
-          href="/dashboard"
+          href={`/${locale}/dashboard`}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
-          Retour au dashboard
+          {t('backToDashboard')}
         </Link>
-        <h1 className="text-4xl font-bold mb-2">Acheter des Credits</h1>
+        <h1 className="text-4xl font-bold mb-2">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Rechargez votre solde et debloquez plus de fonctionnalites
+          {t('subtitle')}
         </p>
       </div>
 
@@ -128,7 +132,7 @@ function CreditsPurchaseContent() {
             onClick={() => setMessage(null)}
             className="text-xs underline mt-1 opacity-70 hover:opacity-100"
           >
-            Fermer
+            {t('close')}
           </button>
         </div>
       )}
@@ -136,19 +140,19 @@ function CreditsPurchaseContent() {
       {/* Solde actuel */}
       {balance && (
         <div>
-          <h2 className="text-2xl font-bold mb-4">Votre Solde Actuel</h2>
+          <h2 className="text-2xl font-bold mb-4">{t('currentBalance')}</h2>
           <CreditBalance data={balance} />
         </div>
       )}
 
       {/* Packs disponibles */}
       <div>
-        <h2 className="text-2xl font-bold mb-4">Packs Disponibles</h2>
+        <h2 className="text-2xl font-bold mb-4">{t('availablePacks')}</h2>
 
         {packs.length === 0 ? (
           <div className="bg-yellow-50 dark:bg-yellow-950 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              Aucun pack disponible pour le moment.
+              {t('noPacks')}
             </p>
           </div>
         ) : (
@@ -167,29 +171,29 @@ function CreditsPurchaseContent() {
 
       {/* Informations */}
       <div className="bg-muted rounded-lg p-6 space-y-4">
-        <h3 className="text-lg font-bold">Informations Importantes</h3>
+        <h3 className="text-lg font-bold">{t('importantInfo.title')}</h3>
 
         <div className="space-y-2 text-sm">
           <p>
-            <strong>Paiement securise</strong> : Nous utilisons FedaPay pour traiter vos paiements en toute securite.
+            <strong>{t('importantInfo.securePayment.title')}</strong> : {t('importantInfo.securePayment.description')}
           </p>
           <p>
-            <strong>Methodes de paiement</strong> : Carte bancaire (Visa, Mastercard) et Mobile Money (MTN, Moov, Orange).
+            <strong>{t('importantInfo.paymentMethods.title')}</strong> : {t('importantInfo.paymentMethods.description')}
           </p>
           <p>
-            <strong>Credits sans expiration</strong> : Vos credits ne s epuisent jamais et restent disponibles a vie.
+            <strong>{t('importantInfo.noExpiration.title')}</strong> : {t('importantInfo.noExpiration.description')}
           </p>
           <p>
-            <strong>Tiers automatiques</strong> : Votre tier est calcule automatiquement selon votre total depense et vous donne acces a plus de fonctionnalites.
+            <strong>{t('importantInfo.autoTiers.title')}</strong> : {t('importantInfo.autoTiers.description')}
           </p>
           <p>
-            <strong>Codes promo</strong> : Entrez un code promo lors de l achat pour beneficier de reductions ou de credits bonus.
+            <strong>{t('importantInfo.promoCodes.title')}</strong> : {t('importantInfo.promoCodes.description')}
           </p>
         </div>
 
         <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded p-3 mt-4">
           <p className="text-xs text-blue-800 dark:text-blue-200">
-            <strong>Astuce</strong> : Plus vous achetez en une fois, plus vous economisez sur le prix par credit !
+            <strong>{t('tip.title')}</strong> : {t('tip.description')}
           </p>
         </div>
       </div>
@@ -198,8 +202,10 @@ function CreditsPurchaseContent() {
 }
 
 export default function CreditsPurchasePage() {
+  const t = useTranslations('creditsPurchase');
+
   return (
-    <Suspense fallback={<div className="container mx-auto p-8">Chargement...</div>}>
+    <Suspense fallback={<div className="container mx-auto p-8">{t('loading')}</div>}>
       <CreditsPurchaseContent />
     </Suspense>
   );

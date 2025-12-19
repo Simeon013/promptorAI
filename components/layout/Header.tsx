@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { LanguageSelector } from '@/components/ui/language-selector';
+import { GlobalSelector } from '@/components/ui/global-selector';
 import { Sparkles, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
@@ -79,7 +79,7 @@ export function Header() {
 
           {/* Right Side */}
           <div className="flex items-center gap-2">
-            <LanguageSelector />
+            <GlobalSelector />
             <ThemeToggle />
 
             <SignedOut>

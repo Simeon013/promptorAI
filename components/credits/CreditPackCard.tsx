@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Check } from 'lucide-react';
+import { formatCurrency, type CurrencyCode, CURRENCIES } from '@/config/currencies';
 
 interface CreditPack {
   id: string;
@@ -18,22 +19,29 @@ interface CreditPack {
   currency: string;
   tier_unlock: string | null;
   is_featured: boolean;
-  price_per_credit: number;
+  price_per_credit: number | string;
 }
 
 interface CreditPackCardProps {
   pack: CreditPack;
   onPurchase: (packId: string, promoCode?: string) => void;
   loading?: boolean;
+  currency?: CurrencyCode;
 }
 
-export function CreditPackCard({ pack, onPurchase, loading }: CreditPackCardProps) {
+export function CreditPackCard({ pack, onPurchase, loading, currency = 'USD' }: CreditPackCardProps) {
   const [promoCode, setPromoCode] = useState('');
   const [showPromoInput, setShowPromoInput] = useState(false);
 
   const handlePurchase = () => {
     onPurchase(pack.id, promoCode || undefined);
   };
+
+  const currencyInfo = CURRENCIES[currency];
+  const formattedPrice = formatCurrency(pack.price, currency);
+  const pricePerCredit = typeof pack.price_per_credit === 'string'
+    ? pack.price_per_credit
+    : formatCurrency(pack.price_per_credit, currency);
 
   return (
     <Card
@@ -63,12 +71,11 @@ export function CreditPackCard({ pack, onPurchase, loading }: CreditPackCardProp
       <div className="mb-6">
         <div className="flex items-baseline gap-1">
           <span className="text-4xl font-bold">
-            {pack.price.toLocaleString('fr-FR')}
+            {formattedPrice}
           </span>
-          <span className="text-lg text-muted-foreground">FCFA</span>
         </div>
         <p className="text-xs text-muted-foreground mt-1">
-          {pack.price_per_credit} FCFA par credit
+          {pricePerCredit} par crédit
         </p>
       </div>
 

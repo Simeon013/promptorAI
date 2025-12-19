@@ -1,0 +1,493 @@
+{
+  "common": {
+    "getStarted": "免费开始",
+    "signIn": "登录",
+    "signUp": "注册",
+    "dashboard": "仪表板",
+    "editor": "编辑器",
+    "pricing": "定价",
+    "features": "功能",
+    "howItWorks": "如何使用",
+    "faq": "常见问题",
+    "copy": "复制",
+    "copied": "已复制！",
+    "loading": "加载中...",
+    "learnMore": "了解更多"
+  },
+  "hero": {
+    "badge": "将您的想法转化为专业提示词",
+    "title1": "好的提示词",
+    "titleHighlight": "至关重要",
+    "description": "将基础提示词转化为优化的提示词，使用 {tools} 和所有AI模型生成卓越的结果。",
+    "ctaPrimary": "免费开始",
+    "ctaSecondary": "查看区别",
+    "trustFree": "免费开始",
+    "trustNoCard": "无需信用卡",
+    "trustPrompts": "每月10个免费提示词",
+    "comparison": {
+      "basicTitle": "基础提示词",
+      "basicPrompt": "帮我写一封专业邮件",
+      "basicPoint1": "结果模糊且通用",
+      "basicPoint2": "缺乏上下文",
+      "basicPoint3": "需要多次修改",
+      "optimizedTitle": "优化后的提示词",
+      "optimizedBadge": "使用 Promptor",
+      "optimizedPrompt": "撰写一封专业邮件，跟进一位两周未回复的B2B客户。语气：礼貌但直接。目标：安排会议。包含价值主张和明确的行动号召。",
+      "optimizedPoint1": "结果精准可执行",
+      "optimizedPoint2": "上下文和语气明确",
+      "optimizedPoint3": "可立即使用"
+    },
+    "stats": {
+      "faster": "更高效",
+      "secure": "安全",
+      "languages": "种语言"
+    }
+  },
+  "features": {
+    "badge": "功能",
+    "title": "您需要的",
+    "titleHighlight": "一切",
+    "description": "强大的工具，无论您的水平如何，都能创建完美的提示词。",
+    "generation": {
+      "title": "智能生成",
+      "description": "描述您的想法，获得详细优化的提示词，适用于任何生成式AI。"
+    },
+    "improvement": {
+      "title": "提示词优化",
+      "description": "通过我们先进的AI分析，将现有提示词转化为更有效的版本。"
+    },
+    "multilang": {
+      "title": "多语言",
+      "description": "支持13种不同语言生成提示词。中文、英语、法语、德语等。"
+    },
+    "history": {
+      "title": "完整历史",
+      "description": "通过搜索、筛选和收藏功能找到所有生成的提示词。不再丢失好想法。"
+    },
+    "suggestions": {
+      "title": "AI建议",
+      "description": "获取上下文建议，丰富您的提示词并获得更好的结果。"
+    },
+    "speed": {
+      "title": "极速",
+      "description": "借助我们的AI，几秒钟内完成生成。无需等待，只有结果。"
+    }
+  },
+  "howItWorks": {
+    "badge": "如何使用",
+    "title": "三个简单",
+    "titleHighlight": "步骤",
+    "description": "在几秒钟内创建完美的提示词。",
+    "step1": {
+      "title": "描述您的想法",
+      "description": "输入您想创建的内容：图像、文本、代码...如有需要可添加约束条件。"
+    },
+    "step2": {
+      "title": "AI生成您的提示词",
+      "description": "我们的AI分析您的请求，创建详细、结构化且优化的提示词以获得最佳结果。"
+    },
+    "step3": {
+      "title": "复制并使用",
+      "description": "一键复制您的提示词，在ChatGPT、Midjourney、DALL-E或任何其他AI中使用。"
+    }
+  },
+  "faq": {
+    "badge": "常见问题",
+    "title": "常见",
+    "titleHighlight": "问题",
+    "description": "关于Promptor您需要了解的一切。",
+    "q1": {
+      "question": "什么是提示词？",
+      "answer": "提示词是给生成式AI的文本指令，用于获得特定结果。提示词越详细、结构越好，AI生成的结果就越好。"
+    },
+    "q2": {
+      "question": "支持哪些AI模型？",
+      "answer": "Promptor生成的提示词针对所有生成式AI模型进行了优化：ChatGPT、GPT-4、Claude、Midjourney、DALL-E、Stable Diffusion等。"
+    },
+    "q3": {
+      "question": "免费计划真的免费吗？",
+      "answer": "是的！免费计划允许您每月生成10个提示词，无需承诺，无需信用卡。非常适合测试服务。"
+    },
+    "q4": {
+      "question": "我可以随时取消订阅吗？",
+      "answer": "当然可以。您可以随时从仪表板取消订阅。您将保留访问权限直到计费周期结束。"
+    },
+    "q5": {
+      "question": "我的提示词是私密的吗？",
+      "answer": "是的，您所有的提示词都是私密且安全的。我们永远不会与第三方分享您的数据，您可以随时删除您的提示词。"
+    },
+    "q6": {
+      "question": "多语言生成如何工作？",
+      "answer": "您可以用13种不同的语言生成提示词。只需选择所需语言，我们的AI会相应地调整提示词。"
+    }
+  },
+  "testimonials": {
+    "badge": "用户评价",
+    "title": "我们的用户",
+    "titleHighlight": "怎么说",
+    "description": "加入成千上万将想法转化为专业提示词的用户。",
+    "testimonial1": "Promptor完全改变了我与AI的工作方式。我节省了大量时间，结果也好多了！",
+    "testimonial2": "作为营销人员，我每天都需要创建内容。Promptor让我能在几秒钟内生成优化的提示词。",
+    "testimonial3": "界面直观，结果出色。我向所有设计师同事推荐Promptor！",
+    "testimonial4": "AI建议太棒了。它们帮助我专业地构建提示词，即使是复杂的任务也不在话下。",
+    "testimonial5": "我每天都用Promptor管理社交媒体。它已成为我工作流程中不可或缺的工具。",
+    "testimonial6": "多语言生成对我的国际项目来说非常完美。节省了大量时间！"
+  },
+  "cta": {
+    "badge": "立即开始",
+    "title": "准备好创建",
+    "titleHighlight": "卓越的提示词",
+    "description": "加入成千上万使用Promptor改善AI结果的用户。免费开始，无需信用卡。",
+    "ctaPrimary": "免费开始",
+    "ctaSecondary": "查看定价",
+    "trustPrompts": "每月10个免费提示词",
+    "trustNoCard": "无需信用卡",
+    "trustCancel": "随时取消"
+  },
+  "footer": {
+    "description": "在几秒钟内生成和改进您的AI提示词。针对所有生成式AI模型进行了优化。",
+    "product": "产品",
+    "resources": "资源",
+    "legal": "法律",
+    "documentation": "文档",
+    "api": "API",
+    "blog": "博客",
+    "privacy": "隐私",
+    "terms": "条款",
+    "legalNotice": "法律声明",
+    "copyright": "保留所有权利。"
+  },
+  "notFound": {
+    "title": "页面未找到",
+    "description": "抱歉！您查找的页面不存在或已被移动。请检查URL或返回首页。",
+    "backHome": "返回首页",
+    "viewPricing": "查看定价"
+  },
+  "pricing": {
+    "pricing": "定价",
+    "title": "简单透明的定价",
+    "subtitle": "选择适合您需求的计划",
+    "popular": "热门",
+    "custom": "定制",
+    "perMonth": "/月",
+    "startFree": "免费开始",
+    "subscribe": "订阅",
+    "contactUs": "联系我们",
+    "footer": "所有计划都包含电子邮件支持。随时取消。",
+    "home": "首页",
+    "signIn": "登录"
+  },
+  "credits": {
+    "badge": "简单透明的定价",
+    "title": "购买积分",
+    "subtitle": "选择适合您需求的套餐。买得越多，省得越多！",
+    "viewBalance": "查看我的余额",
+    "loading": "正在加载套餐...",
+    "popular": "热门",
+    "buy": "购买",
+    "redirecting": "正在跳转...",
+    "credits": "积分",
+    "baseCredits": "基础积分",
+    "bonusFree": "免费奖励",
+    "addedAuto": "自动添加",
+    "total": "总计",
+    "save": "节省",
+    "perCredit": "/积分",
+    "features": {
+      "title": "为什么选择我们的积分？",
+      "securePayment": {
+        "title": "安全支付",
+        "description": "交易由FedaPay保护。接受信用卡和移动支付。"
+      },
+      "instantAdd": {
+        "title": "即时到账",
+        "description": "您的积分在付款后立即添加。立即开始使用！"
+      },
+      "noExpiration": {
+        "title": "永不过期",
+        "description": "您的积分永不过期。随时使用，按您自己的节奏。"
+      },
+      "freeBonus": {
+        "title": "免费奖励",
+        "description": "每个套餐都包含免费奖励积分。买得越多，赚得越多！"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "howCreditsWork": {
+        "question": "积分如何工作？",
+        "answer": "每个操作（提示词生成、改进等）根据复杂程度消耗一定数量的积分。"
+      },
+      "creditsExpire": {
+        "question": "积分会过期吗？",
+        "answer": "不会！您的积分永久有效，永不过期。"
+      },
+      "whatIsTier": {
+        "question": "什么是等级？",
+        "answer": "等级让您获得更多功能。您消费越多，等级自动越高。"
+      },
+      "promoCode": {
+        "question": "我可以使用促销码吗？",
+        "answer": "可以！在购买时输入促销码即可获得折扣或奖励积分。"
+      }
+    },
+    "proTip": {
+      "title": "专业提示",
+      "description": "套餐越大，每积分的价格越优惠。更大的套餐提供最好的奖励并解锁更高等级！"
+    },
+    "cta": {
+      "title": "准备好提升您的创造力了吗？",
+      "description": "加入成千上万使用Promptor创建卓越提示词的用户",
+      "button": "查看我的仪表板"
+    }
+  },
+  "success": {
+    "activating": "激活中...",
+    "paymentSuccess": "支付成功！",
+    "activatingDescription": "我们正在激活您的订阅，这只需要一会儿...",
+    "successDescription": "您的订阅已成功激活。现在您可以享受计划的所有功能。",
+    "syncError": "您的付款已处理，但同步失败。如果问题持续，请联系支持。",
+    "goToDashboard": "前往仪表板",
+    "backHome": "返回首页",
+    "loading": "加载中..."
+  },
+  "dashboard": {
+    "title": "仪表板",
+    "welcome": "欢迎",
+    "buyCredits": "购买积分",
+    "generate": "生成",
+    "creditsBalance": "积分余额",
+    "creditsAvailable": "可用积分",
+    "seeDetails": "查看详情",
+    "currentTier": "当前等级",
+    "spent": "已花费",
+    "nextTier": "下一级",
+    "remaining": "还需",
+    "totalSpent": "总支出",
+    "sinceStart": "从开始至今",
+    "lastPurchase": "最近购买",
+    "totalPrompts": "提示词总数",
+    "sinceBeginning": "从开始至今",
+    "thisMonth": "本月",
+    "promptsGenerated": "已生成提示词",
+    "purchases": "购买",
+    "transactions": "交易",
+    "history": "历史记录",
+    "seeAll": "查看全部",
+    "recentPrompts": "最近的提示词",
+    "yourLastGenerations": "您最近的生成",
+    "viewAll": "查看全部",
+    "generated": "已生成",
+    "improved": "已改进",
+    "noPromptsYet": "暂无提示词",
+    "startGenerating": "开始生成您的第一个提示词！",
+    "generatePrompt": "生成提示词",
+    "recentPurchases": "最近购买",
+    "yourLastTransactions": "您最近的交易",
+    "details": "详情",
+    "noPurchases": "暂无购买",
+    "buyCreditsUnlock": "购买积分以解锁功能",
+    "lowCredits": "积分不足",
+    "lowCreditsDesc": "您的余额较低。请充值以继续生成提示词。",
+    "bonusCredits": "部分套餐包含奖励积分",
+    "usePromoCode": "使用促销码享受更多优惠",
+    "levelUpTier": "购买积分提升等级",
+    "rechargeNow": "立即充值"
+  },
+  "history": {
+    "title": "历史记录",
+    "backToDashboard": "返回仪表板",
+    "totalPrompts": "共 {count} 个提示词",
+    "searchPlaceholder": "搜索您的提示词...",
+    "allTypes": "所有类型",
+    "generated": "已生成",
+    "improved": "已改进",
+    "favorites": "收藏夹",
+    "exportCSV": "导出 CSV",
+    "exportJSON": "导出 JSON",
+    "loading": "正在加载您的提示词...",
+    "noPromptsFound": "未找到提示词",
+    "noPromptsYet": "暂无提示词",
+    "modifyFilters": "尝试修改搜索条件",
+    "noPromptsGenerated": "您还没有生成任何提示词",
+    "createPrompt": "创建提示词",
+    "previous": "上一页",
+    "next": "下一页",
+    "pageOf": "第 {page} 页，共 {total} 页",
+    "tip": "提示：使用收藏夹快速找到您最好的提示词",
+    "noExportData": "没有可导出的提示词",
+    "exportSuccess": "导出成功！",
+    "promptDeleted": "提示词已删除",
+    "loadError": "加载提示词时出错"
+  },
+  "creditsPage": {
+    "title": "我的积分",
+    "subtitle": "管理您的余额并查看历史记录",
+    "backToDashboard": "返回仪表板",
+    "buyCredits": "购买积分",
+    "overview": "概览",
+    "purchases": "购买记录",
+    "transactions": "交易记录",
+    "totalPurchased": "总购买",
+    "creditsPurchased": "已购买积分",
+    "bonusReceived": "获得奖励",
+    "bonusCredits": "奖励积分",
+    "used": "已使用",
+    "usagePercent": "{percent}% 使用率",
+    "importantInfo": "重要信息",
+    "noExpiration": "永不过期",
+    "noExpirationDesc": "您的积分永久有效，永不过期",
+    "promoCodes": "促销码",
+    "promoCodesDesc": "使用促销码获取折扣或奖励",
+    "tierSystem": "等级系统",
+    "tierSystemDesc": "根据总消费自动升级",
+    "packBonus": "套餐奖励",
+    "packBonusDesc": "一次购买越多，每积分越省钱",
+    "noPurchases": "暂无购买",
+    "noPurchasesYet": "您还没有购买任何积分",
+    "buyNow": "立即购买",
+    "credits": "积分",
+    "promoCode": "促销码",
+    "noTransactions": "暂无交易",
+    "transactionsHistory": "您的交易历史将显示在这里",
+    "balance": "余额"
+  },
+  "creditsPurchase": {
+    "title": "购买积分",
+    "subtitle": "充值余额并解锁更多功能",
+    "backToDashboard": "返回仪表板",
+    "paymentSuccess": "支付成功！{credits} 积分已添加到您的账户。",
+    "close": "关闭",
+    "currentBalance": "您的当前余额",
+    "availablePacks": "可用套餐",
+    "noPacks": "目前没有可用的套餐。",
+    "loading": "加载中...",
+    "errors": {
+      "generic": "错误",
+      "paymentDeclined": "支付被拒绝。请检查您的银行卡信息。",
+      "paymentCanceled": "支付已取消。",
+      "callbackError": "处理支付时出错。",
+      "missingTransactionId": "缺少交易ID。",
+      "purchaseError": "购买时出错"
+    },
+    "importantInfo": {
+      "title": "重要信息",
+      "securePayment": {
+        "title": "安全支付",
+        "description": "我们使用 FedaPay 安全处理您的支付。"
+      },
+      "paymentMethods": {
+        "title": "支付方式",
+        "description": "银行卡（Visa、Mastercard）和移动支付（MTN、Moov、Orange）。"
+      },
+      "noExpiration": {
+        "title": "积分永不过期",
+        "description": "您的积分永不过期，永久有效。"
+      },
+      "autoTiers": {
+        "title": "自动等级",
+        "description": "您的等级根据总消费自动计算，并为您提供更多功能。"
+      },
+      "promoCodes": {
+        "title": "促销码",
+        "description": "在购买时输入促销码可获得折扣或奖励积分。"
+      }
+    },
+    "tip": {
+      "title": "提示",
+      "description": "一次购买越多，每积分越省钱！"
+    }
+  },
+  "globalSelector": {
+    "language": "语言",
+    "currency": "货币",
+    "searchCurrency": "搜索货币...",
+    "currentSettings": "当前设置",
+    "currencyGroups": {
+      "majorCurrencies": "主要货币",
+      "africa": "非洲",
+      "asiaMiddleEast": "亚洲和中东",
+      "southAmerica": "南美洲"
+    }
+  },
+  "editor": {
+    "title": "提示词编辑器",
+    "subtitle": "为人工智能创建和优化您的提示词",
+    "backToDashboard": "返回仪表板",
+    "credits": "积分",
+    "mode": "模式",
+    "modeGenerate": "生成",
+    "modeGenerateDesc": "从想法开始",
+    "modeImprove": "改进",
+    "modeImproveDesc": "优化现有",
+    "configuration": "配置",
+    "promptType": "提示词类型",
+    "outputLanguage": "输出语言",
+    "languageAutoDesc": "提示词将使用自动检测的语言",
+    "languageSelectedDesc": "提示词将以此语言生成",
+    "yourIdea": "💡 您的想法",
+    "yourIdeaDesc": "描述您想创建什么",
+    "promptToImprove": "🎯 待改进的提示词",
+    "promptToImproveDesc": "粘贴您想优化的提示词",
+    "placeholderGenerate": "示例：一个人形机器人在日落时分的未来城市中行走，赛博朋克风格...",
+    "placeholderImprove": "在此粘贴您现有的提示词...",
+    "constraints": "附加约束",
+    "optional": "可选",
+    "constraintsPlaceholder": "示例：摄影风格，避免技术术语，专业语气...",
+    "generating": "生成中...",
+    "generateButton": "生成提示词",
+    "improveButton": "改进提示词",
+    "getSuggestions": "获取建议",
+    "result": "✨ 结果",
+    "suggestions": "💡 建议",
+    "suggestionsDesc": "点击选择（已选择 {count} 个）",
+    "resultPlaceholder": "您的结果将在这里显示",
+    "resultPlaceholderDesc": "输入您的想法并点击\"生成提示词\"开始",
+    "lowCreditsTitle": "积分不足",
+    "lowCreditsDesc": "您只剩下 {count} 个积分。请充值以继续。",
+    "noCreditsTitle": "余额耗尽",
+    "noCreditsDesc": "您没有积分了。购买套餐以继续生成提示词。",
+    "recharge": "充值",
+    "buyCredits": "购买积分",
+    "tipsTitle": "获得最佳提示词的技巧",
+    "tip1Title": "超级精确",
+    "tip1Desc": "详细说明上下文、受众和具体目标",
+    "tip2Title": "定义风格",
+    "tip2Desc": "指定语气、格式和视觉或文字参考",
+    "tip3Title": "使用约束",
+    "tip3Desc": "指出要避免什么或要遵守的技术限制",
+    "creditInfo": "消耗根据您的等级而异（每次生成1至10个积分）。建议消耗1个积分。",
+    "promptTypes": {
+      "auto": "自动检测",
+      "autoDesc": "自动检测提示词类型",
+      "image": "图像生成",
+      "imageDesc": "DALL-E、Midjourney、Stable Diffusion",
+      "video": "视频生成",
+      "videoDesc": "Runway、Pika、Sora、Gen-2",
+      "code": "代码生成",
+      "codeDesc": "GitHub Copilot、ChatGPT、Claude",
+      "text": "文本写作",
+      "textDesc": "文章、故事、编辑内容",
+      "chat": "对话助手",
+      "chatDesc": "聊天机器人和AI助手",
+      "analysis": "数据分析",
+      "analysisDesc": "分析、总结、洞察"
+    },
+    "languages": {
+      "auto": "自动检测"
+    },
+    "errors": {
+      "emptyInput": "请输入想法或提示词",
+      "insufficientCredits": "余额不足。购买积分以继续。",
+      "generic": "发生错误",
+      "copyFailed": "复制时出错",
+      "emptyInputForSuggestions": "请输入文本以获取建议",
+      "suggestionsFailed": "生成建议时出错"
+    },
+    "success": {
+      "generated": "✨ 提示词已生成！（已使用 {credits} 个积分）",
+      "improved": "⚡ 提示词已改进！（已使用 {credits} 个积分）",
+      "suggestions": "💡 建议已生成！（已使用 {credits} 个积分）"
+    }
+  }
+}

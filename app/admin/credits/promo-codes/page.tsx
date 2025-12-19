@@ -131,7 +131,7 @@ export default function AdminPromoCodesPage() {
       case 'percentage':
         return `${code.discount_percentage}%`;
       case 'fixed_amount':
-        return `${code.discount_fixed_amount} FCFA`;
+        return `${code.discount_fixed_amount} XOF`;
       case 'credit_bonus':
       case 'free_credits':
         return `+${code.bonus_credits} crédits`;
@@ -403,7 +403,7 @@ function PromoCodeForm({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="percentage">Réduction en %</SelectItem>
-            <SelectItem value="fixed_amount">Montant fixe (FCFA)</SelectItem>
+            <SelectItem value="fixed_amount">Montant fixe (XOF)</SelectItem>
             <SelectItem value="credit_bonus">Bonus de crédits</SelectItem>
             <SelectItem value="free_credits">Crédits gratuits (100% réduction)</SelectItem>
           </SelectContent>
@@ -427,7 +427,7 @@ function PromoCodeForm({
 
       {formData.type === 'fixed_amount' && (
         <div className="space-y-2">
-          <Label htmlFor="discount_fixed_amount">Montant (FCFA)</Label>
+          <Label htmlFor="discount_fixed_amount">Montant (XOF)</Label>
           <Input
             id="discount_fixed_amount"
             type="number"

@@ -181,6 +181,70 @@
     "footer": "All plans include email support. Cancel anytime.",
     "home": "Home",
     "signIn": "Sign in"
+  },
+  "credits": {
+    "badge": "Simple and Transparent Pricing",
+    "title": "Buy Credits",
+    "subtitle": "Choose the pack that fits your needs. The more you buy, the more you save!",
+    "viewBalance": "View my Balance",
+    "loading": "Loading packs...",
+    "popular": "POPULAR",
+    "buy": "Buy",
+    "redirecting": "Redirecting...",
+    "credits": "credits",
+    "baseCredits": "Base credits",
+    "bonusFree": "free bonus",
+    "addedAuto": "Added automatically",
+    "total": "Total",
+    "save": "Save",
+    "perCredit": "/credit",
+    "features": {
+      "title": "Why Choose Our Credits?",
+      "securePayment": {
+        "title": "Secure Payment",
+        "description": "Transactions protected by FedaPay. Credit card and Mobile Money accepted."
+      },
+      "instantAdd": {
+        "title": "Instant Addition",
+        "description": "Your credits are added immediately after payment. Start right away!"
+      },
+      "noExpiration": {
+        "title": "No Expiration",
+        "description": "Your credits never expire. Use them when you want, at your own pace."
+      },
+      "freeBonus": {
+        "title": "Free Bonuses",
+        "description": "Each pack includes free bonus credits. The more you buy, the more you earn!"
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "howCreditsWork": {
+        "question": "How do credits work?",
+        "answer": "Each action (prompt generation, improvement, etc.) consumes a certain number of credits based on complexity."
+      },
+      "creditsExpire": {
+        "question": "Do credits expire?",
+        "answer": "No! Your credits are valid for life and never expire."
+      },
+      "whatIsTier": {
+        "question": "What is a tier?",
+        "answer": "Tiers give you access to more features. The more you spend, the higher your tier automatically increases."
+      },
+      "promoCode": {
+        "question": "Can I use a promo code?",
+        "answer": "Yes! Enter your promo code during purchase to get discounts or bonus credits."
+      }
+    },
+    "proTip": {
+      "title": "Pro Tip",
+      "description": "The larger the pack, the better the price per credit. Higher packs offer the best bonuses and unlock higher tiers!"
+    },
+    "cta": {
+      "title": "Ready to boost your creativity?",
+      "description": "Join thousands of users creating exceptional prompts with Promptor",
+      "button": "View my Dashboard"
+    }
   }
 ,
   "success": {
@@ -192,5 +256,244 @@
     "goToDashboard": "Go to Dashboard",
     "backHome": "Back to home",
     "loading": "Loading..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome",
+    "buyCredits": "Buy Credits",
+    "generate": "Generate",
+    "creditsBalance": "Credits Balance",
+    "creditsAvailable": "credits available",
+    "seeDetails": "See details",
+    "currentTier": "Current Tier",
+    "spent": "spent",
+    "nextTier": "Next",
+    "remaining": "Remaining",
+    "totalSpent": "Total Spent",
+    "sinceStart": "since the start",
+    "lastPurchase": "Last purchase",
+    "totalPrompts": "Total Prompts",
+    "sinceBeginning": "Since the beginning",
+    "thisMonth": "This Month",
+    "promptsGenerated": "Prompts generated",
+    "purchases": "Purchases",
+    "transactions": "Transactions",
+    "history": "History",
+    "seeAll": "See all",
+    "recentPrompts": "Recent Prompts",
+    "yourLastGenerations": "Your last generations",
+    "viewAll": "View all",
+    "generated": "Generated",
+    "improved": "Improved",
+    "noPromptsYet": "No prompts yet",
+    "startGenerating": "Start by generating your first prompt!",
+    "generatePrompt": "Generate a Prompt",
+    "recentPurchases": "Recent Purchases",
+    "yourLastTransactions": "Your last transactions",
+    "details": "Details",
+    "noPurchases": "No purchases",
+    "buyCreditsUnlock": "Buy credits to unlock features",
+    "lowCredits": "Low Credits",
+    "lowCreditsDesc": "Your balance is low. Recharge to continue generating prompts.",
+    "bonusCredits": "Bonus credits on select packs",
+    "usePromoCode": "Use a promo code for more savings",
+    "levelUpTier": "Level up your tier by buying credits",
+    "rechargeNow": "Recharge Now"
+  },
+  "history": {
+    "title": "History",
+    "backToDashboard": "Back to Dashboard",
+    "totalPrompts": "{count} prompt(s) total",
+    "searchPlaceholder": "Search in your prompts...",
+    "allTypes": "All types",
+    "generated": "Generated",
+    "improved": "Improved",
+    "favorites": "Favorites",
+    "exportCSV": "Export CSV",
+    "exportJSON": "Export JSON",
+    "loading": "Loading your prompts...",
+    "noPromptsFound": "No prompts found",
+    "noPromptsYet": "No prompts yet",
+    "modifyFilters": "Try modifying your search filters",
+    "noPromptsGenerated": "You haven't generated any prompts yet",
+    "createPrompt": "Create a prompt",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {page} of {total}",
+    "tip": "Tip: Use favorites to quickly find your best prompts",
+    "noExportData": "No prompts to export",
+    "exportSuccess": "Export successful!",
+    "promptDeleted": "Prompt deleted",
+    "loadError": "Error loading prompts"
+  },
+  "creditsPage": {
+    "title": "My Credits",
+    "subtitle": "Manage your balance and view your history",
+    "backToDashboard": "Back to Dashboard",
+    "buyCredits": "Buy credits",
+    "overview": "Overview",
+    "purchases": "Purchases",
+    "transactions": "Transactions",
+    "totalPurchased": "Total purchased",
+    "creditsPurchased": "credits purchased",
+    "bonusReceived": "Bonus received",
+    "bonusCredits": "bonus credits",
+    "used": "Used",
+    "usagePercent": "{percent}% usage",
+    "importantInfo": "Important Information",
+    "noExpiration": "No expiration",
+    "noExpirationDesc": "Your credits remain available forever and never expire",
+    "promoCodes": "Promo codes",
+    "promoCodesDesc": "Use promo codes to get discounts or bonuses",
+    "tierSystem": "Tier system",
+    "tierSystemDesc": "Automatically level up based on your total spent",
+    "packBonus": "Pack bonuses",
+    "packBonusDesc": "The more you buy at once, the more you save per credit",
+    "noPurchases": "No purchases",
+    "noPurchasesYet": "You haven't purchased any credits yet",
+    "buyNow": "Buy now",
+    "credits": "credits",
+    "promoCode": "Promo code",
+    "noTransactions": "No transactions",
+    "transactionsHistory": "Your transaction history will appear here",
+    "balance": "Balance"
+  },
+  "creditsPurchase": {
+    "title": "Buy Credits",
+    "subtitle": "Recharge your balance and unlock more features",
+    "backToDashboard": "Back to dashboard",
+    "paymentSuccess": "Payment successful! {credits} credits added to your account.",
+    "close": "Close",
+    "currentBalance": "Your Current Balance",
+    "availablePacks": "Available Packs",
+    "noPacks": "No packs available at the moment.",
+    "loading": "Loading...",
+    "errors": {
+      "generic": "Error",
+      "paymentDeclined": "Payment declined. Please check your card details.",
+      "paymentCanceled": "Payment canceled.",
+      "callbackError": "Error processing the payment.",
+      "missingTransactionId": "Missing transaction ID.",
+      "purchaseError": "Error during purchase"
+    },
+    "importantInfo": {
+      "title": "Important Information",
+      "securePayment": {
+        "title": "Secure payment",
+        "description": "We use FedaPay to process your payments securely."
+      },
+      "paymentMethods": {
+        "title": "Payment methods",
+        "description": "Credit card (Visa, Mastercard) and Mobile Money (MTN, Moov, Orange)."
+      },
+      "noExpiration": {
+        "title": "Credits never expire",
+        "description": "Your credits never expire and remain available forever."
+      },
+      "autoTiers": {
+        "title": "Automatic tiers",
+        "description": "Your tier is calculated automatically based on your total spent and gives you access to more features."
+      },
+      "promoCodes": {
+        "title": "Promo codes",
+        "description": "Enter a promo code during purchase to get discounts or bonus credits."
+      }
+    },
+    "tip": {
+      "title": "Tip",
+      "description": "The more you buy at once, the more you save per credit!"
+    }
+  },
+  "globalSelector": {
+    "language": "Language",
+    "currency": "Currency",
+    "searchCurrency": "Search currency...",
+    "currentSettings": "Current settings",
+    "currencyGroups": {
+      "majorCurrencies": "Major currencies",
+      "africa": "Africa",
+      "asiaMiddleEast": "Asia & Middle East",
+      "southAmerica": "South America"
+    }
+  },
+  "editor": {
+    "title": "Prompt Editor",
+    "subtitle": "Create and optimize your prompts for artificial intelligence",
+    "backToDashboard": "Back to Dashboard",
+    "credits": "Credits",
+    "mode": "Mode",
+    "modeGenerate": "Generate",
+    "modeGenerateDesc": "From an idea",
+    "modeImprove": "Improve",
+    "modeImproveDesc": "Optimize existing",
+    "configuration": "Configuration",
+    "promptType": "Prompt type",
+    "outputLanguage": "Output language",
+    "languageAutoDesc": "The prompt will be in the automatically detected language",
+    "languageSelectedDesc": "The prompt will be generated in this language",
+    "yourIdea": "💡 Your idea",
+    "yourIdeaDesc": "Describe what you want to create",
+    "promptToImprove": "🎯 Prompt to improve",
+    "promptToImproveDesc": "Paste the prompt you want to optimize",
+    "placeholderGenerate": "Example: A humanoid robot walking in a futuristic city at sunset, cyberpunk style...",
+    "placeholderImprove": "Paste your existing prompt here...",
+    "constraints": "Additional constraints",
+    "optional": "optional",
+    "constraintsPlaceholder": "Example: Photographic style, avoid technical terms, professional tone...",
+    "generating": "Generating...",
+    "generateButton": "Generate prompt",
+    "improveButton": "Improve prompt",
+    "getSuggestions": "Get suggestions",
+    "result": "✨ Result",
+    "suggestions": "💡 Suggestions",
+    "suggestionsDesc": "Click to select ({count} selected)",
+    "resultPlaceholder": "Your result will appear here",
+    "resultPlaceholderDesc": "Enter your idea and click \"Generate prompt\" to start",
+    "lowCreditsTitle": "Low credits",
+    "lowCreditsDesc": "You only have {count} credits left. Recharge to continue.",
+    "noCreditsTitle": "Balance depleted",
+    "noCreditsDesc": "You have no more credits. Buy a pack to continue generating prompts.",
+    "recharge": "Recharge",
+    "buyCredits": "Buy credits",
+    "tipsTitle": "Tips for optimal prompts",
+    "tip1Title": "Be ultra-precise",
+    "tip1Desc": "Detail the context, audience and specific objectives",
+    "tip2Title": "Define the style",
+    "tip2Desc": "Specify the tone, format and visual or textual references",
+    "tip3Title": "Use constraints",
+    "tip3Desc": "Indicate what to avoid or technical limits to respect",
+    "creditInfo": "Consumption varies according to your tier (1 to 10 credits per generation). Suggestions cost 1 credit.",
+    "promptTypes": {
+      "auto": "Auto-detection",
+      "autoDesc": "Automatic prompt type detection",
+      "image": "Image generation",
+      "imageDesc": "DALL-E, Midjourney, Stable Diffusion",
+      "video": "Video generation",
+      "videoDesc": "Runway, Pika, Sora, Gen-2",
+      "code": "Code generation",
+      "codeDesc": "GitHub Copilot, ChatGPT, Claude",
+      "text": "Text writing",
+      "textDesc": "Articles, stories, editorial content",
+      "chat": "Conversational assistant",
+      "chatDesc": "Chatbots and AI assistants",
+      "analysis": "Data analysis",
+      "analysisDesc": "Analysis, summaries, insights"
+    },
+    "languages": {
+      "auto": "Automatic detection"
+    },
+    "errors": {
+      "emptyInput": "Please enter an idea or prompt",
+      "insufficientCredits": "Insufficient balance. Buy credits to continue.",
+      "generic": "An error occurred",
+      "copyFailed": "Error during copy",
+      "emptyInputForSuggestions": "Please enter text to get suggestions",
+      "suggestionsFailed": "Error generating suggestions"
+    },
+    "success": {
+      "generated": "✨ Prompt generated! ({credits} credit(s) used)",
+      "improved": "⚡ Prompt improved! ({credits} credit(s) used)",
+      "suggestions": "💡 Suggestions generated! ({credits} credit used)"
+    }
   }
 }

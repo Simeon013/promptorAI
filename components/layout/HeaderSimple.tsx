@@ -6,8 +6,10 @@ import { usePathname } from 'next/navigation';
 import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { GlobalSelector } from '@/components/ui/global-selector';
 import { Sparkles, Menu, X, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 // Liste des emails admin autorisés
 const ADMIN_EMAILS = [
@@ -16,18 +18,19 @@ const ADMIN_EMAILS = [
   // Ajoutez vos emails admin ici
 ];
 
-const navLinks = [
-  { href: '/#features', label: 'Features' },
-  { href: '/#how-it-works', label: 'How it works' },
-  { href: '/pricing', label: 'Pricing' },
-  { href: '/#faq', label: 'FAQ' },
-];
-
 export function HeaderSimple() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const { user } = useUser();
+  const t = useTranslations('common');
+
+  const navLinks = [
+    { href: '/#features', label: t('features') },
+    { href: '/#how-it-works', label: t('howItWorks') },
+    { href: '/pricing', label: t('pricing') },
+    { href: '/#faq', label: t('faq') },
+  ];
 
   // Vérifier si l'utilisateur est admin
   const isAdmin = user?.emailAddresses?.some((email) =>
@@ -89,18 +92,19 @@ export function HeaderSimple() {
 
           {/* Right Side */}
           <div className="flex items-center gap-2">
+            <GlobalSelector />
             <ThemeToggle />
 
             <SignedOut>
               <div className="hidden sm:flex items-center gap-2">
                 <Link href="/sign-in">
                   <Button variant="ghost" size="sm" className="font-medium">
-                    Sign in
+                    {t('signIn')}
                   </Button>
                 </Link>
                 <Link href="/sign-up">
                   <Button size="sm" className="btn-gradient text-white font-medium">
-                    Get started
+                    {t('getStarted')}
                   </Button>
                 </Link>
               </div>
@@ -122,12 +126,12 @@ export function HeaderSimple() {
                 )}
                 <Link href="/dashboard">
                   <Button variant="ghost" size="sm" className="font-medium">
-                    Dashboard
+                    {t('dashboard')}
                   </Button>
                 </Link>
                 <Link href="/editor">
                   <Button size="sm" className="btn-gradient text-white font-medium">
-                    Editor
+                    {t('editor')}
                   </Button>
                 </Link>
                 <UserButton
@@ -185,12 +189,12 @@ export function HeaderSimple() {
                   <div className="space-y-2 px-4">
                     <Link href="/sign-in" className="block">
                       <Button variant="outline" className="w-full">
-                        Sign in
+                        {t('signIn')}
                       </Button>
                     </Link>
                     <Link href="/sign-up" className="block">
                       <Button className="w-full btn-gradient text-white">
-                        Get started
+                        {t('getStarted')}
                       </Button>
                     </Link>
                   </div>
@@ -211,12 +215,12 @@ export function HeaderSimple() {
                     )}
                     <Link href="/dashboard" className="block">
                       <Button variant="outline" className="w-full">
-                        Dashboard
+                        {t('dashboard')}
                       </Button>
                     </Link>
                     <Link href="/editor" className="block">
                       <Button className="w-full btn-gradient text-white">
-                        Editor
+                        {t('editor')}
                       </Button>
                     </Link>
                     <div className="flex items-center justify-center pt-2">

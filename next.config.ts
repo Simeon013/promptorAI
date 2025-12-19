@@ -70,8 +70,8 @@ const nextConfig: NextConfig = {
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.clerk.accounts.dev",
               // Styles : self + inline (nécessaire pour Tailwind)
               "style-src 'self' 'unsafe-inline'",
-              // Images : self + data URIs + blob + CDNs
-              "img-src 'self' data: blob: https://*.clerk.com https://*.stripe.com https://img.clerk.com",
+              // Images : self + data URIs + blob + CDNs + Flags
+              "img-src 'self' data: blob: https://*.clerk.com https://*.stripe.com https://img.clerk.com https://flagcdn.com",
               // Fonts : self + Google Fonts
               "font-src 'self' https://fonts.gstatic.com",
               // Connexions : self + APIs tierces

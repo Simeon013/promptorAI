@@ -339,15 +339,15 @@ export interface ActivePromotion {
 // Currency (Devises)
 // ============================================================================
 
-export type CurrencyCode = 'XOF' | 'EUR' | 'USD';
+// Re-export from config for backwards compatibility
+export type { CurrencyCode } from '@/config/currencies';
 
 export interface CurrencyRate {
   id: string;
-  currency: CurrencyCode;
+  currency: string;
   name: string;
   symbol: string;
-  rate_to_xof: number;
-  rate_from_xof: number;
+  rate_to_usd: number;
   is_active: boolean;
   is_default: boolean;
   decimals: number;

@@ -172,7 +172,7 @@ export function FedaPayCheckout({ plan, amount, onSuccess, onCancel }: FedaPayCh
       <div>
         <h3 className="text-xl font-semibold">Paiement sécurisé</h3>
         <p className="text-sm text-muted-foreground">
-          Plan {plan} - {amount.toLocaleString('fr-FR')} FCFA/mois
+          Plan {plan} - {amount.toLocaleString('fr-FR')} XOF/mois
         </p>
       </div>
 
@@ -214,7 +214,7 @@ export function FedaPayCheckout({ plan, amount, onSuccess, onCancel }: FedaPayCh
             {promoValidation.valid ? (
               <>
                 ✓ Code promo appliqué ! Réduction de{' '}
-                <strong>{promoValidation.discount?.toLocaleString('fr-FR')} FCFA</strong>
+                <strong>{promoValidation.discount?.toLocaleString('fr-FR')} XOF</strong>
               </>
             ) : (
               <>✗ {promoValidation.error}</>
@@ -228,18 +228,18 @@ export function FedaPayCheckout({ plan, amount, onSuccess, onCancel }: FedaPayCh
         {hasDiscount && (
           <div className="flex justify-between text-sm text-muted-foreground">
             <span>Prix original</span>
-            <span className="line-through">{amount.toLocaleString('fr-FR')} FCFA</span>
+            <span className="line-through">{amount.toLocaleString('fr-FR')} XOF</span>
           </div>
         )}
         {hasDiscount && (
           <div className="flex justify-between text-sm text-green-600">
             <span>Réduction</span>
-            <span>-{promoValidation?.discount?.toLocaleString('fr-FR')} FCFA</span>
+            <span>-{promoValidation?.discount?.toLocaleString('fr-FR')} XOF</span>
           </div>
         )}
         <div className="flex justify-between text-lg font-bold">
           <span>Total à payer</span>
-          <span>{displayAmount?.toLocaleString('fr-FR')} FCFA</span>
+          <span>{displayAmount?.toLocaleString('fr-FR')} XOF</span>
         </div>
       </div>
 

@@ -251,7 +251,7 @@ export default function AdminTransactionsPage() {
                       <div className="font-medium">{purchase.pack_name}</div>
                       {purchase.discount_amount > 0 && (
                         <div className="text-xs text-green-600">
-                          -{purchase.discount_amount.toLocaleString('fr-FR')} FCFA
+                          -{purchase.discount_amount.toLocaleString('fr-FR')} XOF
                         </div>
                       )}
                     </td>
@@ -265,11 +265,11 @@ export default function AdminTransactionsPage() {
                     </td>
                     <td className="p-4 text-right">
                       <div className="font-semibold">
-                        {purchase.final_amount.toLocaleString('fr-FR')} FCFA
+                        {purchase.final_amount.toLocaleString('fr-FR')} XOF
                       </div>
                       {purchase.discount_amount > 0 && (
                         <div className="text-xs text-muted-foreground line-through">
-                          {purchase.amount.toLocaleString('fr-FR')} FCFA
+                          {purchase.amount.toLocaleString('fr-FR')} XOF
                         </div>
                       )}
                     </td>

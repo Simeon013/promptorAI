@@ -142,7 +142,7 @@ export default function PromotionsManagementPage() {
       const payload = {
         ...formData,
         pack_id: formData.all_packs ? null : formData.pack_id || null,
-        badge_text: formData.badge_text || `${formData.discount_type === 'percentage' ? '-' : ''}${formData.discount_value}${formData.discount_type === 'percentage' ? '%' : ' FCFA'}`,
+        badge_text: formData.badge_text || `${formData.discount_type === 'percentage' ? '-' : ''}${formData.discount_value}${formData.discount_type === 'percentage' ? '%' : ' XOF'}`,
       };
 
       const res = await fetch(url, {
@@ -373,7 +373,7 @@ export default function PromotionsManagementPage() {
                         />
                         <div className="flex-1">
                           <div className="font-semibold">Montant fixe</div>
-                          <div className="text-sm text-muted-foreground">Ex: -500 FCFA</div>
+                          <div className="text-sm text-muted-foreground">Ex: -500 XOF</div>
                         </div>
                       </label>
                     </div>
@@ -381,7 +381,7 @@ export default function PromotionsManagementPage() {
 
                   <div className="space-y-3">
                     <Label htmlFor="discount_value" className="text-base font-medium">
-                      Valeur {formData.discount_type === 'percentage' ? '(en %)' : '(en FCFA)'}
+                      Valeur {formData.discount_type === 'percentage' ? '(en %)' : '(en XOF)'}
                     </Label>
                     <div className="relative">
                       <input
@@ -402,7 +402,7 @@ export default function PromotionsManagementPage() {
                     </div>
                     <div className="bg-purple-50 dark:bg-purple-950/30 border border-purple-200 dark:border-purple-800 rounded-lg p-3">
                       <p className="text-sm text-purple-900 dark:text-purple-100">
-                        <strong>Aperçu:</strong> {formData.discount_type === 'percentage' ? `-${formData.discount_value}%` : `-${formData.discount_value} FCFA`}
+                        <strong>Aperçu:</strong> {formData.discount_type === 'percentage' ? `-${formData.discount_value}%` : `-${formData.discount_value} XOF`}
                       </p>
                     </div>
                   </div>
@@ -447,7 +447,7 @@ export default function PromotionsManagementPage() {
                         <option value="">-- Choisir un pack --</option>
                         {packs.map((pack) => (
                           <option key={pack.id} value={pack.id}>
-                            {pack.display_name} ({pack.total_credits} crédits - {pack.price_xof || pack.price} FCFA)
+                            {pack.display_name} ({pack.total_credits} crédits - {pack.price_xof || pack.price} XOF)
                           </option>
                         ))}
                       </select>
@@ -532,7 +532,7 @@ export default function PromotionsManagementPage() {
                             className="w-full px-4 py-3 text-base border-2 border-border rounded-xl bg-background focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                             value={formData.badge_text}
                             onChange={(e) => setFormData({ ...formData, badge_text: e.target.value })}
-                            placeholder={`${formData.discount_type === 'percentage' ? '-' : ''}${formData.discount_value}${formData.discount_type === 'percentage' ? '%' : ' FCFA'}`}
+                            placeholder={`${formData.discount_type === 'percentage' ? '-' : ''}${formData.discount_value}${formData.discount_type === 'percentage' ? '%' : ' XOF'}`}
                           />
                           <p className="text-xs text-muted-foreground">Laissez vide pour générer automatiquement</p>
                         </div>
@@ -570,7 +570,7 @@ export default function PromotionsManagementPage() {
                                 formData.badge_color === 'blue' ? 'bg-blue-500' :
                                 'bg-green-500'
                               }`}>
-                                {formData.badge_text || `${formData.discount_type === 'percentage' ? '-' : ''}${formData.discount_value}${formData.discount_type === 'percentage' ? '%' : ' FCFA'}`}
+                                {formData.badge_text || `${formData.discount_type === 'percentage' ? '-' : ''}${formData.discount_value}${formData.discount_type === 'percentage' ? '%' : ' XOF'}`}
                               </span>
                             </div>
                           </div>
@@ -762,7 +762,7 @@ export default function PromotionsManagementPage() {
                           <div className="font-semibold text-sm">
                             {promo.discount_type === 'percentage'
                               ? `-${promo.discount_value}%`
-                              : `-${promo.discount_value} FCFA`}
+                              : `-${promo.discount_value} XOF`}
                           </div>
                         </div>
 

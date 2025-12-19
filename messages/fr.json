@@ -181,6 +181,70 @@
     "footer": "Tous les plans incluent un support par email. Annulez à tout moment.",
     "home": "Accueil",
     "signIn": "Connexion"
+  },
+  "credits": {
+    "badge": "Tarification Simple et Transparente",
+    "title": "Achetez des Crédits",
+    "subtitle": "Choisissez le pack qui correspond à vos besoins. Plus vous achetez, plus vous économisez !",
+    "viewBalance": "Voir mon Solde",
+    "loading": "Chargement des packs...",
+    "popular": "POPULAIRE",
+    "buy": "Acheter",
+    "redirecting": "Redirection...",
+    "credits": "crédits",
+    "baseCredits": "Crédits de base",
+    "bonusFree": "bonus gratuits",
+    "addedAuto": "Ajoutés automatiquement",
+    "total": "Total",
+    "save": "Économisez",
+    "perCredit": "/crédit",
+    "features": {
+      "title": "Pourquoi choisir nos Crédits ?",
+      "securePayment": {
+        "title": "Paiement Sécurisé",
+        "description": "Transactions protégées par FedaPay. Carte bancaire et Mobile Money acceptés."
+      },
+      "instantAdd": {
+        "title": "Ajout Instantané",
+        "description": "Vos crédits sont ajoutés immédiatement après le paiement. Commencez tout de suite !"
+      },
+      "noExpiration": {
+        "title": "Sans Expiration",
+        "description": "Vos crédits n'expirent jamais. Utilisez-les quand vous voulez, à votre rythme."
+      },
+      "freeBonus": {
+        "title": "Bonus Gratuits",
+        "description": "Chaque pack inclut des crédits bonus gratuits. Plus vous achetez, plus vous gagnez !"
+      }
+    },
+    "faq": {
+      "title": "Questions Fréquentes",
+      "howCreditsWork": {
+        "question": "Comment fonctionnent les crédits ?",
+        "answer": "Chaque action (génération de prompt, amélioration, etc.) consomme un certain nombre de crédits selon la complexité."
+      },
+      "creditsExpire": {
+        "question": "Les crédits expirent-ils ?",
+        "answer": "Non ! Vos crédits sont valables à vie et ne s'épuisent jamais."
+      },
+      "whatIsTier": {
+        "question": "Qu'est-ce qu'un tier ?",
+        "answer": "Les tiers vous donnent accès à plus de fonctionnalités. Plus vous dépensez, plus votre tier augmente automatiquement."
+      },
+      "promoCode": {
+        "question": "Puis-je utiliser un code promo ?",
+        "answer": "Oui ! Entrez votre code promo lors de l'achat pour bénéficier de réductions ou de crédits bonus."
+      }
+    },
+    "proTip": {
+      "title": "Conseil Pro",
+      "description": "Plus le pack est grand, plus le prix par crédit est avantageux. Les packs supérieurs offrent les meilleurs bonus et débloquent des tiers plus élevés !"
+    },
+    "cta": {
+      "title": "Prêt à booster votre créativité ?",
+      "description": "Rejoignez des milliers d'utilisateurs qui créent des prompts exceptionnels avec Promptor",
+      "button": "Voir mon Dashboard"
+    }
   }
 ,
   "success": {
@@ -192,5 +256,244 @@
     "goToDashboard": "Accéder au Dashboard",
     "backHome": "Retour à l'accueil",
     "loading": "Chargement..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Bienvenue",
+    "buyCredits": "Acheter des Crédits",
+    "generate": "Générer",
+    "creditsBalance": "Solde de Crédits",
+    "creditsAvailable": "crédits disponibles",
+    "seeDetails": "Voir les détails",
+    "currentTier": "Tier Actuel",
+    "spent": "dépensés",
+    "nextTier": "Prochain",
+    "remaining": "Encore",
+    "totalSpent": "Total Dépensé",
+    "sinceStart": "depuis le début",
+    "lastPurchase": "Dernier achat",
+    "totalPrompts": "Total Prompts",
+    "sinceBeginning": "Depuis le début",
+    "thisMonth": "Ce Mois-ci",
+    "promptsGenerated": "Prompts générés",
+    "purchases": "Achats",
+    "transactions": "Transactions",
+    "history": "Historique",
+    "seeAll": "Voir tout",
+    "recentPrompts": "Prompts Récents",
+    "yourLastGenerations": "Vos dernières générations",
+    "viewAll": "Tout voir",
+    "generated": "Généré",
+    "improved": "Amélioré",
+    "noPromptsYet": "Aucun prompt pour le moment",
+    "startGenerating": "Commencez par générer votre premier prompt !",
+    "generatePrompt": "Générer un Prompt",
+    "recentPurchases": "Achats Récents",
+    "yourLastTransactions": "Vos dernières transactions",
+    "details": "Détails",
+    "noPurchases": "Aucun achat",
+    "buyCreditsUnlock": "Achetez des crédits pour débloquer des fonctionnalités",
+    "lowCredits": "Crédits Faibles",
+    "lowCreditsDesc": "Votre solde est bas. Rechargez pour continuer à générer des prompts.",
+    "bonusCredits": "Crédits bonus sur certains packs",
+    "usePromoCode": "Utilisez un code promo pour plus d'économies",
+    "levelUpTier": "Montez de tier en achetant des crédits",
+    "rechargeNow": "Recharger Maintenant"
+  },
+  "history": {
+    "title": "Historique",
+    "backToDashboard": "Retour au Dashboard",
+    "totalPrompts": "{count} prompt(s) au total",
+    "searchPlaceholder": "Rechercher dans vos prompts...",
+    "allTypes": "Tous types",
+    "generated": "Générés",
+    "improved": "Améliorés",
+    "favorites": "Favoris",
+    "exportCSV": "Export CSV",
+    "exportJSON": "Export JSON",
+    "loading": "Chargement de vos prompts...",
+    "noPromptsFound": "Aucun prompt trouvé",
+    "noPromptsYet": "Aucun prompt pour le moment",
+    "modifyFilters": "Essayez de modifier vos filtres de recherche",
+    "noPromptsGenerated": "Vous n'avez pas encore généré de prompts",
+    "createPrompt": "Créer un prompt",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "pageOf": "Page {page} sur {total}",
+    "tip": "Astuce : Utilisez les favoris pour retrouver rapidement vos meilleurs prompts",
+    "noExportData": "Aucun prompt à exporter",
+    "exportSuccess": "Export réussi !",
+    "promptDeleted": "Prompt supprimé",
+    "loadError": "Erreur lors du chargement des prompts"
+  },
+  "creditsPage": {
+    "title": "Mes Crédits",
+    "subtitle": "Gérez votre solde et consultez votre historique",
+    "backToDashboard": "Retour au Dashboard",
+    "buyCredits": "Acheter des crédits",
+    "overview": "Vue d'ensemble",
+    "purchases": "Achats",
+    "transactions": "Transactions",
+    "totalPurchased": "Total acheté",
+    "creditsPurchased": "crédits achetés",
+    "bonusReceived": "Bonus reçus",
+    "bonusCredits": "crédits bonus",
+    "used": "Utilisés",
+    "usagePercent": "{percent}% d'utilisation",
+    "importantInfo": "Informations Importantes",
+    "noExpiration": "Crédits sans expiration",
+    "noExpirationDesc": "Vos crédits restent disponibles à vie et ne s'épuisent jamais",
+    "promoCodes": "Codes promo",
+    "promoCodesDesc": "Utilisez des codes promo pour bénéficier de réductions ou de bonus",
+    "tierSystem": "Système de tiers",
+    "tierSystemDesc": "Montez automatiquement de tier en fonction de votre total dépensé",
+    "packBonus": "Bonus sur packs",
+    "packBonusDesc": "Plus vous achetez en une fois, plus vous économisez sur le prix par crédit",
+    "noPurchases": "Aucun achat",
+    "noPurchasesYet": "Vous n'avez pas encore acheté de crédits",
+    "buyNow": "Acheter maintenant",
+    "credits": "crédits",
+    "promoCode": "Code promo",
+    "noTransactions": "Aucune transaction",
+    "transactionsHistory": "Votre historique de transactions apparaîtra ici",
+    "balance": "Solde"
+  },
+  "creditsPurchase": {
+    "title": "Acheter des Crédits",
+    "subtitle": "Rechargez votre solde et débloquez plus de fonctionnalités",
+    "backToDashboard": "Retour au dashboard",
+    "paymentSuccess": "Paiement réussi ! {credits} crédits ajoutés à votre compte.",
+    "close": "Fermer",
+    "currentBalance": "Votre Solde Actuel",
+    "availablePacks": "Packs Disponibles",
+    "noPacks": "Aucun pack disponible pour le moment.",
+    "loading": "Chargement...",
+    "errors": {
+      "generic": "Erreur",
+      "paymentDeclined": "Paiement refusé. Vérifiez vos informations bancaires.",
+      "paymentCanceled": "Paiement annulé.",
+      "callbackError": "Erreur lors du traitement du paiement.",
+      "missingTransactionId": "ID de transaction manquant.",
+      "purchaseError": "Erreur lors de l'achat"
+    },
+    "importantInfo": {
+      "title": "Informations Importantes",
+      "securePayment": {
+        "title": "Paiement sécurisé",
+        "description": "Nous utilisons FedaPay pour traiter vos paiements en toute sécurité."
+      },
+      "paymentMethods": {
+        "title": "Méthodes de paiement",
+        "description": "Carte bancaire (Visa, Mastercard) et Mobile Money (MTN, Moov, Orange)."
+      },
+      "noExpiration": {
+        "title": "Crédits sans expiration",
+        "description": "Vos crédits ne s'épuisent jamais et restent disponibles à vie."
+      },
+      "autoTiers": {
+        "title": "Tiers automatiques",
+        "description": "Votre tier est calculé automatiquement selon votre total dépensé et vous donne accès à plus de fonctionnalités."
+      },
+      "promoCodes": {
+        "title": "Codes promo",
+        "description": "Entrez un code promo lors de l'achat pour bénéficier de réductions ou de crédits bonus."
+      }
+    },
+    "tip": {
+      "title": "Astuce",
+      "description": "Plus vous achetez en une fois, plus vous économisez sur le prix par crédit !"
+    }
+  },
+  "globalSelector": {
+    "language": "Langue",
+    "currency": "Devise",
+    "searchCurrency": "Rechercher une devise...",
+    "currentSettings": "Paramètres actuels",
+    "currencyGroups": {
+      "majorCurrencies": "Devises principales",
+      "africa": "Afrique",
+      "asiaMiddleEast": "Asie & Moyen-Orient",
+      "southAmerica": "Amérique du Sud"
+    }
+  },
+  "editor": {
+    "title": "Éditeur de Prompts",
+    "subtitle": "Créez et optimisez vos prompts pour l'intelligence artificielle",
+    "backToDashboard": "Retour au Dashboard",
+    "credits": "Crédits",
+    "mode": "Mode",
+    "modeGenerate": "Générer",
+    "modeGenerateDesc": "À partir d'une idée",
+    "modeImprove": "Améliorer",
+    "modeImproveDesc": "Optimiser l'existant",
+    "configuration": "Configuration",
+    "promptType": "Type de prompt",
+    "outputLanguage": "Langue de sortie",
+    "languageAutoDesc": "Le prompt sera dans la langue détectée automatiquement",
+    "languageSelectedDesc": "Le prompt sera généré dans cette langue",
+    "yourIdea": "💡 Votre idée",
+    "yourIdeaDesc": "Décrivez ce que vous souhaitez créer",
+    "promptToImprove": "🎯 Prompt à améliorer",
+    "promptToImproveDesc": "Collez le prompt que vous souhaitez optimiser",
+    "placeholderGenerate": "Exemple : Un robot humanoïde marchant dans une ville futuriste au coucher du soleil, style cyberpunk...",
+    "placeholderImprove": "Collez votre prompt existant ici...",
+    "constraints": "Contraintes additionnelles",
+    "optional": "optionnel",
+    "constraintsPlaceholder": "Exemple : Style photographique, éviter les termes techniques, ton professionnel...",
+    "generating": "Génération en cours...",
+    "generateButton": "Générer le prompt",
+    "improveButton": "Améliorer le prompt",
+    "getSuggestions": "Obtenir des suggestions",
+    "result": "✨ Résultat",
+    "suggestions": "💡 Suggestions",
+    "suggestionsDesc": "Cliquez pour sélectionner ({count} sélectionnée(s))",
+    "resultPlaceholder": "Votre résultat apparaîtra ici",
+    "resultPlaceholderDesc": "Entrez votre idée et cliquez sur \"Générer le prompt\" pour commencer",
+    "lowCreditsTitle": "Crédits faibles",
+    "lowCreditsDesc": "Il vous reste seulement {count} crédits. Rechargez pour continuer.",
+    "noCreditsTitle": "Solde épuisé",
+    "noCreditsDesc": "Vous n'avez plus de crédits. Achetez un pack pour continuer à générer des prompts.",
+    "recharge": "Recharger",
+    "buyCredits": "Acheter des crédits",
+    "tipsTitle": "Conseils pour des prompts optimaux",
+    "tip1Title": "Soyez ultra-précis",
+    "tip1Desc": "Détaillez le contexte, l'audience et les objectifs spécifiques",
+    "tip2Title": "Définissez le style",
+    "tip2Desc": "Précisez le ton, le format et les références visuelles ou textuelles",
+    "tip3Title": "Utilisez les contraintes",
+    "tip3Desc": "Indiquez ce qu'il faut éviter ou les limites techniques à respecter",
+    "creditInfo": "La consommation varie selon votre tier (1 à 10 crédits par génération). Les suggestions coûtent 1 crédit.",
+    "promptTypes": {
+      "auto": "Auto-détection",
+      "autoDesc": "Détection automatique du type de prompt",
+      "image": "Génération d'image",
+      "imageDesc": "DALL-E, Midjourney, Stable Diffusion",
+      "video": "Génération vidéo",
+      "videoDesc": "Runway, Pika, Sora, Gen-2",
+      "code": "Génération de code",
+      "codeDesc": "GitHub Copilot, ChatGPT, Claude",
+      "text": "Rédaction de texte",
+      "textDesc": "Articles, stories, contenu rédactionnel",
+      "chat": "Assistant conversationnel",
+      "chatDesc": "Chatbots et assistants IA",
+      "analysis": "Analyse de données",
+      "analysisDesc": "Analyse, résumés, insights"
+    },
+    "languages": {
+      "auto": "Détection automatique"
+    },
+    "errors": {
+      "emptyInput": "Veuillez entrer une idée ou un prompt",
+      "insufficientCredits": "Solde insuffisant. Achetez des crédits pour continuer.",
+      "generic": "Une erreur est survenue",
+      "copyFailed": "Erreur lors de la copie",
+      "emptyInputForSuggestions": "Veuillez entrer du texte pour obtenir des suggestions",
+      "suggestionsFailed": "Erreur lors de la génération des suggestions"
+    },
+    "success": {
+      "generated": "✨ Prompt généré ! ({credits} crédit(s) utilisé(s))",
+      "improved": "⚡ Prompt amélioré ! ({credits} crédit(s) utilisé(s))",
+      "suggestions": "💡 Suggestions générées ! ({credits} crédit utilisé)"
+    }
   }
 }

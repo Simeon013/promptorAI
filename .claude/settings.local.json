@@ -17,7 +17,8 @@
       "Bash(dir:*)",
       "Bash(ls:*)",
       "Bash(npm uninstall:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(node -e:*)"
     ],
     "deny": [],
     "ask": []

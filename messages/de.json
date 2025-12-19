@@ -1,0 +1,493 @@
+{
+  "common": {
+    "getStarted": "Kostenlos starten",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "dashboard": "Dashboard",
+    "editor": "Editor",
+    "pricing": "Preise",
+    "features": "Funktionen",
+    "howItWorks": "So funktioniert's",
+    "faq": "FAQ",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "loading": "Laden...",
+    "learnMore": "Mehr erfahren"
+  },
+  "hero": {
+    "badge": "Verwandeln Sie Ihre Ideen in professionelle Prompts",
+    "title1": "Ein guter Prompt macht",
+    "titleHighlight": "den Unterschied",
+    "description": "Verwandeln Sie einen einfachen Prompt in einen optimierten, der außergewöhnliche Ergebnisse mit {tools} und allen KI-Modellen erzielt.",
+    "ctaPrimary": "Kostenlos starten",
+    "ctaSecondary": "Unterschied sehen",
+    "trustFree": "Kostenlos starten",
+    "trustNoCard": "Keine Karte erforderlich",
+    "trustPrompts": "10 kostenlose Prompts/Monat",
+    "comparison": {
+      "basicTitle": "Einfacher Prompt",
+      "basicPrompt": "Schreib mir eine professionelle E-Mail",
+      "basicPoint1": "Vages und generisches Ergebnis",
+      "basicPoint2": "Fehlender Kontext",
+      "basicPoint3": "Mehrere Überarbeitungen nötig",
+      "optimizedTitle": "Optimierter Prompt",
+      "optimizedBadge": "Mit Promptor",
+      "optimizedPrompt": "Verfasse eine professionelle E-Mail zur Nachverfolgung eines B2B-Kunden, der seit 2 Wochen nicht geantwortet hat. Ton: höflich aber direkt. Ziel: Terminvereinbarung. Füge ein Wertversprechen und einen klaren CTA hinzu.",
+      "optimizedPoint1": "Präzises und umsetzbares Ergebnis",
+      "optimizedPoint2": "Kontext und Ton definiert",
+      "optimizedPoint3": "Sofort einsatzbereit"
+    },
+    "stats": {
+      "faster": "Effektiver",
+      "secure": "Sicher",
+      "languages": "Sprachen"
+    }
+  },
+  "features": {
+    "badge": "Funktionen",
+    "title": "Alles was Sie",
+    "titleHighlight": "brauchen",
+    "description": "Leistungsstarke Tools für perfekte Prompts, unabhängig von Ihrem Niveau.",
+    "generation": {
+      "title": "Intelligente Generierung",
+      "description": "Beschreiben Sie Ihre Idee und erhalten Sie einen detaillierten, optimierten Prompt für jede generative KI."
+    },
+    "improvement": {
+      "title": "Prompt-Verbesserung",
+      "description": "Verwandeln Sie bestehende Prompts in effektivere Versionen mit unserer fortschrittlichen KI-Analyse."
+    },
+    "multilang": {
+      "title": "Mehrsprachig",
+      "description": "Generieren Sie Prompts in 13 verschiedenen Sprachen. Deutsch, Englisch, Französisch, Spanisch und mehr."
+    },
+    "history": {
+      "title": "Vollständiger Verlauf",
+      "description": "Finden Sie alle generierten Prompts mit Suche, Filtern und Favoriten. Verlieren Sie nie wieder eine gute Idee."
+    },
+    "suggestions": {
+      "title": "KI-Vorschläge",
+      "description": "Erhalten Sie kontextbezogene Vorschläge zur Bereicherung Ihrer Prompts für bessere Ergebnisse."
+    },
+    "speed": {
+      "title": "Ultraschnell",
+      "description": "Generierung in Sekunden dank unserer KI. Kein Warten, nur Ergebnisse."
+    }
+  },
+  "howItWorks": {
+    "badge": "So funktioniert's",
+    "title": "Drei einfache",
+    "titleHighlight": "Schritte",
+    "description": "Erstellen Sie perfekte Prompts in Sekunden.",
+    "step1": {
+      "title": "Beschreiben Sie Ihre Idee",
+      "description": "Geben Sie ein, was Sie erstellen möchten: ein Bild, Text, Code... Fügen Sie bei Bedarf Einschränkungen hinzu."
+    },
+    "step2": {
+      "title": "KI generiert Ihren Prompt",
+      "description": "Unsere KI analysiert Ihre Anfrage und erstellt einen detaillierten, strukturierten und optimierten Prompt."
+    },
+    "step3": {
+      "title": "Kopieren und verwenden",
+      "description": "Kopieren Sie Ihren Prompt mit einem Klick und verwenden Sie ihn in ChatGPT, Midjourney, DALL-E oder einer anderen KI."
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Häufig gestellte",
+    "titleHighlight": "Fragen",
+    "description": "Alles, was Sie über Promptor wissen müssen.",
+    "q1": {
+      "question": "Was ist ein Prompt?",
+      "answer": "Ein Prompt ist eine Textanweisung an eine generative KI, um ein bestimmtes Ergebnis zu erzielen. Je detaillierter und strukturierter der Prompt, desto besser die von der KI generierten Ergebnisse."
+    },
+    "q2": {
+      "question": "Welche KI-Modelle werden unterstützt?",
+      "answer": "Die von Promptor generierten Prompts sind für alle generativen KI-Modelle optimiert: ChatGPT, GPT-4, Claude, Midjourney, DALL-E, Stable Diffusion und viele mehr."
+    },
+    "q3": {
+      "question": "Ist der kostenlose Plan wirklich kostenlos?",
+      "answer": "Ja! Der kostenlose Plan ermöglicht 10 Prompts pro Monat ohne Verpflichtung und ohne Kreditkarte. Perfekt zum Testen."
+    },
+    "q4": {
+      "question": "Kann ich mein Abo jederzeit kündigen?",
+      "answer": "Absolut. Sie können Ihr Abonnement jederzeit über Ihr Dashboard kündigen. Sie behalten den Zugang bis zum Ende Ihres Abrechnungszeitraums."
+    },
+    "q5": {
+      "question": "Sind meine Prompts privat?",
+      "answer": "Ja, alle Ihre Prompts sind privat und sicher. Wir teilen Ihre Daten nie mit Dritten und Sie können Ihre Prompts jederzeit löschen."
+    },
+    "q6": {
+      "question": "Wie funktioniert die mehrsprachige Generierung?",
+      "answer": "Sie können Prompts in 13 verschiedenen Sprachen generieren. Wählen Sie einfach die gewünschte Sprache und unsere KI passt den Prompt entsprechend an."
+    }
+  },
+  "testimonials": {
+    "badge": "Testimonials",
+    "title": "Was unsere",
+    "titleHighlight": "Nutzer sagen",
+    "description": "Schließen Sie sich Tausenden von Nutzern an, die ihre Ideen in professionelle Prompts verwandeln.",
+    "testimonial1": "Promptor hat meine Arbeitsweise mit KI komplett verändert. Ich spare so viel Zeit und meine Ergebnisse sind viel besser!",
+    "testimonial2": "Als Marketer muss ich täglich Inhalte erstellen. Promptor ermöglicht es mir, optimierte Prompts in Sekunden zu generieren.",
+    "testimonial3": "Intuitive Oberfläche, außergewöhnliche Ergebnisse. Ich empfehle Promptor allen meinen Designer-Kollegen!",
+    "testimonial4": "Die KI-Vorschläge sind unglaublich. Sie helfen mir, meine Prompts auch bei komplexen Aufgaben professionell zu strukturieren.",
+    "testimonial5": "Ich nutze Promptor täglich für meine Social-Media-Verwaltung. Es ist ein unverzichtbares Tool geworden.",
+    "testimonial6": "Die mehrsprachige Generierung ist perfekt für meine internationalen Projekte. Eine enorme Zeitersparnis!"
+  },
+  "cta": {
+    "badge": "Jetzt starten",
+    "title": "Bereit für außergewöhnliche",
+    "titleHighlight": "Prompts",
+    "description": "Schließen Sie sich Tausenden an, die ihre KI-Ergebnisse mit Promptor verbessern. Kostenlos starten, ohne Kreditkarte.",
+    "ctaPrimary": "Kostenlos starten",
+    "ctaSecondary": "Preise ansehen",
+    "trustPrompts": "10 kostenlose Prompts/Monat",
+    "trustNoCard": "Keine Karte erforderlich",
+    "trustCancel": "Jederzeit kündbar"
+  },
+  "footer": {
+    "description": "Generieren und verbessern Sie Ihre KI-Prompts in Sekunden. Optimiert für alle generativen KI-Modelle.",
+    "product": "Produkt",
+    "resources": "Ressourcen",
+    "legal": "Rechtliches",
+    "documentation": "Dokumentation",
+    "api": "API",
+    "blog": "Blog",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "legalNotice": "Impressum",
+    "copyright": "Alle Rechte vorbehalten."
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Hoppla! Die gesuchte Seite existiert nicht oder wurde verschoben. Überprüfen Sie die URL oder kehren Sie zur Startseite zurück.",
+    "backHome": "Zur Startseite",
+    "viewPricing": "Preise ansehen"
+  },
+  "pricing": {
+    "pricing": "Preise",
+    "title": "Einfache und transparente Preise",
+    "subtitle": "Wählen Sie den Plan, der zu Ihren Bedürfnissen passt",
+    "popular": "Beliebt",
+    "custom": "Individuell",
+    "perMonth": "/Monat",
+    "startFree": "Kostenlos starten",
+    "subscribe": "Abonnieren",
+    "contactUs": "Kontakt",
+    "footer": "Alle Pläne beinhalten E-Mail-Support. Jederzeit kündbar.",
+    "home": "Startseite",
+    "signIn": "Anmelden"
+  },
+  "credits": {
+    "badge": "Einfache und Transparente Preise",
+    "title": "Credits Kaufen",
+    "subtitle": "Wählen Sie das Paket, das zu Ihren Bedürfnissen passt. Je mehr Sie kaufen, desto mehr sparen Sie!",
+    "viewBalance": "Mein Guthaben anzeigen",
+    "loading": "Pakete werden geladen...",
+    "popular": "BELIEBT",
+    "buy": "Kaufen",
+    "redirecting": "Weiterleitung...",
+    "credits": "Credits",
+    "baseCredits": "Basis-Credits",
+    "bonusFree": "Gratis-Bonus",
+    "addedAuto": "Automatisch hinzugefügt",
+    "total": "Gesamt",
+    "save": "Sparen Sie",
+    "perCredit": "/Credit",
+    "features": {
+      "title": "Warum unsere Credits wählen?",
+      "securePayment": {
+        "title": "Sichere Zahlung",
+        "description": "Transaktionen geschützt durch FedaPay. Kreditkarte und Mobile Money akzeptiert."
+      },
+      "instantAdd": {
+        "title": "Sofortige Gutschrift",
+        "description": "Ihre Credits werden sofort nach der Zahlung hinzugefügt. Starten Sie sofort!"
+      },
+      "noExpiration": {
+        "title": "Kein Ablaufdatum",
+        "description": "Ihre Credits verfallen nie. Nutzen Sie sie wann Sie wollen, in Ihrem eigenen Tempo."
+      },
+      "freeBonus": {
+        "title": "Gratis-Bonus",
+        "description": "Jedes Paket enthält kostenlose Bonus-Credits. Je mehr Sie kaufen, desto mehr gewinnen Sie!"
+      }
+    },
+    "faq": {
+      "title": "Häufig Gestellte Fragen",
+      "howCreditsWork": {
+        "question": "Wie funktionieren Credits?",
+        "answer": "Jede Aktion (Prompt-Generierung, Verbesserung, etc.) verbraucht eine bestimmte Anzahl von Credits je nach Komplexität."
+      },
+      "creditsExpire": {
+        "question": "Verfallen Credits?",
+        "answer": "Nein! Ihre Credits sind lebenslang gültig und verfallen nie."
+      },
+      "whatIsTier": {
+        "question": "Was ist eine Stufe?",
+        "answer": "Stufen geben Ihnen Zugang zu mehr Funktionen. Je mehr Sie ausgeben, desto höher steigt Ihre Stufe automatisch."
+      },
+      "promoCode": {
+        "question": "Kann ich einen Promo-Code verwenden?",
+        "answer": "Ja! Geben Sie Ihren Promo-Code beim Kauf ein, um Rabatte oder Bonus-Credits zu erhalten."
+      }
+    },
+    "proTip": {
+      "title": "Profi-Tipp",
+      "description": "Je größer das Paket, desto besser der Preis pro Credit. Größere Pakete bieten die besten Boni und schalten höhere Stufen frei!"
+    },
+    "cta": {
+      "title": "Bereit, Ihre Kreativität zu steigern?",
+      "description": "Schließen Sie sich Tausenden von Nutzern an, die außergewöhnliche Prompts mit Promptor erstellen",
+      "button": "Mein Dashboard anzeigen"
+    }
+  },
+  "success": {
+    "activating": "Aktivierung...",
+    "paymentSuccess": "Zahlung erfolgreich!",
+    "activatingDescription": "Wir aktivieren Ihr Abonnement, das dauert nur einen Moment...",
+    "successDescription": "Ihr Abonnement wurde erfolgreich aktiviert. Sie können jetzt alle Funktionen Ihres Plans nutzen.",
+    "syncError": "Ihre Zahlung wurde verarbeitet, aber die Synchronisierung ist fehlgeschlagen. Kontaktieren Sie den Support, wenn das Problem weiterhin besteht.",
+    "goToDashboard": "Zum Dashboard",
+    "backHome": "Zur Startseite",
+    "loading": "Laden..."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Willkommen",
+    "buyCredits": "Credits Kaufen",
+    "generate": "Generieren",
+    "creditsBalance": "Credit-Guthaben",
+    "creditsAvailable": "Credits verfügbar",
+    "seeDetails": "Details anzeigen",
+    "currentTier": "Aktuelle Stufe",
+    "spent": "ausgegeben",
+    "nextTier": "Nächste",
+    "remaining": "Noch",
+    "totalSpent": "Gesamt Ausgegeben",
+    "sinceStart": "seit Beginn",
+    "lastPurchase": "Letzter Kauf",
+    "totalPrompts": "Gesamt Prompts",
+    "sinceBeginning": "Seit Beginn",
+    "thisMonth": "Diesen Monat",
+    "promptsGenerated": "Prompts generiert",
+    "purchases": "Käufe",
+    "transactions": "Transaktionen",
+    "history": "Verlauf",
+    "seeAll": "Alle anzeigen",
+    "recentPrompts": "Neueste Prompts",
+    "yourLastGenerations": "Ihre letzten Generierungen",
+    "viewAll": "Alle anzeigen",
+    "generated": "Generiert",
+    "improved": "Verbessert",
+    "noPromptsYet": "Noch keine Prompts",
+    "startGenerating": "Beginnen Sie mit Ihrem ersten Prompt!",
+    "generatePrompt": "Prompt Generieren",
+    "recentPurchases": "Neueste Käufe",
+    "yourLastTransactions": "Ihre letzten Transaktionen",
+    "details": "Details",
+    "noPurchases": "Keine Käufe",
+    "buyCreditsUnlock": "Kaufen Sie Credits, um Funktionen freizuschalten",
+    "lowCredits": "Niedriges Guthaben",
+    "lowCreditsDesc": "Ihr Guthaben ist niedrig. Laden Sie auf, um weiter Prompts zu generieren.",
+    "bonusCredits": "Bonus-Credits bei ausgewählten Paketen",
+    "usePromoCode": "Nutzen Sie einen Promo-Code für mehr Ersparnisse",
+    "levelUpTier": "Steigen Sie auf, indem Sie Credits kaufen",
+    "rechargeNow": "Jetzt Aufladen"
+  },
+  "history": {
+    "title": "Verlauf",
+    "backToDashboard": "Zurück zum Dashboard",
+    "totalPrompts": "{count} Prompt(s) insgesamt",
+    "searchPlaceholder": "In Ihren Prompts suchen...",
+    "allTypes": "Alle Typen",
+    "generated": "Generiert",
+    "improved": "Verbessert",
+    "favorites": "Favoriten",
+    "exportCSV": "CSV Export",
+    "exportJSON": "JSON Export",
+    "loading": "Ihre Prompts werden geladen...",
+    "noPromptsFound": "Keine Prompts gefunden",
+    "noPromptsYet": "Noch keine Prompts",
+    "modifyFilters": "Versuchen Sie, Ihre Suchfilter anzupassen",
+    "noPromptsGenerated": "Sie haben noch keine Prompts generiert",
+    "createPrompt": "Prompt erstellen",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "pageOf": "Seite {page} von {total}",
+    "tip": "Tipp: Nutzen Sie Favoriten, um Ihre besten Prompts schnell zu finden",
+    "noExportData": "Keine Prompts zum Exportieren",
+    "exportSuccess": "Export erfolgreich!",
+    "promptDeleted": "Prompt gelöscht",
+    "loadError": "Fehler beim Laden der Prompts"
+  },
+  "creditsPage": {
+    "title": "Meine Credits",
+    "subtitle": "Verwalten Sie Ihr Guthaben und sehen Sie Ihren Verlauf",
+    "backToDashboard": "Zurück zum Dashboard",
+    "buyCredits": "Credits kaufen",
+    "overview": "Übersicht",
+    "purchases": "Käufe",
+    "transactions": "Transaktionen",
+    "totalPurchased": "Gesamt gekauft",
+    "creditsPurchased": "Credits gekauft",
+    "bonusReceived": "Bonus erhalten",
+    "bonusCredits": "Bonus-Credits",
+    "used": "Verwendet",
+    "usagePercent": "{percent}% Nutzung",
+    "importantInfo": "Wichtige Informationen",
+    "noExpiration": "Kein Ablaufdatum",
+    "noExpirationDesc": "Ihre Credits bleiben für immer verfügbar und verfallen nie",
+    "promoCodes": "Promo-Codes",
+    "promoCodesDesc": "Nutzen Sie Promo-Codes für Rabatte oder Boni",
+    "tierSystem": "Stufen-System",
+    "tierSystemDesc": "Steigen Sie automatisch basierend auf Ihren Gesamtausgaben auf",
+    "packBonus": "Paket-Boni",
+    "packBonusDesc": "Je mehr Sie auf einmal kaufen, desto mehr sparen Sie pro Credit",
+    "noPurchases": "Keine Käufe",
+    "noPurchasesYet": "Sie haben noch keine Credits gekauft",
+    "buyNow": "Jetzt kaufen",
+    "credits": "Credits",
+    "promoCode": "Promo-Code",
+    "noTransactions": "Keine Transaktionen",
+    "transactionsHistory": "Ihr Transaktionsverlauf wird hier angezeigt",
+    "balance": "Guthaben"
+  },
+  "creditsPurchase": {
+    "title": "Credits Kaufen",
+    "subtitle": "Laden Sie Ihr Guthaben auf und schalten Sie mehr Funktionen frei",
+    "backToDashboard": "Zurück zum Dashboard",
+    "paymentSuccess": "Zahlung erfolgreich! {credits} Credits wurden Ihrem Konto gutgeschrieben.",
+    "close": "Schließen",
+    "currentBalance": "Ihr Aktuelles Guthaben",
+    "availablePacks": "Verfügbare Pakete",
+    "noPacks": "Derzeit keine Pakete verfügbar.",
+    "loading": "Laden...",
+    "errors": {
+      "generic": "Fehler",
+      "paymentDeclined": "Zahlung abgelehnt. Bitte überprüfen Sie Ihre Kartendaten.",
+      "paymentCanceled": "Zahlung abgebrochen.",
+      "callbackError": "Fehler bei der Zahlungsverarbeitung.",
+      "missingTransactionId": "Fehlende Transaktions-ID.",
+      "purchaseError": "Fehler beim Kauf"
+    },
+    "importantInfo": {
+      "title": "Wichtige Informationen",
+      "securePayment": {
+        "title": "Sichere Zahlung",
+        "description": "Wir nutzen FedaPay für sichere Zahlungsabwicklung."
+      },
+      "paymentMethods": {
+        "title": "Zahlungsmethoden",
+        "description": "Kreditkarte (Visa, Mastercard) und Mobile Money (MTN, Moov, Orange)."
+      },
+      "noExpiration": {
+        "title": "Credits verfallen nie",
+        "description": "Ihre Credits verfallen nie und bleiben für immer verfügbar."
+      },
+      "autoTiers": {
+        "title": "Automatische Stufen",
+        "description": "Ihre Stufe wird automatisch basierend auf Ihren Gesamtausgaben berechnet und gibt Ihnen Zugang zu mehr Funktionen."
+      },
+      "promoCodes": {
+        "title": "Promo-Codes",
+        "description": "Geben Sie beim Kauf einen Promo-Code ein, um Rabatte oder Bonus-Credits zu erhalten."
+      }
+    },
+    "tip": {
+      "title": "Tipp",
+      "description": "Je mehr Sie auf einmal kaufen, desto mehr sparen Sie pro Credit!"
+    }
+  },
+  "globalSelector": {
+    "language": "Sprache",
+    "currency": "Währung",
+    "searchCurrency": "Währung suchen...",
+    "currentSettings": "Aktuelle Einstellungen",
+    "currencyGroups": {
+      "majorCurrencies": "Hauptwährungen",
+      "africa": "Afrika",
+      "asiaMiddleEast": "Asien & Naher Osten",
+      "southAmerica": "Südamerika"
+    }
+  },
+  "editor": {
+    "title": "Prompt-Editor",
+    "subtitle": "Erstellen und optimieren Sie Ihre Prompts für künstliche Intelligenz",
+    "backToDashboard": "Zurück zum Dashboard",
+    "credits": "Credits",
+    "mode": "Modus",
+    "modeGenerate": "Generieren",
+    "modeGenerateDesc": "Aus einer Idee",
+    "modeImprove": "Verbessern",
+    "modeImproveDesc": "Bestehendes optimieren",
+    "configuration": "Konfiguration",
+    "promptType": "Prompt-Typ",
+    "outputLanguage": "Ausgabesprache",
+    "languageAutoDesc": "Der Prompt wird in der automatisch erkannten Sprache sein",
+    "languageSelectedDesc": "Der Prompt wird in dieser Sprache generiert",
+    "yourIdea": "💡 Ihre Idee",
+    "yourIdeaDesc": "Beschreiben Sie, was Sie erstellen möchten",
+    "promptToImprove": "🎯 Zu verbessernder Prompt",
+    "promptToImproveDesc": "Fügen Sie den Prompt ein, den Sie optimieren möchten",
+    "placeholderGenerate": "Beispiel: Ein humanoider Roboter, der bei Sonnenuntergang durch eine futuristische Stadt geht, Cyberpunk-Stil...",
+    "placeholderImprove": "Fügen Sie hier Ihren bestehenden Prompt ein...",
+    "constraints": "Zusätzliche Einschränkungen",
+    "optional": "optional",
+    "constraintsPlaceholder": "Beispiel: Fotografischer Stil, technische Begriffe vermeiden, professioneller Ton...",
+    "generating": "Wird generiert...",
+    "generateButton": "Prompt generieren",
+    "improveButton": "Prompt verbessern",
+    "getSuggestions": "Vorschläge erhalten",
+    "result": "✨ Ergebnis",
+    "suggestions": "💡 Vorschläge",
+    "suggestionsDesc": "Klicken Sie zum Auswählen ({count} ausgewählt)",
+    "resultPlaceholder": "Ihr Ergebnis wird hier erscheinen",
+    "resultPlaceholderDesc": "Geben Sie Ihre Idee ein und klicken Sie auf \"Prompt generieren\", um zu beginnen",
+    "lowCreditsTitle": "Niedriges Guthaben",
+    "lowCreditsDesc": "Sie haben nur noch {count} Credits übrig. Laden Sie auf, um fortzufahren.",
+    "noCreditsTitle": "Guthaben aufgebraucht",
+    "noCreditsDesc": "Sie haben keine Credits mehr. Kaufen Sie ein Paket, um weiter Prompts zu generieren.",
+    "recharge": "Aufladen",
+    "buyCredits": "Credits kaufen",
+    "tipsTitle": "Tipps für optimale Prompts",
+    "tip1Title": "Seien Sie ultra-präzise",
+    "tip1Desc": "Beschreiben Sie den Kontext, die Zielgruppe und spezifische Ziele",
+    "tip2Title": "Definieren Sie den Stil",
+    "tip2Desc": "Geben Sie Ton, Format und visuelle oder textuelle Referenzen an",
+    "tip3Title": "Verwenden Sie Einschränkungen",
+    "tip3Desc": "Geben Sie an, was zu vermeiden ist oder welche technischen Grenzen zu beachten sind",
+    "creditInfo": "Der Verbrauch variiert je nach Stufe (1 bis 10 Credits pro Generierung). Vorschläge kosten 1 Credit.",
+    "promptTypes": {
+      "auto": "Automatische Erkennung",
+      "autoDesc": "Automatische Prompt-Typerkennung",
+      "image": "Bildgenerierung",
+      "imageDesc": "DALL-E, Midjourney, Stable Diffusion",
+      "video": "Videogenerierung",
+      "videoDesc": "Runway, Pika, Sora, Gen-2",
+      "code": "Code-Generierung",
+      "codeDesc": "GitHub Copilot, ChatGPT, Claude",
+      "text": "Texterstellung",
+      "textDesc": "Artikel, Geschichten, redaktionelle Inhalte",
+      "chat": "Konversationsassistent",
+      "chatDesc": "Chatbots und KI-Assistenten",
+      "analysis": "Datenanalyse",
+      "analysisDesc": "Analysen, Zusammenfassungen, Erkenntnisse"
+    },
+    "languages": {
+      "auto": "Automatische Erkennung"
+    },
+    "errors": {
+      "emptyInput": "Bitte geben Sie eine Idee oder einen Prompt ein",
+      "insufficientCredits": "Unzureichendes Guthaben. Kaufen Sie Credits, um fortzufahren.",
+      "generic": "Ein Fehler ist aufgetreten",
+      "copyFailed": "Fehler beim Kopieren",
+      "emptyInputForSuggestions": "Bitte geben Sie Text ein, um Vorschläge zu erhalten",
+      "suggestionsFailed": "Fehler beim Generieren von Vorschlägen"
+    },
+    "success": {
+      "generated": "✨ Prompt generiert! ({credits} Credit(s) verwendet)",
+      "improved": "⚡ Prompt verbessert! ({credits} Credit(s) verwendet)",
+      "suggestions": "💡 Vorschläge generiert! ({credits} Credit verwendet)"
+    }
+  }
+}

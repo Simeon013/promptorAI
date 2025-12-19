@@ -311,7 +311,7 @@ export default function AdminPacksPage() {
                       Prix par crédit
                     </span>
                     <span className="text-xs font-medium text-cyan-600 dark:text-cyan-400">
-                      ~{pricePerCredit} FCFA
+                      ~{pricePerCredit} XOF
                     </span>
                   </div>
                 </div>
@@ -432,7 +432,7 @@ function PackForm({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="price">Prix (FCFA) *</Label>
+          <Label htmlFor="price">Prix (XOF) *</Label>
           <Input
             id="price"
             type="number"
@@ -442,7 +442,7 @@ function PackForm({
             required
           />
           <p className="text-xs text-muted-foreground">
-            Prix par crédit: ~{Math.round(formData.price / (formData.credits + formData.bonus_credits))} FCFA
+            Prix par crédit: ~{Math.round(formData.price / (formData.credits + formData.bonus_credits))} XOF
           </p>
         </div>
 

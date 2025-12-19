@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +40,8 @@ interface CreditPack {
 }
 
 export function PricingContent() {
+  const t = useTranslations('credits');
+  const locale = useLocale();
   const [packs, setPacks] = useState<CreditPack[]>([]);
   const [loading, setLoading] = useState(true);
   const [purchasing, setPurchasing] = useState<string | null>(null);
@@ -86,8 +89,8 @@ export function PricingContent() {
   };
 
   const handlePurchase = (packId: string) => {
-    // Rediriger vers la page de checkout
-    window.location.href = `/fr/credits/checkout?pack=${packId}`;
+    // Redirect to checkout page with current locale
+    window.location.href = `/${locale}/credits/checkout?pack=${packId}`;
   };
 
   if (loading) {
@@ -105,16 +108,16 @@ export function PricingContent() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
               <Sparkles className="h-4 w-4 text-purple-600 animate-pulse" />
               <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
-                Tarification Simple et Transparente
+                {t('badge')}
               </span>
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Achetez des Crédits
+              {t('title')}
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              Choisissez le pack qui correspond à vos besoins. Plus vous achetez, plus vous économisez !
+              {t('subtitle')}
             </p>
 
             {/* Currency Selector Skeleton */}
@@ -182,7 +185,7 @@ export function PricingContent() {
           <div className="text-center">
             <div className="inline-flex items-center gap-2 text-muted-foreground">
               <Sparkles className="h-5 w-5 animate-spin text-purple-500" />
-              Chargement des packs...
+              {t('loading')}
             </div>
           </div>
         </div>
@@ -204,16 +207,16 @@ export function PricingContent() {
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/10 border border-purple-500/20 mb-6">
             <Sparkles className="h-4 w-4 text-purple-600" />
             <span className="text-sm font-medium text-purple-600 dark:text-purple-400">
-              Tarification Simple et Transparente
+              {t('badge')}
             </span>
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Achetez des Crédits
+            {t('title')}
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-            Choisissez le pack qui correspond à vos besoins. Plus vous achetez, plus vous économisez !
+            {t('subtitle')}
           </p>
 
           {/* Currency Selector */}
@@ -222,9 +225,9 @@ export function PricingContent() {
           </div>
 
           <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/dashboard">
+            <Link href={`/${locale}/dashboard`}>
               <Button size="lg" variant="outline">
-                Voir mon Solde
+                {t('viewBalance')}
               </Button>
             </Link>
           </div>
@@ -256,7 +259,7 @@ export function PricingContent() {
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
                     <div className="flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs font-bold shadow-lg">
                       <Star className="h-3.5 w-3.5 fill-current" />
-                      <span>POPULAIRE</span>
+                      <span>{t('popular')}</span>
                     </div>
                   </div>
                 )}
@@ -320,14 +323,14 @@ export function PricingContent() {
                         <span className="text-lg font-semibold text-muted-foreground">{pack.currency}</span>
                         {pack.price_per_credit && (
                           <span className="text-xs text-muted-foreground/60">
-                            ~{pack.price_per_credit.toFixed(currency === 'XOF' ? 0 : 2)} {currency}/crédit
+                            ~{pack.price_per_credit.toFixed(currency === 'XOF' ? 0 : 2)} {currency}{t('perCredit')}
                           </span>
                         )}
                       </div>
                     </div>
                     {pack.active_promotion && (
                       <Badge className="mt-2 bg-green-500 text-white">
-                        Économisez {formatCurrency(pack.active_promotion.calculated_discount, currency)}
+                        {t('save')} {formatCurrency(pack.active_promotion.calculated_discount, currency)}
                       </Badge>
                     )}
                   </div>
@@ -340,9 +343,9 @@ export function PricingContent() {
                       </div>
                       <div className="flex-1">
                         <p className="font-semibold text-sm text-foreground">
-                          {pack.credits.toLocaleString('fr-FR')} crédits
+                          {pack.credits.toLocaleString(locale)} {t('credits')}
                         </p>
-                        <p className="text-xs text-muted-foreground">Crédits de base</p>
+                        <p className="text-xs text-muted-foreground">{t('baseCredits')}</p>
                       </div>
                     </div>
 
@@ -353,18 +356,18 @@ export function PricingContent() {
                         </div>
                         <div className="flex-1">
                           <p className="font-semibold text-sm text-green-600 dark:text-green-400">
-                            +{pack.bonus_credits} bonus gratuits
+                            +{pack.bonus_credits} {t('bonusFree')}
                           </p>
-                          <p className="text-xs text-muted-foreground">Ajoutés automatiquement</p>
+                          <p className="text-xs text-muted-foreground">{t('addedAuto')}</p>
                         </div>
                       </div>
                     )}
 
                     <div className="pt-4 border-t border-border/50">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-muted-foreground">Total</span>
+                        <span className="text-sm text-muted-foreground">{t('total')}</span>
                         <span className="text-lg font-bold bg-gradient-to-r from-cyan-600 to-cyan-500 bg-clip-text text-transparent">
-                          {pack.total_credits.toLocaleString('fr-FR')} crédits
+                          {pack.total_credits.toLocaleString(locale)} {t('credits')}
                         </span>
                       </div>
                     </div>
@@ -381,7 +384,7 @@ export function PricingContent() {
                     }`}
                     size="lg"
                   >
-                    <span>{purchasing === pack.id ? 'Redirection...' : 'Acheter'}</span>
+                    <span>{purchasing === pack.id ? t('redirecting') : t('buy')}</span>
                     <ArrowRight className={`h-4 w-4 ml-2 ${purchasing === pack.id ? '' : 'group-hover/btn:translate-x-1'} transition-transform`} />
                   </Button>
                 </div>
@@ -393,7 +396,7 @@ export function PricingContent() {
         {/* Features Grid */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-center mb-8">
-            Pourquoi choisir nos Crédits ?
+            {t('features.title')}
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -401,9 +404,9 @@ export function PricingContent() {
               <div className="mb-4 p-3 bg-purple-500/10 rounded-lg w-fit">
                 <Shield className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="font-bold mb-2">Paiement Sécurisé</h3>
+              <h3 className="font-bold mb-2">{t('features.securePayment.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Transactions protégées par FedaPay. Carte bancaire et Mobile Money acceptés.
+                {t('features.securePayment.description')}
               </p>
             </Card>
 
@@ -411,9 +414,9 @@ export function PricingContent() {
               <div className="mb-4 p-3 bg-cyan-500/10 rounded-lg w-fit">
                 <Zap className="h-6 w-6 text-cyan-600" />
               </div>
-              <h3 className="font-bold mb-2">Ajout Instantané</h3>
+              <h3 className="font-bold mb-2">{t('features.instantAdd.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Vos crédits sont ajoutés immédiatement après le paiement. Commencez tout de suite !
+                {t('features.instantAdd.description')}
               </p>
             </Card>
 
@@ -421,9 +424,9 @@ export function PricingContent() {
               <div className="mb-4 p-3 bg-green-500/10 rounded-lg w-fit">
                 <Clock className="h-6 w-6 text-green-600" />
               </div>
-              <h3 className="font-bold mb-2">Sans Expiration</h3>
+              <h3 className="font-bold mb-2">{t('features.noExpiration.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Vos crédits n'expirent jamais. Utilisez-les quand vous voulez, à votre rythme.
+                {t('features.noExpiration.description')}
               </p>
             </Card>
 
@@ -431,9 +434,9 @@ export function PricingContent() {
               <div className="mb-4 p-3 bg-pink-500/10 rounded-lg w-fit">
                 <Gift className="h-6 w-6 text-pink-600" />
               </div>
-              <h3 className="font-bold mb-2">Bonus Gratuits</h3>
+              <h3 className="font-bold mb-2">{t('features.freeBonus.title')}</h3>
               <p className="text-sm text-muted-foreground">
-                Chaque pack inclut des crédits bonus gratuits. Plus vous achetez, plus vous gagnez !
+                {t('features.freeBonus.description')}
               </p>
             </Card>
           </div>
@@ -441,7 +444,7 @@ export function PricingContent() {
 
         {/* FAQ Section */}
         <div className="mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12">Questions Fréquentes</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">{t('faq.title')}</h2>
 
           <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
             <Card className="p-6 border-border/50 hover:border-purple-500/30 hover:shadow-lg hover:shadow-purple-500/5 transition-all">
@@ -450,9 +453,9 @@ export function PricingContent() {
                   <Check className="h-5 w-5 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Comment fonctionnent les crédits ?</h3>
+                  <h3 className="font-semibold mb-2">{t('faq.howCreditsWork.question')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Chaque action (génération de prompt, amélioration, etc.) consomme un certain nombre de crédits selon la complexité.
+                    {t('faq.howCreditsWork.answer')}
                   </p>
                 </div>
               </div>
@@ -464,9 +467,9 @@ export function PricingContent() {
                   <Clock className="h-5 w-5 text-cyan-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Les crédits expirent-ils ?</h3>
+                  <h3 className="font-semibold mb-2">{t('faq.creditsExpire.question')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Non ! Vos crédits sont valables à vie et ne s'épuisent jamais.
+                    {t('faq.creditsExpire.answer')}
                   </p>
                 </div>
               </div>
@@ -478,9 +481,9 @@ export function PricingContent() {
                   <TrendingUp className="h-5 w-5 text-pink-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Qu'est-ce qu'un tier ?</h3>
+                  <h3 className="font-semibold mb-2">{t('faq.whatIsTier.question')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Les tiers vous donnent accès à plus de fonctionnalités. Plus vous dépensez, plus votre tier augmente automatiquement.
+                    {t('faq.whatIsTier.answer')}
                   </p>
                 </div>
               </div>
@@ -492,9 +495,9 @@ export function PricingContent() {
                   <Gift className="h-5 w-5 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="font-semibold mb-2">Puis-je utiliser un code promo ?</h3>
+                  <h3 className="font-semibold mb-2">{t('faq.promoCode.question')}</h3>
                   <p className="text-sm text-muted-foreground">
-                    Oui ! Entrez votre code promo lors de l'achat pour bénéficier de réductions ou de crédits bonus.
+                    {t('faq.promoCode.answer')}
                   </p>
                 </div>
               </div>
@@ -508,9 +511,9 @@ export function PricingContent() {
                   <Sparkles className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h4 className="font-bold mb-2 text-lg">Conseil Pro</h4>
+                  <h4 className="font-bold mb-2 text-lg">{t('proTip.title')}</h4>
                   <p className="text-sm text-muted-foreground">
-                    Plus le pack est grand, plus le prix par crédit est avantageux. Les packs supérieurs offrent les meilleurs bonus et débloquent des tiers plus élevés !
+                    {t('proTip.description')}
                   </p>
                 </div>
               </div>
@@ -523,16 +526,16 @@ export function PricingContent() {
           <div className="absolute inset-0 bg-grid-white/10 [mask-image:linear-gradient(0deg,transparent,black)]" />
           <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">
-              Prêt à booster votre créativité ?
+              {t('cta.title')}
             </h2>
             <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
-              Rejoignez des milliers d'utilisateurs qui créent des prompts exceptionnels avec Promptor
+              {t('cta.description')}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link href="/dashboard">
+              <Link href={`/${locale}/dashboard`}>
                 <Button size="lg" className="bg-white text-purple-600 hover:bg-white/90 shadow-xl group">
                   <Sparkles className="h-5 w-5 mr-2 group-hover:rotate-12 transition-transform" />
-                  Voir mon Dashboard
+                  {t('cta.button')}
                   <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>

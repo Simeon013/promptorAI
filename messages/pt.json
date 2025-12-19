@@ -1,0 +1,493 @@
+{
+  "common": {
+    "getStarted": "Começar grátis",
+    "signIn": "Entrar",
+    "signUp": "Cadastrar",
+    "dashboard": "Painel",
+    "editor": "Editor",
+    "pricing": "Preços",
+    "features": "Recursos",
+    "howItWorks": "Como funciona",
+    "faq": "FAQ",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "loading": "Carregando...",
+    "learnMore": "Saiba mais"
+  },
+  "hero": {
+    "badge": "Transforme suas ideias em prompts profissionais",
+    "title1": "Um bom prompt faz",
+    "titleHighlight": "toda a diferença",
+    "description": "Transforme um prompt básico em um otimizado que gera resultados excepcionais com {tools} e todos os modelos de IA.",
+    "ctaPrimary": "Começar grátis",
+    "ctaSecondary": "Ver a diferença",
+    "trustFree": "Grátis para começar",
+    "trustNoCard": "Sem cartão necessário",
+    "trustPrompts": "10 prompts grátis/mês",
+    "comparison": {
+      "basicTitle": "Prompt básico",
+      "basicPrompt": "Escreva um email profissional para mim",
+      "basicPoint1": "Resultado vago e genérico",
+      "basicPoint2": "Falta de contexto",
+      "basicPoint3": "Múltiplas revisões necessárias",
+      "optimizedTitle": "Prompt otimizado",
+      "optimizedBadge": "Com Promptor",
+      "optimizedPrompt": "Escreva um email profissional para fazer follow-up com um cliente B2B que não respondeu há 2 semanas. Tom: educado mas direto. Objetivo: agendar uma reunião. Inclua uma proposta de valor e um CTA claro.",
+      "optimizedPoint1": "Resultado preciso e acionável",
+      "optimizedPoint2": "Contexto e tom definidos",
+      "optimizedPoint3": "Pronto para usar"
+    },
+    "stats": {
+      "faster": "Mais eficaz",
+      "secure": "Seguro",
+      "languages": "Idiomas"
+    }
+  },
+  "features": {
+    "badge": "Recursos",
+    "title": "Tudo que você",
+    "titleHighlight": "precisa",
+    "description": "Ferramentas poderosas para criar prompts perfeitos, independente do seu nível.",
+    "generation": {
+      "title": "Geração Inteligente",
+      "description": "Descreva sua ideia e obtenha um prompt detalhado e otimizado para qualquer IA generativa."
+    },
+    "improvement": {
+      "title": "Melhoria de Prompts",
+      "description": "Transforme seus prompts existentes em versões mais eficazes com nossa análise de IA avançada."
+    },
+    "multilang": {
+      "title": "Multi-idiomas",
+      "description": "Gere prompts em 13 idiomas diferentes. Português, inglês, espanhol, francês e mais."
+    },
+    "history": {
+      "title": "Histórico Completo",
+      "description": "Encontre todos os seus prompts gerados com busca, filtros e favoritos. Nunca perca uma boa ideia."
+    },
+    "suggestions": {
+      "title": "Sugestões de IA",
+      "description": "Receba sugestões contextuais para enriquecer seus prompts e obter melhores resultados."
+    },
+    "speed": {
+      "title": "Ultra Rápido",
+      "description": "Geração em segundos graças à nossa IA. Sem espera, apenas resultados."
+    }
+  },
+  "howItWorks": {
+    "badge": "Como funciona",
+    "title": "Três passos",
+    "titleHighlight": "simples",
+    "description": "Crie prompts perfeitos em segundos.",
+    "step1": {
+      "title": "Descreva sua ideia",
+      "description": "Digite o que você quer criar: uma imagem, texto, código... Adicione restrições se necessário."
+    },
+    "step2": {
+      "title": "A IA gera seu prompt",
+      "description": "Nossa IA analisa sua solicitação e cria um prompt detalhado, estruturado e otimizado para melhores resultados."
+    },
+    "step3": {
+      "title": "Copie e use",
+      "description": "Copie seu prompt com um clique e use no ChatGPT, Midjourney, DALL-E ou qualquer outra IA."
+    }
+  },
+  "faq": {
+    "badge": "FAQ",
+    "title": "Perguntas",
+    "titleHighlight": "frequentes",
+    "description": "Tudo que você precisa saber sobre o Promptor.",
+    "q1": {
+      "question": "O que é um prompt?",
+      "answer": "Um prompt é uma instrução textual dada a uma IA generativa para obter um resultado específico. Quanto mais detalhado e estruturado o prompt, melhores serão os resultados gerados pela IA."
+    },
+    "q2": {
+      "question": "Quais modelos de IA são suportados?",
+      "answer": "Os prompts gerados pelo Promptor são otimizados para todos os modelos de IA generativa: ChatGPT, GPT-4, Claude, Midjourney, DALL-E, Stable Diffusion e muitos outros."
+    },
+    "q3": {
+      "question": "O plano gratuito é realmente grátis?",
+      "answer": "Sim! O plano gratuito permite gerar 10 prompts por mês sem compromisso e sem cartão. Perfeito para testar o serviço."
+    },
+    "q4": {
+      "question": "Posso cancelar minha assinatura a qualquer momento?",
+      "answer": "Absolutamente. Você pode cancelar sua assinatura a qualquer momento pelo painel. Você manterá o acesso até o final do seu período de faturamento."
+    },
+    "q5": {
+      "question": "Meus prompts são privados?",
+      "answer": "Sim, todos os seus prompts são privados e seguros. Nunca compartilhamos seus dados com terceiros e você pode deletar seus prompts a qualquer momento."
+    },
+    "q6": {
+      "question": "Como funciona a geração multilíngue?",
+      "answer": "Você pode gerar prompts em 13 idiomas diferentes. Basta selecionar o idioma desejado e nossa IA adaptará o prompt de acordo."
+    }
+  },
+  "testimonials": {
+    "badge": "Depoimentos",
+    "title": "O que nossos",
+    "titleHighlight": "usuários dizem",
+    "description": "Junte-se a milhares de usuários que transformam suas ideias em prompts profissionais.",
+    "testimonial1": "O Promptor mudou completamente minha forma de trabalhar com IA. Economizo muito tempo e meus resultados são muito melhores!",
+    "testimonial2": "Como profissional de marketing, preciso criar conteúdo todos os dias. O Promptor me permite gerar prompts otimizados em segundos.",
+    "testimonial3": "Interface intuitiva, resultados excepcionais. Recomendo o Promptor a todos os meus colegas designers!",
+    "testimonial4": "As sugestões de IA são incríveis. Elas me ajudam a estruturar meus prompts profissionalmente mesmo para tarefas complexas.",
+    "testimonial5": "Uso o Promptor diariamente para gerenciar minhas redes sociais. Tornou-se uma ferramenta indispensável.",
+    "testimonial6": "A geração multilíngue é perfeita para meus projetos internacionais. Uma economia de tempo considerável!"
+  },
+  "cta": {
+    "badge": "Comece agora",
+    "title": "Pronto para criar prompts",
+    "titleHighlight": "extraordinários",
+    "description": "Junte-se a milhares de usuários que melhoram seus resultados de IA com o Promptor. Comece grátis, sem cartão.",
+    "ctaPrimary": "Começar grátis",
+    "ctaSecondary": "Ver preços",
+    "trustPrompts": "10 prompts grátis/mês",
+    "trustNoCard": "Sem cartão necessário",
+    "trustCancel": "Cancele quando quiser"
+  },
+  "footer": {
+    "description": "Gere e melhore seus prompts de IA em segundos. Otimizado para todos os modelos de IA generativa.",
+    "product": "Produto",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "documentation": "Documentação",
+    "api": "API",
+    "blog": "Blog",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "legalNotice": "Aviso legal",
+    "copyright": "Todos os direitos reservados."
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "description": "Ops! A página que você procura não existe ou foi movida. Verifique a URL ou volte para o início.",
+    "backHome": "Voltar ao início",
+    "viewPricing": "Ver preços"
+  },
+  "pricing": {
+    "pricing": "Preços",
+    "title": "Preços simples e transparentes",
+    "subtitle": "Escolha o plano que se adapta às suas necessidades",
+    "popular": "Popular",
+    "custom": "Personalizado",
+    "perMonth": "/mês",
+    "startFree": "Começar grátis",
+    "subscribe": "Assinar",
+    "contactUs": "Fale conosco",
+    "footer": "Todos os planos incluem suporte por email. Cancele quando quiser.",
+    "home": "Início",
+    "signIn": "Entrar"
+  },
+  "credits": {
+    "badge": "Preços Simples e Transparentes",
+    "title": "Comprar Créditos",
+    "subtitle": "Escolha o pacote que se adapta às suas necessidades. Quanto mais você compra, mais economiza!",
+    "viewBalance": "Ver meu Saldo",
+    "loading": "Carregando pacotes...",
+    "popular": "POPULAR",
+    "buy": "Comprar",
+    "redirecting": "Redirecionando...",
+    "credits": "créditos",
+    "baseCredits": "Créditos base",
+    "bonusFree": "bônus grátis",
+    "addedAuto": "Adicionados automaticamente",
+    "total": "Total",
+    "save": "Economize",
+    "perCredit": "/crédito",
+    "features": {
+      "title": "Por que escolher nossos Créditos?",
+      "securePayment": {
+        "title": "Pagamento Seguro",
+        "description": "Transações protegidas pelo FedaPay. Cartão de crédito e Mobile Money aceitos."
+      },
+      "instantAdd": {
+        "title": "Adição Instantânea",
+        "description": "Seus créditos são adicionados imediatamente após o pagamento. Comece agora mesmo!"
+      },
+      "noExpiration": {
+        "title": "Sem Expiração",
+        "description": "Seus créditos nunca expiram. Use-os quando quiser, no seu próprio ritmo."
+      },
+      "freeBonus": {
+        "title": "Bônus Grátis",
+        "description": "Cada pacote inclui créditos bônus grátis. Quanto mais você compra, mais você ganha!"
+      }
+    },
+    "faq": {
+      "title": "Perguntas Frequentes",
+      "howCreditsWork": {
+        "question": "Como funcionam os créditos?",
+        "answer": "Cada ação (geração de prompt, melhoria, etc.) consome um certo número de créditos com base na complexidade."
+      },
+      "creditsExpire": {
+        "question": "Os créditos expiram?",
+        "answer": "Não! Seus créditos são válidos para sempre e nunca expiram."
+      },
+      "whatIsTier": {
+        "question": "O que é um nível?",
+        "answer": "Os níveis dão acesso a mais recursos. Quanto mais você gasta, mais alto seu nível sobe automaticamente."
+      },
+      "promoCode": {
+        "question": "Posso usar um código promocional?",
+        "answer": "Sim! Digite seu código promocional durante a compra para obter descontos ou créditos bônus."
+      }
+    },
+    "proTip": {
+      "title": "Dica Pro",
+      "description": "Quanto maior o pacote, melhor o preço por crédito. Pacotes maiores oferecem os melhores bônus e desbloqueiam níveis mais altos!"
+    },
+    "cta": {
+      "title": "Pronto para impulsionar sua criatividade?",
+      "description": "Junte-se a milhares de usuários que criam prompts excepcionais com o Promptor",
+      "button": "Ver meu Painel"
+    }
+  },
+  "success": {
+    "activating": "Ativando...",
+    "paymentSuccess": "Pagamento bem-sucedido!",
+    "activatingDescription": "Estamos ativando sua assinatura, isso levará apenas um momento...",
+    "successDescription": "Sua assinatura foi ativada com sucesso. Agora você pode aproveitar todos os recursos do seu plano.",
+    "syncError": "Seu pagamento foi processado, mas a sincronização falhou. Entre em contato com o suporte se o problema persistir.",
+    "goToDashboard": "Ir para o Painel",
+    "backHome": "Voltar ao início",
+    "loading": "Carregando..."
+  },
+  "dashboard": {
+    "title": "Painel",
+    "welcome": "Bem-vindo",
+    "buyCredits": "Comprar Créditos",
+    "generate": "Gerar",
+    "creditsBalance": "Saldo de Créditos",
+    "creditsAvailable": "créditos disponíveis",
+    "seeDetails": "Ver detalhes",
+    "currentTier": "Nível Atual",
+    "spent": "gastos",
+    "nextTier": "Próximo",
+    "remaining": "Faltam",
+    "totalSpent": "Total Gasto",
+    "sinceStart": "desde o início",
+    "lastPurchase": "Última compra",
+    "totalPrompts": "Total de Prompts",
+    "sinceBeginning": "Desde o início",
+    "thisMonth": "Este Mês",
+    "promptsGenerated": "Prompts gerados",
+    "purchases": "Compras",
+    "transactions": "Transações",
+    "history": "Histórico",
+    "seeAll": "Ver tudo",
+    "recentPrompts": "Prompts Recentes",
+    "yourLastGenerations": "Suas últimas gerações",
+    "viewAll": "Ver tudo",
+    "generated": "Gerado",
+    "improved": "Melhorado",
+    "noPromptsYet": "Nenhum prompt ainda",
+    "startGenerating": "Comece gerando seu primeiro prompt!",
+    "generatePrompt": "Gerar um Prompt",
+    "recentPurchases": "Compras Recentes",
+    "yourLastTransactions": "Suas últimas transações",
+    "details": "Detalhes",
+    "noPurchases": "Sem compras",
+    "buyCreditsUnlock": "Compre créditos para desbloquear recursos",
+    "lowCredits": "Créditos Baixos",
+    "lowCreditsDesc": "Seu saldo está baixo. Recarregue para continuar gerando prompts.",
+    "bonusCredits": "Créditos bônus em pacotes selecionados",
+    "usePromoCode": "Use um código promo para mais economia",
+    "levelUpTier": "Suba de nível comprando créditos",
+    "rechargeNow": "Recarregar Agora"
+  },
+  "history": {
+    "title": "Histórico",
+    "backToDashboard": "Voltar ao Painel",
+    "totalPrompts": "{count} prompt(s) no total",
+    "searchPlaceholder": "Pesquisar nos seus prompts...",
+    "allTypes": "Todos os tipos",
+    "generated": "Gerado",
+    "improved": "Melhorado",
+    "favorites": "Favoritos",
+    "exportCSV": "Exportar CSV",
+    "exportJSON": "Exportar JSON",
+    "loading": "Carregando seus prompts...",
+    "noPromptsFound": "Nenhum prompt encontrado",
+    "noPromptsYet": "Nenhum prompt ainda",
+    "modifyFilters": "Tente modificar seus filtros de pesquisa",
+    "noPromptsGenerated": "Você ainda não gerou nenhum prompt",
+    "createPrompt": "Criar um prompt",
+    "previous": "Anterior",
+    "next": "Próximo",
+    "pageOf": "Página {page} de {total}",
+    "tip": "Dica: Use os favoritos para encontrar rapidamente seus melhores prompts",
+    "noExportData": "Nenhum prompt para exportar",
+    "exportSuccess": "Exportação concluída!",
+    "promptDeleted": "Prompt excluído",
+    "loadError": "Erro ao carregar prompts"
+  },
+  "creditsPage": {
+    "title": "Meus Créditos",
+    "subtitle": "Gerencie seu saldo e veja seu histórico",
+    "backToDashboard": "Voltar ao Painel",
+    "buyCredits": "Comprar créditos",
+    "overview": "Visão Geral",
+    "purchases": "Compras",
+    "transactions": "Transações",
+    "totalPurchased": "Total comprado",
+    "creditsPurchased": "créditos comprados",
+    "bonusReceived": "Bônus recebido",
+    "bonusCredits": "créditos bônus",
+    "used": "Usado",
+    "usagePercent": "{percent}% de uso",
+    "importantInfo": "Informações Importantes",
+    "noExpiration": "Sem expiração",
+    "noExpirationDesc": "Seus créditos ficam disponíveis para sempre e nunca expiram",
+    "promoCodes": "Códigos promocionais",
+    "promoCodesDesc": "Use códigos promocionais para obter descontos ou bônus",
+    "tierSystem": "Sistema de níveis",
+    "tierSystemDesc": "Suba de nível automaticamente com base no total gasto",
+    "packBonus": "Bônus de pacotes",
+    "packBonusDesc": "Quanto mais você compra de uma vez, mais economiza por crédito",
+    "noPurchases": "Sem compras",
+    "noPurchasesYet": "Você ainda não comprou nenhum crédito",
+    "buyNow": "Comprar agora",
+    "credits": "créditos",
+    "promoCode": "Código promocional",
+    "noTransactions": "Sem transações",
+    "transactionsHistory": "Seu histórico de transações aparecerá aqui",
+    "balance": "Saldo"
+  },
+  "creditsPurchase": {
+    "title": "Comprar Créditos",
+    "subtitle": "Recarregue seu saldo e desbloqueie mais recursos",
+    "backToDashboard": "Voltar ao painel",
+    "paymentSuccess": "Pagamento bem-sucedido! {credits} créditos adicionados à sua conta.",
+    "close": "Fechar",
+    "currentBalance": "Seu Saldo Atual",
+    "availablePacks": "Pacotes Disponíveis",
+    "noPacks": "Nenhum pacote disponível no momento.",
+    "loading": "Carregando...",
+    "errors": {
+      "generic": "Erro",
+      "paymentDeclined": "Pagamento recusado. Verifique suas informações bancárias.",
+      "paymentCanceled": "Pagamento cancelado.",
+      "callbackError": "Erro ao processar o pagamento.",
+      "missingTransactionId": "ID de transação ausente.",
+      "purchaseError": "Erro durante a compra"
+    },
+    "importantInfo": {
+      "title": "Informações Importantes",
+      "securePayment": {
+        "title": "Pagamento seguro",
+        "description": "Usamos o FedaPay para processar seus pagamentos com segurança."
+      },
+      "paymentMethods": {
+        "title": "Métodos de pagamento",
+        "description": "Cartão bancário (Visa, Mastercard) e Mobile Money (MTN, Moov, Orange)."
+      },
+      "noExpiration": {
+        "title": "Créditos sem expiração",
+        "description": "Seus créditos nunca expiram e permanecem disponíveis para sempre."
+      },
+      "autoTiers": {
+        "title": "Níveis automáticos",
+        "description": "Seu nível é calculado automaticamente com base no total gasto e dá acesso a mais recursos."
+      },
+      "promoCodes": {
+        "title": "Códigos promocionais",
+        "description": "Insira um código promocional durante a compra para obter descontos ou créditos bônus."
+      }
+    },
+    "tip": {
+      "title": "Dica",
+      "description": "Quanto mais você compra de uma vez, mais economiza por crédito!"
+    }
+  },
+  "globalSelector": {
+    "language": "Idioma",
+    "currency": "Moeda",
+    "searchCurrency": "Buscar moeda...",
+    "currentSettings": "Configurações atuais",
+    "currencyGroups": {
+      "majorCurrencies": "Moedas principais",
+      "africa": "África",
+      "asiaMiddleEast": "Ásia e Oriente Médio",
+      "southAmerica": "América do Sul"
+    }
+  },
+  "editor": {
+    "title": "Editor de Prompts",
+    "subtitle": "Crie e otimize seus prompts para inteligência artificial",
+    "backToDashboard": "Voltar ao Painel",
+    "credits": "Créditos",
+    "mode": "Modo",
+    "modeGenerate": "Gerar",
+    "modeGenerateDesc": "A partir de uma ideia",
+    "modeImprove": "Melhorar",
+    "modeImproveDesc": "Otimizar existente",
+    "configuration": "Configuração",
+    "promptType": "Tipo de prompt",
+    "outputLanguage": "Idioma de saída",
+    "languageAutoDesc": "O prompt estará no idioma detectado automaticamente",
+    "languageSelectedDesc": "O prompt será gerado neste idioma",
+    "yourIdea": "💡 Sua ideia",
+    "yourIdeaDesc": "Descreva o que você quer criar",
+    "promptToImprove": "🎯 Prompt a melhorar",
+    "promptToImproveDesc": "Cole o prompt que você quer otimizar",
+    "placeholderGenerate": "Exemplo: Um robô humanoide caminhando em uma cidade futurista ao pôr do sol, estilo cyberpunk...",
+    "placeholderImprove": "Cole seu prompt existente aqui...",
+    "constraints": "Restrições adicionais",
+    "optional": "opcional",
+    "constraintsPlaceholder": "Exemplo: Estilo fotográfico, evitar termos técnicos, tom profissional...",
+    "generating": "Gerando...",
+    "generateButton": "Gerar prompt",
+    "improveButton": "Melhorar prompt",
+    "getSuggestions": "Obter sugestões",
+    "result": "✨ Resultado",
+    "suggestions": "💡 Sugestões",
+    "suggestionsDesc": "Clique para selecionar ({count} selecionadas)",
+    "resultPlaceholder": "Seu resultado aparecerá aqui",
+    "resultPlaceholderDesc": "Digite sua ideia e clique em \"Gerar prompt\" para começar",
+    "lowCreditsTitle": "Créditos baixos",
+    "lowCreditsDesc": "Você só tem {count} créditos restantes. Recarregue para continuar.",
+    "noCreditsTitle": "Saldo esgotado",
+    "noCreditsDesc": "Você não tem mais créditos. Compre um pacote para continuar gerando prompts.",
+    "recharge": "Recarregar",
+    "buyCredits": "Comprar créditos",
+    "tipsTitle": "Dicas para prompts otimizados",
+    "tip1Title": "Seja ultra-preciso",
+    "tip1Desc": "Detalhe o contexto, público e objetivos específicos",
+    "tip2Title": "Defina o estilo",
+    "tip2Desc": "Especifique o tom, formato e referências visuais ou textuais",
+    "tip3Title": "Use restrições",
+    "tip3Desc": "Indique o que evitar ou limites técnicos a respeitar",
+    "creditInfo": "O consumo varia de acordo com seu nível (1 a 10 créditos por geração). Sugestões custam 1 crédito.",
+    "promptTypes": {
+      "auto": "Auto-detecção",
+      "autoDesc": "Detecção automática do tipo de prompt",
+      "image": "Geração de imagens",
+      "imageDesc": "DALL-E, Midjourney, Stable Diffusion",
+      "video": "Geração de vídeo",
+      "videoDesc": "Runway, Pika, Sora, Gen-2",
+      "code": "Geração de código",
+      "codeDesc": "GitHub Copilot, ChatGPT, Claude",
+      "text": "Redação de texto",
+      "textDesc": "Artigos, histórias, conteúdo editorial",
+      "chat": "Assistente conversacional",
+      "chatDesc": "Chatbots e assistentes de IA",
+      "analysis": "Análise de dados",
+      "analysisDesc": "Análises, resumos, insights"
+    },
+    "languages": {
+      "auto": "Detecção automática"
+    },
+    "errors": {
+      "emptyInput": "Por favor, digite uma ideia ou prompt",
+      "insufficientCredits": "Saldo insuficiente. Compre créditos para continuar.",
+      "generic": "Ocorreu um erro",
+      "copyFailed": "Erro ao copiar",
+      "emptyInputForSuggestions": "Por favor, digite texto para obter sugestões",
+      "suggestionsFailed": "Erro ao gerar sugestões"
+    },
+    "success": {
+      "generated": "✨ Prompt gerado! ({credits} crédito(s) usado(s))",
+      "improved": "⚡ Prompt melhorado! ({credits} crédito(s) usado(s))",
+      "suggestions": "💡 Sugestões geradas! ({credits} crédito usado)"
+    }
+  }
+}
