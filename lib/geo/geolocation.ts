@@ -4,7 +4,7 @@
  */
 
 import { Locale, countryToLocale, defaultLocale } from '@/i18n/config';
-import { CurrencyCode, countryToCurrency, DEFAULT_CURRENCY } from '@/config/currencies';
+import { CurrencyCode, countryToCurrency, DEFAULT_CURRENCY, getActiveCurrencyOrDefault } from '@/config/currencies';
 
 export interface GeoLocation {
   country: string;       // Code pays ISO 3166-1 alpha-2 (ex: "FR", "US")
@@ -121,15 +121,15 @@ export function getGeoLocationFromBrowser(): GeoLocation {
 }
 
 /**
- * Retourne les valeurs par défaut (anglais + USD)
+ * Retourne les valeurs par défaut (français + XOF pour FedaPay)
  */
 export function getDefaultGeoLocation(): GeoLocation {
   return {
-    country: 'US',
-    countryName: 'United States',
-    timezone: 'America/New_York',
-    locale: 'en',
-    currency: 'USD',
+    country: 'SN',
+    countryName: 'Sénégal',
+    timezone: 'Africa/Dakar',
+    locale: defaultLocale,
+    currency: DEFAULT_CURRENCY,
   };
 }
 
@@ -142,9 +142,15 @@ export function getLocaleByCountry(countryCode: string): Locale {
 
 /**
  * Obtient la devise pour un pays donné
+ * Si la devise du pays n'est pas active (pas supportée par FedaPay),
+ * retourne la devise par défaut (XOF)
  */
 export function getCurrencyByCountry(countryCode: string): CurrencyCode {
-  return countryToCurrency[countryCode.toUpperCase()] || DEFAULT_CURRENCY;
+  const countryCurrency = countryToCurrency[countryCode.toUpperCase()];
+  if (countryCurrency) {
+    return getActiveCurrencyOrDefault(countryCurrency);
+  }
+  return DEFAULT_CURRENCY;
 }
 
 /**

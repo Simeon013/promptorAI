@@ -409,12 +409,7 @@
     "currency": "Devise",
     "searchCurrency": "Rechercher une devise...",
     "currentSettings": "Paramètres actuels",
-    "currencyGroups": {
-      "majorCurrencies": "Devises principales",
-      "africa": "Afrique",
-      "asiaMiddleEast": "Asie & Moyen-Orient",
-      "southAmerica": "Amérique du Sud"
-    }
+    "availableCurrencies": "Devises disponibles"
   },
   "editor": {
     "title": "Éditeur de Prompts",

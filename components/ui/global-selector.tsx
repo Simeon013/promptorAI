@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import { locales, localeNames, type Locale } from '@/i18n/config';
-import { CURRENCIES, type CurrencyCode } from '@/config/currencies';
+import { CURRENCIES, getActiveCurrencies, type CurrencyCode } from '@/config/currencies';
 import { useCurrency } from '@/hooks/useCurrency';
 import { FlagIcon } from '@/components/ui/flag-icon';
 import { Globe, ChevronDown, Check, Languages, Coins, Search } from 'lucide-react';
@@ -17,30 +17,6 @@ interface GlobalSelectorProps {
   compact?: boolean;
 }
 
-// Groupes de devises pour une meilleure organisation
-const CURRENCY_GROUPS: { id: string; labelKey: string; currencies: CurrencyCode[] }[] = [
-  {
-    id: 'major',
-    labelKey: 'majorCurrencies',
-    currencies: ['USD', 'EUR', 'GBP', 'CHF', 'CAD', 'AUD'],
-  },
-  {
-    id: 'africa',
-    labelKey: 'africa',
-    currencies: ['XOF', 'XAF', 'MAD', 'NGN', 'GHS', 'KES', 'ZAR'],
-  },
-  {
-    id: 'asia',
-    labelKey: 'asiaMiddleEast',
-    currencies: ['CNY', 'INR', 'SAR', 'AED'],
-  },
-  {
-    id: 'southAmerica',
-    labelKey: 'southAmerica',
-    currencies: ['BRL'],
-  },
-];
-
 export function GlobalSelector({ className = '', compact = false }: GlobalSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('language');
@@ -50,7 +26,7 @@ export function GlobalSelector({ className = '', compact = false }: GlobalSelect
   const locale = useLocale() as Locale;
   const router = useRouter();
   const pathname = usePathname();
-  const { currency, setCurrency, isLoading: currencyLoading } = useCurrency();
+  const { currency, setCurrency } = useCurrency();
   const t = useTranslations('globalSelector');
 
   // Close dropdown when clicking outside
@@ -106,21 +82,6 @@ export function GlobalSelector({ className = '', compact = false }: GlobalSelect
       localeNames[loc].toLowerCase().includes(query)
     );
   });
-
-  // Filter currencies by search
-  const filterCurrencies = (currencies: CurrencyCode[]) => {
-    if (!searchQuery) return currencies;
-    const query = searchQuery.toLowerCase();
-    return currencies.filter((code) => {
-      const curr = CURRENCIES[code];
-      return (
-        code.toLowerCase().includes(query) ||
-        curr.name.toLowerCase().includes(query) ||
-        curr.nameEn.toLowerCase().includes(query) ||
-        curr.symbol.toLowerCase().includes(query)
-      );
-    });
-  };
 
   const selectedCurrency = CURRENCIES[currency];
 
@@ -256,58 +217,59 @@ export function GlobalSelector({ className = '', compact = false }: GlobalSelect
               {/* Currency Tab */}
               {activeTab === 'currency' && (
                 <div className="p-2">
-                  {CURRENCY_GROUPS.map((group) => {
-                    const filteredCurrencies = filterCurrencies(group.currencies);
-                    if (filteredCurrencies.length === 0) return null;
+                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    {t('availableCurrencies')}
+                  </div>
+                  <div className="grid grid-cols-1 gap-1">
+                    {getActiveCurrencies()
+                      .filter((curr) => {
+                        if (!searchQuery) return true;
+                        const query = searchQuery.toLowerCase();
+                        return (
+                          curr.code.toLowerCase().includes(query) ||
+                          curr.name.toLowerCase().includes(query) ||
+                          curr.nameEn.toLowerCase().includes(query) ||
+                          curr.symbol.toLowerCase().includes(query)
+                        );
+                      })
+                      .map((curr) => {
+                        const isSelected = curr.code === currency;
 
-                    return (
-                      <div key={group.id} className="mb-2 last:mb-0">
-                        <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                          {t(`currencyGroups.${group.labelKey}`)}
-                        </div>
-                        <div className="grid grid-cols-1 gap-1">
-                          {filteredCurrencies.map((code) => {
-                            const curr = CURRENCIES[code];
-                            const isSelected = code === currency;
-
-                            return (
-                              <button
-                                type="button"
-                                key={code}
-                                onClick={() => handleCurrencyChange(code)}
-                                className={`
-                                  flex items-center gap-3 px-4 py-3 rounded-xl
-                                  transition-all duration-200
-                                  ${isSelected
-                                    ? 'bg-gradient-to-r from-purple-500/15 to-pink-500/15 border border-purple-500/30'
-                                    : 'hover:bg-muted/50'
-                                  }
-                                `}
-                              >
-                                <FlagIcon code={code} size="md" />
-                                <div className="flex-1 text-left">
-                                  <div className={`font-medium ${isSelected ? 'text-purple-600 dark:text-purple-400' : ''}`}>
-                                    {curr.code}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {locale === 'fr' ? curr.name : curr.nameEn}
-                                  </div>
-                                </div>
-                                <span className="text-sm text-muted-foreground font-mono">
-                                  {curr.symbol}
-                                </span>
-                                {isSelected && (
-                                  <div className="flex items-center justify-center w-5 h-5 rounded-full bg-purple-500">
-                                    <Check className="h-3 w-3 text-white" />
-                                  </div>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
+                        return (
+                          <button
+                            type="button"
+                            key={curr.code}
+                            onClick={() => handleCurrencyChange(curr.code)}
+                            className={`
+                              flex items-center gap-3 px-4 py-3 rounded-xl
+                              transition-all duration-200
+                              ${isSelected
+                                ? 'bg-gradient-to-r from-purple-500/15 to-pink-500/15 border border-purple-500/30'
+                                : 'hover:bg-muted/50'
+                              }
+                            `}
+                          >
+                            <FlagIcon code={curr.code} size="md" />
+                            <div className="flex-1 text-left">
+                              <div className={`font-medium ${isSelected ? 'text-purple-600 dark:text-purple-400' : ''}`}>
+                                {curr.code}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {locale === 'fr' ? curr.name : curr.nameEn}
+                              </div>
+                            </div>
+                            <span className="text-sm text-muted-foreground font-mono">
+                              {curr.symbol}
+                            </span>
+                            {isSelected && (
+                              <div className="flex items-center justify-center w-5 h-5 rounded-full bg-purple-500">
+                                <Check className="h-3 w-3 text-white" />
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                  </div>
                 </div>
               )}
             </div>

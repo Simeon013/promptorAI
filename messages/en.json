@@ -409,12 +409,7 @@
     "currency": "Currency",
     "searchCurrency": "Search currency...",
     "currentSettings": "Current settings",
-    "currencyGroups": {
-      "majorCurrencies": "Major currencies",
-      "africa": "Africa",
-      "asiaMiddleEast": "Asia & Middle East",
-      "southAmerica": "South America"
-    }
+    "availableCurrencies": "Available currencies"
   },
   "editor": {
     "title": "Prompt Editor",

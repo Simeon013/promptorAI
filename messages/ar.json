@@ -403,12 +403,7 @@
     "currency": "العملة",
     "searchCurrency": "البحث عن عملة...",
     "currentSettings": "الإعدادات الحالية",
-    "currencyGroups": {
-      "majorCurrencies": "العملات الرئيسية",
-      "africa": "أفريقيا",
-      "asiaMiddleEast": "آسيا والشرق الأوسط",
-      "southAmerica": "أمريكا الجنوبية"
-    }
+    "availableCurrencies": "العملات المتاحة"
   },
   "editor": {
     "title": "محرر البرومبت",

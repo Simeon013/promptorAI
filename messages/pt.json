@@ -403,12 +403,7 @@
     "currency": "Moeda",
     "searchCurrency": "Buscar moeda...",
     "currentSettings": "Configurações atuais",
-    "currencyGroups": {
-      "majorCurrencies": "Moedas principais",
-      "africa": "África",
-      "asiaMiddleEast": "Ásia e Oriente Médio",
-      "southAmerica": "América do Sul"
-    }
+    "availableCurrencies": "Moedas disponíveis"
   },
   "editor": {
     "title": "Editor de Prompts",

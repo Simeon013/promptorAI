@@ -1,9 +1,14 @@
 /**
  * Configuration des devises supportées
  * Système international avec détection automatique par pays
+ *
+ * Phase 1: FedaPay uniquement (XOF, EUR, GNF)
+ * Phase 2: Stripe pour internationalisation (USD, GBP, etc.)
  */
 
-export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'XOF' | 'XAF' | 'MAD' | 'NGN' | 'GHS' | 'KES' | 'ZAR' | 'BRL' | 'CNY' | 'INR' | 'CAD' | 'AUD' | 'CHF' | 'SAR' | 'AED';
+export type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'XOF' | 'XAF' | 'MAD' | 'NGN' | 'GHS' | 'KES' | 'ZAR' | 'BRL' | 'CNY' | 'INR' | 'CAD' | 'AUD' | 'CHF' | 'SAR' | 'AED' | 'GNF';
+
+export type PaymentGateway = 'fedapay' | 'stripe' | 'none';
 
 export interface Currency {
   code: CurrencyCode;
@@ -15,21 +20,16 @@ export interface Currency {
   displayFormat: string; // '{amount} {symbol}' ou '{symbol}{amount}'
   rateToUSD: number; // Taux de conversion vers USD (devise de référence)
   locale: string; // Locale pour le formatage des nombres
+  isActive: boolean; // Si la devise est actuellement disponible
+  gateway: PaymentGateway; // Gateway de paiement pour cette devise
 }
 
 export const CURRENCIES: Record<CurrencyCode, Currency> = {
-  // Devises principales internationales
-  USD: {
-    code: 'USD',
-    name: 'Dollar américain',
-    nameEn: 'US Dollar',
-    symbol: '$',
-    flag: '🇺🇸',
-    decimals: 2,
-    displayFormat: '{symbol}{amount}',
-    rateToUSD: 1,
-    locale: 'en-US',
-  },
+  // ============================================
+  // DEVISES ACTIVES - FedaPay (Phase 1)
+  // ============================================
+
+  // Euro - Supporté par FedaPay
   EUR: {
     code: 'EUR',
     name: 'Euro',
@@ -40,53 +40,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{amount} {symbol}',
     rateToUSD: 1.08,
     locale: 'fr-FR',
-  },
-  GBP: {
-    code: 'GBP',
-    name: 'Livre sterling',
-    nameEn: 'British Pound',
-    symbol: '£',
-    flag: '🇬🇧',
-    decimals: 2,
-    displayFormat: '{symbol}{amount}',
-    rateToUSD: 1.27,
-    locale: 'en-GB',
-  },
-  CHF: {
-    code: 'CHF',
-    name: 'Franc suisse',
-    nameEn: 'Swiss Franc',
-    symbol: 'CHF',
-    flag: '🇨🇭',
-    decimals: 2,
-    displayFormat: '{symbol} {amount}',
-    rateToUSD: 1.13,
-    locale: 'fr-CH',
-  },
-  CAD: {
-    code: 'CAD',
-    name: 'Dollar canadien',
-    nameEn: 'Canadian Dollar',
-    symbol: 'CA$',
-    flag: '🇨🇦',
-    decimals: 2,
-    displayFormat: '{symbol}{amount}',
-    rateToUSD: 0.74,
-    locale: 'en-CA',
-  },
-  AUD: {
-    code: 'AUD',
-    name: 'Dollar australien',
-    nameEn: 'Australian Dollar',
-    symbol: 'A$',
-    flag: '🇦🇺',
-    decimals: 2,
-    displayFormat: '{symbol}{amount}',
-    rateToUSD: 0.65,
-    locale: 'en-AU',
+    isActive: true,
+    gateway: 'fedapay',
   },
 
-  // Devises africaines
+  // Franc CFA UEMOA - Devise principale FedaPay
   XOF: {
     code: 'XOF',
     name: 'Franc CFA (UEMOA)',
@@ -97,7 +55,106 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{amount} {symbol}',
     rateToUSD: 0.00165,
     locale: 'fr-BJ',
+    isActive: true,
+    gateway: 'fedapay',
   },
+
+  // Franc guinéen - Supporté par FedaPay
+  GNF: {
+    code: 'GNF',
+    name: 'Franc guinéen',
+    nameEn: 'Guinean Franc',
+    symbol: 'GNF',
+    flag: '🇬🇳',
+    decimals: 0,
+    displayFormat: '{amount} {symbol}',
+    rateToUSD: 0.000116,
+    locale: 'fr-GN',
+    isActive: true,
+    gateway: 'fedapay',
+  },
+
+  // ============================================
+  // DEVISES INACTIVES - Stripe (Phase 2)
+  // À activer lors de l'internationalisation
+  // ============================================
+
+  // Dollar américain
+  USD: {
+    code: 'USD',
+    name: 'Dollar américain',
+    nameEn: 'US Dollar',
+    symbol: '$',
+    flag: '🇺🇸',
+    decimals: 2,
+    displayFormat: '{symbol}{amount}',
+    rateToUSD: 1,
+    locale: 'en-US',
+    isActive: false, // À activer avec Stripe
+    gateway: 'stripe',
+  },
+
+  // Livre sterling
+  GBP: {
+    code: 'GBP',
+    name: 'Livre sterling',
+    nameEn: 'British Pound',
+    symbol: '£',
+    flag: '🇬🇧',
+    decimals: 2,
+    displayFormat: '{symbol}{amount}',
+    rateToUSD: 1.27,
+    locale: 'en-GB',
+    isActive: false,
+    gateway: 'stripe',
+  },
+
+  // Franc suisse
+  CHF: {
+    code: 'CHF',
+    name: 'Franc suisse',
+    nameEn: 'Swiss Franc',
+    symbol: 'CHF',
+    flag: '🇨🇭',
+    decimals: 2,
+    displayFormat: '{symbol} {amount}',
+    rateToUSD: 1.13,
+    locale: 'fr-CH',
+    isActive: false,
+    gateway: 'stripe',
+  },
+
+  // Dollar canadien
+  CAD: {
+    code: 'CAD',
+    name: 'Dollar canadien',
+    nameEn: 'Canadian Dollar',
+    symbol: 'CA$',
+    flag: '🇨🇦',
+    decimals: 2,
+    displayFormat: '{symbol}{amount}',
+    rateToUSD: 0.74,
+    locale: 'en-CA',
+    isActive: false,
+    gateway: 'stripe',
+  },
+
+  // Dollar australien
+  AUD: {
+    code: 'AUD',
+    name: 'Dollar australien',
+    nameEn: 'Australian Dollar',
+    symbol: 'A$',
+    flag: '🇦🇺',
+    decimals: 2,
+    displayFormat: '{symbol}{amount}',
+    rateToUSD: 0.65,
+    locale: 'en-AU',
+    isActive: false,
+    gateway: 'stripe',
+  },
+
+  // Franc CFA CEMAC
   XAF: {
     code: 'XAF',
     name: 'Franc CFA (CEMAC)',
@@ -108,7 +165,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{amount} {symbol}',
     rateToUSD: 0.00165,
     locale: 'fr-CM',
+    isActive: false, // Pas supporté par FedaPay, à activer avec autre gateway
+    gateway: 'none',
   },
+
+  // Dirham marocain
   MAD: {
     code: 'MAD',
     name: 'Dirham marocain',
@@ -119,7 +180,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{amount} {symbol}',
     rateToUSD: 0.099,
     locale: 'ar-MA',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Naira nigérian
   NGN: {
     code: 'NGN',
     name: 'Naira nigérian',
@@ -130,7 +195,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.00063,
     locale: 'en-NG',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Cedi ghanéen
   GHS: {
     code: 'GHS',
     name: 'Cedi ghanéen',
@@ -141,7 +210,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.064,
     locale: 'en-GH',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Shilling kényan
   KES: {
     code: 'KES',
     name: 'Shilling kényan',
@@ -152,7 +225,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.0077,
     locale: 'en-KE',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Rand sud-africain
   ZAR: {
     code: 'ZAR',
     name: 'Rand sud-africain',
@@ -163,9 +240,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.055,
     locale: 'en-ZA',
+    isActive: false,
+    gateway: 'stripe',
   },
 
-  // Devises asiatiques et moyen-orient
+  // Yuan chinois
   CNY: {
     code: 'CNY',
     name: 'Yuan chinois',
@@ -176,7 +255,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.14,
     locale: 'zh-CN',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Roupie indienne
   INR: {
     code: 'INR',
     name: 'Roupie indienne',
@@ -187,7 +270,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.012,
     locale: 'en-IN',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Riyal saoudien
   SAR: {
     code: 'SAR',
     name: 'Riyal saoudien',
@@ -198,7 +285,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{amount} {symbol}',
     rateToUSD: 0.27,
     locale: 'ar-SA',
+    isActive: false,
+    gateway: 'stripe',
   },
+
+  // Dirham émirati
   AED: {
     code: 'AED',
     name: 'Dirham émirati',
@@ -209,9 +300,11 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{amount} {symbol}',
     rateToUSD: 0.27,
     locale: 'ar-AE',
+    isActive: false,
+    gateway: 'stripe',
   },
 
-  // Amérique du Sud
+  // Real brésilien
   BRL: {
     code: 'BRL',
     name: 'Real brésilien',
@@ -222,11 +315,44 @@ export const CURRENCIES: Record<CurrencyCode, Currency> = {
     displayFormat: '{symbol}{amount}',
     rateToUSD: 0.20,
     locale: 'pt-BR',
+    isActive: false,
+    gateway: 'stripe',
   },
 };
 
-// Devise par défaut (USD pour l'international)
-export const DEFAULT_CURRENCY: CurrencyCode = 'USD';
+// Devise par défaut (XOF pour FedaPay - Phase 1)
+export const DEFAULT_CURRENCY: CurrencyCode = 'XOF';
+
+/**
+ * Obtient uniquement les devises actives
+ */
+export function getActiveCurrencies(): Currency[] {
+  return Object.values(CURRENCIES).filter(c => c.isActive);
+}
+
+/**
+ * Obtient les codes des devises actives
+ */
+export function getActiveCurrencyCodes(): CurrencyCode[] {
+  return getActiveCurrencies().map(c => c.code);
+}
+
+/**
+ * Vérifie si une devise est active
+ */
+export function isCurrencyActive(code: CurrencyCode): boolean {
+  return CURRENCIES[code]?.isActive ?? false;
+}
+
+/**
+ * Obtient une devise active par défaut si la devise demandée n'est pas active
+ */
+export function getActiveCurrencyOrDefault(code: CurrencyCode): CurrencyCode {
+  if (isCurrencyActive(code)) {
+    return code;
+  }
+  return DEFAULT_CURRENCY;
+}
 
 // Mapping pays -> devise
 export const countryToCurrency: Record<string, CurrencyCode> = {

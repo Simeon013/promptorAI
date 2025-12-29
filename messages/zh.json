@@ -403,12 +403,7 @@
     "currency": "货币",
     "searchCurrency": "搜索货币...",
     "currentSettings": "当前设置",
-    "currencyGroups": {
-      "majorCurrencies": "主要货币",
-      "africa": "非洲",
-      "asiaMiddleEast": "亚洲和中东",
-      "southAmerica": "南美洲"
-    }
+    "availableCurrencies": "可用货币"
   },
   "editor": {
     "title": "提示词编辑器",
